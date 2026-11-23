@@ -740,17 +740,36 @@ function screenRot(X, Y) {
   const c = Math.cos(ang), s = Math.sin(ang);
   return [X.map((x, i) => x * c - Y[i] * s), X.map((x, i) => x * s + Y[i] * c)];
 }
-function onOri(e) {
-  if (sensorOn) return;                               // the quaternion sensor is running and is better
-  let a = e.alpha, b = e.beta, gm = e.gamma;
-  if (e.webkitCompassHeading != null) a = 360 - e.webkitCompassHeading;
-  if (a == null || b == null) return;
+// here is the modification of the iPhone gyro: iOS alpha is relative (arbitrary zero) and smooth, while
+// webkitCompassHeading is absolute but only meaningful for the device top (phone flat) or the back camera (phone upright).
+// We keep the smooth relative orientation and learn ONE north offset from the compass, filtered slowly.
+let iosOff = null;
+function eulerXYZ(a, b, gm) {
   a *= D2R; b *= D2R; gm *= D2R;
   const cA = Math.cos(a), sA = Math.sin(a), cB = Math.cos(b), sB = Math.sin(b), cG = Math.cos(gm), sG = Math.sin(gm);
   // columns of R = Rz(alpha)·Rx(beta)·Ry(gamma) (device -> earth ENU)
-  let X = [cA * cG - sA * sB * sG, cG * sA + cA * sB * sG, -cB * sG];
-  let Y = [-cB * sA, cA * cB, sB];
-  const Z = [cA * sG + cG * sA * sB, sA * sG - cA * cG * sB, cB * cG];
+  return [[cA * cG - sA * sB * sG, cG * sA + cA * sB * sG, -cB * sG], [-cB * sA, cA * cB, sB], [cA * sG + cG * sA * sB, sA * sG - cA * cG * sB, cB * cG]];
+}
+function rotUp(v, off) { const c = Math.cos(off), s = Math.sin(off); return [v[0] * c + v[1] * s, -v[0] * s + v[1] * c, v[2]]; } // turn azimuth clockwise by off
+function onOri(e) {
+  if (sensorOn) return;                               // the quaternion sensor is running and is better
+  const a = e.alpha, b = e.beta, gm = e.gamma;
+  if (a == null || b == null) return;
+  let [X, Y, Z] = eulerXYZ(a, b, gm);
+  if (e.webkitCompassHeading != null && e.webkitCompassHeading >= 0) {
+    const zUp = Math.abs(Z[2]);                       // 1 = phone flat, 0 = phone upright
+    let v = null;
+    if (zUp > 0.8) v = Y;                             // flat: heading = direction of the top edge
+    else if (zUp < 0.55) v = [-Z[0], -Z[1], -Z[2]];   // upright: heading = direction of the back camera
+    if (v && Math.hypot(v[0], v[1]) > 0.3) {
+      const azRel = Math.atan2(v[0], v[1]);           // azimuth (from north, clockwise) in the relative frame
+      const est = e.webkitCompassHeading * D2R - azRel;
+      if (iosOff == null) iosOff = est;
+      else { const d = Math.atan2(Math.sin(est - iosOff), Math.cos(est - iosOff)); if (Math.abs(d) < 0.6) iosOff += d * 0.05; else iosOff += d * 0.01; }
+    }
+    if (iosOff == null) return;
+    X = rotUp(X, iosOff); Y = rotUp(Y, iosOff); Z = rotUp(Z, iosOff);
+  }
   [X, Y] = screenRot(X, Y);
   setBasis(X, Y, Z);
 }
@@ -783,7 +802,7 @@ function setGyro(on) {
     if (typeof DeviceOrientationEvent !== 'undefined' && DeviceOrientationEvent.requestPermission) DeviceOrientationEvent.requestPermission().then(r => r === 'granted' ? start() : toast(inFrame() ? t('sandboxGyro') : t('noGyro'))).catch(() => toast(inFrame() ? t('sandboxGyro') : t('noGyro')));
     else if (typeof DeviceOrientationEvent !== 'undefined') start(); else toast(t('noGyro'));
   } else {
-    removeEventListener('deviceorientationabsolute', onOri); removeEventListener('deviceorientation', onOri); stopSensor();
+    removeEventListener('deviceorientationabsolute', onOri); removeEventListener('deviceorientation', onOri); stopSensor(); iosOff = null;
     if (st.gyro && gyroBasis) { const f = gyroBasis.f; st.view.az = (Math.atan2(f[1], f[0]) * R2D + 360) % 360; st.view.alt = Math.asin(f[2]) * R2D; }
     st.gyro = false; gyroBasis = null; $('cGyro').classList.remove('on');
   }
