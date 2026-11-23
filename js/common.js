@@ -122,7 +122,9 @@
     let d = document.getElementById('khDrawer');
     if (!d) { d = document.createElement('div'); d.id = 'khDrawer'; d.className = 'kh-drawer'; d.onclick = e => { if (e.target === d) d.hidden = true; }; document.body.appendChild(d); }
     d.innerHTML = `<div class="dw"><div class="dh"><span>${lang === 'ar' ? 'أقسام البرنامج' : 'Sections'}</span><button class="ibtn" onclick="this.closest('.kh-drawer').hidden=true">✕</button></div>` +
-      NAV.map(n => `<a class="${n[0] === cur ? 'cur' : ''}" href="${n[0]}"><span>${n[1]}</span>${n[L]}</a>`).join('') + '</div>';
+      NAV.map(n => `<a class="${n[0] === cur ? 'cur' : ''}" href="${n[0]}"><span>${n[1]}</span>${n[L]}</a>`).join('') +
+      `<div class="trow"><button class="btn ghost" data-t="dark">🌙 ${lang === 'ar' ? 'داكن' : 'Dark'}</button><button class="btn ghost" data-t="light">☀️ ${lang === 'ar' ? 'فاتح' : 'Light'}</button></div></div>`;
+    d.querySelectorAll('[data-t]').forEach(b => b.onclick = () => { setTheme(b.dataset.t); d.hidden = true; });
     d.hidden = false;
   }
   applyTheme(getTheme());

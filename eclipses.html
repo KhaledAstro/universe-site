@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<script>try{document.documentElement.dataset.theme=JSON.parse(localStorage.getItem("khSky.theme"))||"dark"}catch(e){document.documentElement.dataset.theme="dark"}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#07090f">
+<title>الكسوف: كتالوج البيانات والصور</title>
+<link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/page.css">
+<style>
+.ehero{text-align:center;padding:26px 8px 4px}
+.ehero h2{font-size:clamp(28px,5vw,44px);font-weight:900;margin:6px 0;background:linear-gradient(90deg,#f6e3a1,#e8b94a 55%,#ff9a5a);-webkit-background-clip:text;background-clip:text;color:transparent}
+[data-theme=light] .ehero h2{background:linear-gradient(90deg,#8a5d06,#b07d14 55%,#d4541e);-webkit-background-clip:text;background-clip:text}
+.ehero p{color:var(--muted);max-width:760px;margin:6px auto;line-height:1.85;font-size:15px}
+.policy{max-width:760px;margin:12px auto 0;font-size:13px;color:var(--txt2);background:color-mix(in srgb,var(--gold) 9%,var(--card));border:1px solid color-mix(in srgb,var(--gold) 35%,transparent);border-radius:12px;padding:10px 14px;line-height:1.75}
+.ico{width:46px;height:46px;border-radius:12px;display:grid;place-items:center;font-size:24px;background:color-mix(in srgb,var(--gold) 12%,transparent);flex:0 0 auto}
+.dcard .hd2{display:flex;gap:12px;align-items:flex-start}
+.dcard .ds{font-size:13.3px;color:var(--muted);line-height:1.75;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.types{display:flex;gap:6px;flex-wrap:wrap}
+.r-open{background:color-mix(in srgb,var(--ok) 18%,transparent);color:var(--ok)}
+.r-cond{background:color-mix(in srgb,var(--accent) 18%,transparent);color:var(--accent)}
+.r-mixed{background:color-mix(in srgb,var(--warn) 20%,transparent);color:var(--warn)}
+.r-ask{background:color-mix(in srgb,var(--coral) 18%,transparent);color:var(--coral)}
+.r-copy{background:color-mix(in srgb,var(--bad) 18%,transparent);color:var(--bad)}
+.legend{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;font-size:12px;color:var(--muted);margin:4px 0 14px}
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:640px){.mgrid{grid-template-columns:1fr}}
+.copyrow{display:flex;justify-content:space-between;align-items:center;margin:14px 0 6px}
+.copyrow b{color:var(--gold-l)}
+.mlinks{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.empty{text-align:center;color:var(--muted);padding:30px}
+</style>
+</head>
+<body>
+<header class="pg-top">
+  <a class="brand" href="index.html"><span id="logo"></span><div><h1 data-i="title"></h1><div class="sub" data-i="sub"></div></div></a>
+  <button class="ibtn" id="btnLang">EN</button>
+</header>
+<main class="wrap">
+  <section class="ehero">
+    <h2 data-i="h"></h2>
+    <p data-i="lead"></p>
+    <div class="policy" data-i="policy"></div>
+  </section>
+  <div class="stats" id="stats"></div>
+  <div class="search"><span class="ic">🔍</span><input id="q" type="search" autocomplete="off"></div>
+  <div class="filters" id="fYear"></div>
+  <div class="filters" id="fType"></div>
+  <div class="filters" id="fAud"></div>
+  <div class="legend" id="legend"></div>
+  <div class="count" id="cnt"></div>
+  <div class="dgrid" id="grid"></div>
+</main>
+<div class="kmodal" id="modal" hidden><div class="box" id="mbox"></div></div>
+<footer class="pg-foot" id="foot"></footer>
+<script src="js/common.js"></script>
+<script src="js/eclipses-data.js"></script>
+<script>
+(function(){
+// here is the modification: new Eclipses section — searchable, filterable catalogue of public eclipse datasets
+const $=id=>document.getElementById(id);let lang=KH.getLang();const D=window.ECLIPSE_DATA;
+const T={
+ ar:{title:'الكسوف',sub:'كتالوج بيانات وصور الكسوف المفتوحة',h:'كتالوج بيانات الكسوف',
+  lead:'بيانات وصور حقيقية للكسوف الكلي وإكليل الشمس، للعلماء وللجمهور: ملفات FITS وخام وHDR واستقطاب وصور معالجة. لكل مدخل: من أنتجه، وترخيصه، وطريقة الاستشهاد به، ورابط مصدره الأصلي.',
+  policy:'⚖️ لا نستضيف هنا أي صورة أو بيانات. كل مدخل يحيلك إلى مصدره الأصلي مع ذكر أصحابه. راجعنا الترخيص وطريقة الاستشهاد من الصفحة الرسمية لكل مصدر في نوفمبر ٢٠٢٦، وأي تغيير لاحق يحكمه نص المصدر.',
+  ph:'ابحث: Megamovie، استقطاب، FITS، ESA، ١٩١٩…',all:'الكل',year:'الكسوف',type:'نوع البيانات',aud:'الجمهور',
+  st:[['مدخلًا','n'],['كسوفًا مختلفًا','e'],['أنواع بيانات','t'],['حالات ترخيص','o']],
+  types:{raw:'خام',fits:'FITS',hdr:'HDR',pol:'استقطاب',processed:'صورة معالجة',photo:'صور فوتوغرافية'},
+  auds:{sci:'للعلماء',pub:'للجمهور'},
+  kinds:{total:'كلي',artificial:'صناعي (في الفضاء)',annular:'حلقي'},
+  reuse:{open:'ترخيص مفتوح',cond:'وفق إرشادات المصدر',mixed:'يختلف لكل ملف',ask:'اسأل المالك',copy:'محفوظ الحقوق: رابط فقط'},
+  date:'تاريخ الكسوف',by:'المنتِج',lic:'الترخيص',size:'الحجم',rel:'تاريخ النشر',status:'الحالة',also:'كسوفات أخرى',
+  det:'التفاصيل',open:'المصدر الأصلي ↗',paper:'الورقة العلمية ↗',cite:'طريقة الاستشهاد',copy:'📋 نسخ',copied:'✓ تم النسخ',
+  show:(a,b)=>`يظهر ${a} من ${b} مدخلًا`,none:'لا توجد نتائج مطابقة',close:'إغلاق'},
+ en:{title:'Eclipses',sub:'Open eclipse data & image catalogue',h:'Eclipse data catalogue',
+  lead:'Real total-eclipse and corona data and images for scientists and the public: FITS, raw, HDR, polarization and processed images. Every entry shows who produced it, its licence, how to cite it and a link to the original source.',
+  policy:'⚖️ Nothing is re-hosted here. Each entry links to its original source and credits its authors. Licences and citations were checked on each official page in November 2026; if a source changes, its own text applies.',
+  ph:'Search: Megamovie, polarization, FITS, ESA, 1919…',all:'All',year:'Eclipse',type:'Data type',aud:'Audience',
+  st:[['entries','n'],['different eclipses','e'],['data types','t'],['licence situations','o']],
+  types:{raw:'Raw',fits:'FITS',hdr:'HDR',pol:'Polarization',processed:'Processed image',photo:'Photographs'},
+  auds:{sci:'Scientists',pub:'Public'},
+  kinds:{total:'Total',artificial:'Artificial (in space)',annular:'Annular'},
+  reuse:{open:'Open licence',cond:'Source guidelines',mixed:'Varies per file',ask:'Ask the owner',copy:'Copyrighted: link only'},
+  date:'Eclipse date',by:'Produced by',lic:'Licence',size:'Size',rel:'Released',status:'Status',also:'Other eclipses',
+  det:'Details',open:'Original source ↗',paper:'Paper ↗',cite:'How to cite',copy:'📋 Copy',copied:'✓ Copied',
+  show:(a,b)=>`Showing ${a} of ${b} entries`,none:'No matching entries',close:'Close'}};
+const ICON={total:'🌑',artificial:'🛰️',annular:'💍'};
+let F={year:'all',type:'all',aud:'all'};
+const t=k=>T[lang][k];
+const yr=d=>d.slice(0,4);
+function fmtD(iso){if(!iso)return '—';try{return new Intl.DateTimeFormat(lang==='ar'?'ar-EG':'en-GB',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(iso+'T12:00:00Z'));}catch(e){return iso;}}
+function chips(el,label,key,opts){el.innerHTML=`<span class="lbl">${label}</span>`+[['all',t('all')],...opts].map(o=>`<button class="chip${F[key]===o[0]?' on':''}" data-v="${o[0]}">${o[1]}</button>`).join('');el.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{F[key]=b.dataset.v;page();});}
+function page(){
+  document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr';
+  document.querySelectorAll('[data-i]').forEach(e=>{const v=t(e.dataset.i);if(typeof v==='string')e.textContent=v;});
+  $('btnLang').textContent=lang==='ar'?'EN':'ع';$('logo').innerHTML=KH.logoSVG(34);$('q').placeholder=t('ph');
+  const years=[...new Set(D.map(d=>yr(d.date)))].sort().reverse();
+  const counts={n:D.length,e:new Set(D.flatMap(d=>[d.date,...(d.also||[])])).size,t:new Set(D.flatMap(d=>d.types)).size,o:new Set(D.map(d=>d.reuse)).size};
+  $('stats').innerHTML=t('st').map(s=>`<div class="stat"><b>${KH.digits(counts[s[1]],lang)}</b><span>${s[0]}</span></div>`).join('');
+  chips($('fYear'),t('year'),'year',years.map(y=>[y,KH.digits(y,lang)]));
+  chips($('fType'),t('type'),'type',Object.entries(t('types')));
+  chips($('fAud'),t('aud'),'aud',Object.entries(t('auds')));
+  $('legend').innerHTML=Object.entries(t('reuse')).map(r=>`<span class="tag r-${r[0]}">${r[1]}</span>`).join('');
+  draw();
+  $('foot').innerHTML=`${KH.logoSVG(30)}<br>${lang==='ar'?'إعداد: خالد محمد · معيد الفيزياء، جامعة قازان الفيدرالية – فرع القاهرة · عضو AfAS وAUASS':'By Khaled Mohamed · Physics TA, Kazan Federal University – Cairo Branch · Member of AfAS and AUASS'}<br><a href="index.html">${lang==='ar'?'الرئيسية':'Home'}</a>`;
+  document.title=t('title')+' — '+(lang==='ar'?'خالد محمد':'Khaled Mohamed');
+}
+function match(d){
+  if(F.year!=='all'&&yr(d.date)!==F.year&&!(d.also||[]).some(a=>yr(a)===F.year))return false;
+  if(F.type!=='all'&&!d.types.includes(F.type))return false;
+  if(F.aud!=='all'&&!d.aud.includes(F.aud))return false;
+  const q=KH.normAr($('q').value);if(!q)return true;
+  return KH.normAr([d.name.ar,d.name.en,d.by.ar,d.by.en,d.desc.ar,d.desc.en,d.cite,d.date,...d.types.map(x=>T.ar.types[x]+' '+T.en.types[x])].join(' ')).includes(q);
+}
+function draw(){
+  const L=D.filter(match).sort((a,b)=>b.date.localeCompare(a.date));
+  $('cnt').textContent=t('show')(KH.digits(L.length,lang),KH.digits(D.length,lang));
+  $('grid').innerHTML=L.length?L.map(d=>`<article class="dcard">
+    <div class="hd2"><div class="ico">${ICON[d.kind]||'🌑'}</div><div style="flex:1;min-width:0"><h3>${d.name[lang]}</h3><div class="types" style="margin-top:6px">${d.types.map(x=>`<span class="tag gold">${t('types')[x]}</span>`).join('')}</div></div></div>
+    <div class="ds">${d.desc[lang]}</div>
+    <dl class="rows"><dt>${t('date')}</dt><dd>${fmtD(d.date)} · ${t('kinds')[d.kind]}</dd><dt>${t('size')}</dt><dd>${d.size[lang]}</dd><dt>${t('lic')}</dt><dd><span class="tag r-${d.reuse}">${t('reuse')[d.reuse]}</span></dd></dl>
+    <div class="acts"><button class="btn sm" data-d="${d.id}">${t('det')}</button><a class="btn sm ghost" href="${d.url}" target="_blank" rel="noopener">${t('open')}</a></div></article>`).join(''):`<div class="empty">${t('none')}</div>`;
+  $('grid').querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>openD(b.dataset.d));
+}
+function openD(id){
+  const d=D.find(x=>x.id===id);
+  const fb=(k,v)=>v?`<div class="fbox"><span class="k">${k}</span><div class="v">${v}</div></div>`:'';
+  $('mbox').innerHTML=`<div class="mh"><h3>${ICON[d.kind]||'🌑'} ${d.name[lang]}</h3><button class="x" id="mx" aria-label="${t('close')}">✕</button></div>
+   <p style="color:var(--txt2);line-height:1.85;margin-top:0">${d.desc[lang]}</p>
+   <div class="mgrid">${fb(t('date'),fmtD(d.date)+' · '+t('kinds')[d.kind])}${fb(t('size'),d.size[lang])}${fb(t('by'),d.by[lang])}${fb(t('type'),d.types.map(x=>t('types')[x]).join(' · '))}${d.released?fb(t('rel'),fmtD(d.released)):''}${fb(t('aud'),d.aud.map(x=>t('auds')[x]).join(' · '))}${d.also?fb(t('also'),d.also.map(fmtD).join(' · ')):''}${d.status?fb(t('status'),d.status[lang]):''}</div>
+   ${fb(t('lic'),`<span class="tag r-${d.reuse}">${t('reuse')[d.reuse]}</span><div style="margin-top:6px">${d.lic[lang]}</div>`)}
+   <div class="copyrow"><b>${t('cite')}</b><button class="btn sm ghost" id="cp">${t('copy')}</button></div>
+   <div class="cite" id="ct">${d.cite}</div>
+   <div class="mlinks"><a class="btn" href="${d.url}" target="_blank" rel="noopener">${t('open')}</a>${d.paper?`<a class="btn ghost" href="${d.paper}" target="_blank" rel="noopener">${t('paper')}</a>`:''}<span class="tag" style="align-self:center">${d.src}</span></div>`;
+  $('modal').hidden=false;$('mx').onclick=()=>$('modal').hidden=true;
+  $('cp').onclick=async()=>{try{await navigator.clipboard.writeText(d.cite);}catch(e){const r=document.createRange();r.selectNodeContents($('ct'));const s=getSelection();s.removeAllRanges();s.addRange(r);document.execCommand('copy');}$('cp').textContent=t('copied');setTimeout(()=>{if($('cp'))$('cp').textContent=t('copy');},1600);};
+}
+$('modal').onclick=e=>{if(e.target===$('modal'))$('modal').hidden=true;};
+addEventListener('keydown',e=>{if(e.key==='Escape')$('modal').hidden=true;});
+$('q').oninput=draw;
+$('btnLang').onclick=()=>{lang=lang==='ar'?'en':'ar';KH.setLang(lang);page();};
+page();
+window.__ecl={openD};
+})();
+</script>
+</body>
+</html>

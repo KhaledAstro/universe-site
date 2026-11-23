@@ -97,3 +97,5 @@ canvas{background-color:transparent}
 /* text that sits on top of dark visualisations keeps the night palette in both themes */
 .hud,.leg,.lbl,.on-viz,.simwrap,.fb{--txt:#eef1f8;--txt2:#d3daea;--muted:#9aa6c2;--gold-l:#f3d27e;--gold:#e8b94a;--line:#ffffff17}
 .hud,.leg{color:var(--txt)}
+@media(max-width:560px){.kh-acts .kh-theme,.kh-acts #btnPrint{display:none}.pg-top{gap:8px;padding-inline:10px}.kh-acts{gap:6px}}
+.kh-drawer .trow{display:flex;gap:8px;margin:12px 0 4px}.kh-drawer .trow button{flex:1}
