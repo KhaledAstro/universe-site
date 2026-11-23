@@ -2,43 +2,54 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
+<script>try{document.documentElement.dataset.theme=JSON.parse(localStorage.getItem("khSky.theme"))||"dark"}catch(e){document.documentElement.dataset.theme="dark"}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0a0f1e">
+<meta name="theme-color" content="#07090f">
 <title>الكون بين يديك | The Universe in Your Hands — خالد محمد</title>
 <link rel="stylesheet" href="css/app.css">
 <link rel="stylesheet" href="css/page.css">
 <style>
 #bg{position:fixed;inset:0;z-index:-1}
-.hero{text-align:center;padding:calc(36px + env(safe-area-inset-top)) 16px 10px}
-.hero .lg{display:inline-block;filter:drop-shadow(0 6px 24px #d4a73c55)}
-.hero h1{font-size:clamp(28px,6vw,46px);margin:14px 0 4px;background:linear-gradient(90deg,#f6e3a1,#d4a73c,#f6e3a1);-webkit-background-clip:text;background-clip:text;color:transparent}
-.hero p{color:var(--muted);max-width:620px;margin:6px auto;line-height:1.8;font-size:15px}
-.hero .who{font-size:13px;color:#cdd6ee;margin-top:10px}
-.topbar{position:fixed;top:calc(8px + env(safe-area-inset-top));inset-inline-end:12px;z-index:3;display:flex;gap:8px}
-.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px;margin-top:18px}
-.cardx{position:relative;display:block;text-decoration:none;color:inherit;padding:18px;border-radius:18px;border:1px solid var(--line);background:linear-gradient(160deg,#16214acc,#0d1430cc);backdrop-filter:blur(8px);overflow:hidden;transition:transform .2s,border-color .2s;min-height:150px}
-.cardx:hover{transform:translateY(-3px);border-color:#d4a73c88}
-.cardx .em{font-size:34px}
-.cardx h3{margin:8px 0 6px;font-size:18px;color:#fff}
-.cardx p{margin:0;color:var(--muted);font-size:13.5px;line-height:1.7}
-.cardx .st{position:absolute;top:14px;inset-inline-end:14px;font-size:11px;padding:3px 9px;border-radius:999px;background:#1f6f4a;color:#c9ffe3;font-weight:700}
-.cardx .st.soon{background:#3b3a5a;color:#d8d4ff}
-.cardx.dis{opacity:.75;cursor:default}
-.locline{margin-top:14px;font-size:13px;color:var(--muted)}
+[data-theme=light] #bg{display:none}
+.hero{text-align:center;padding:34px 16px 6px}
+.hero .lg{display:inline-block;filter:drop-shadow(0 8px 30px #e8b94a55)}
+.hero h1{font-size:clamp(30px,6vw,52px);font-weight:900;margin:14px 0 6px;background:linear-gradient(90deg,#f6e3a1,#e8b94a 50%,#ff9a5a);-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:-.5px}
+[data-theme=light] .hero h1{background:linear-gradient(90deg,#8a5d06,#b07d14 50%,#d4541e);-webkit-background-clip:text;background-clip:text}
+.hero p{color:var(--muted);max-width:680px;margin:6px auto;line-height:1.85;font-size:15.5px}
+.hero .acts{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:18px 0 4px}
+.locline{margin-top:12px;font-size:13px;color:var(--muted)}
 .locline b{color:var(--gold-l)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px;margin-top:8px}
+.cardx{position:relative;display:flex;flex-direction:column;gap:6px;text-decoration:none;color:inherit;padding:18px;border-radius:var(--radius);border:1px solid var(--line);background:var(--card);transition:transform .18s,border-color .18s,box-shadow .18s;min-height:160px}
+.cardx:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--gold) 55%,transparent);box-shadow:var(--shadow)}
+.cardx .top{display:flex;align-items:center;justify-content:space-between}
+.cardx .em{font-size:30px;width:52px;height:52px;display:grid;place-items:center;border-radius:14px;background:color-mix(in srgb,var(--gold) 12%,transparent)}
+.cardx h3{margin:6px 0 2px;font-size:18px;font-weight:800;color:var(--txt)}
+.cardx p{margin:0;color:var(--muted);font-size:13.5px;line-height:1.75;flex:1}
+.cardx .go{color:var(--gold-l);font-weight:700;font-size:13px;margin-top:6px}
+.empty{text-align:center;color:var(--muted);padding:30px}
 </style>
 </head>
 <body>
 <canvas id="bg"></canvas>
-<div class="topbar"><button class="ibtn" id="btnLang">EN</button></div>
-<header class="hero">
+<header class="pg-top">
+  <a class="brand" href="index.html"><span id="logoS"></span><div><h1 data-i="title"></h1><div class="sub" data-i="by"></div></div></a>
+  <button class="ibtn" id="btnLang">EN</button>
+</header>
+<section class="hero">
   <span class="lg" id="logo"></span>
   <h1 data-i="title"></h1>
   <p data-i="lead"></p>
-  <div class="who" data-i="who"></div>
+  <div class="acts"><a class="btn" href="atlas.html" data-i="cta1"></a><a class="btn ghost" href="eclipses.html" data-i="cta2"></a></div>
   <div class="locline" id="locline"></div>
-</header>
-<main class="wrap"><div class="cards" id="cards"></div></main>
+</section>
+<main class="wrap">
+  <div class="stats" id="stats"></div>
+  <div class="search"><span class="ic">🔍</span><input id="q" type="search" autocomplete="off"></div>
+  <div class="filters" id="flt"></div>
+  <div class="count" id="cnt"></div>
+  <div class="cards" id="cards"></div>
+</main>
 <footer class="pg-foot" id="foot"></footer>
 <script src="js/common.js"></script>
 <script>
@@ -47,8 +58,8 @@ const $=id=>document.getElementById(id); let lang=KH.getLang();
 const S={
  ar:{title:'الكون بين يديك',lead:'برنامج فلكي تعليمي تفاعلي: سماء موقعك لحظة بلحظة، وظواهرها القادمة، والمجموعة الشمسية والمجرة، ودورة حياة النجوم، وفيزياء الجاذبية، بصور وفيديوهات رصد حقيقية.',
   who:'إعداد: خالد محمد · معيد الفيزياء، جامعة قازان الفيدرالية – فرع القاهرة · باحث ماجستير في فيزياء الشمس، جامعة القاهرة · عضو الجمعية الفلكية الأفريقية (AfAS) والاتحاد العربي لعلوم الفلك والفضاء (AUASS)',
-  loc:'موقعك الحالي', ready:'متاح', soon:'قيد الإعداد',
-  cards:[['atlas.html','🌌','أطلس السماء','سماء موقعك الآن بأسماء النجوم العربية، والكواكب والقمر بأطواره، وعرض ثنائي وكرة سماوية 3D، ووجّه موبايلك نحو السماء.',1],
+  loc:'موقعك الحالي', ready:'متاح', soon:'قيد الإعداد', newb:'جديد', by:'برنامج فلكي تفاعلي · خالد محمد', cta1:'🌌 افتح سماءك الآن', cta2:'🌑 كتالوج الكسوف', ph:'ابحث في الأقسام: نجوم، كسوف، شمس، كبلر…', all:'الكل', cats:{sky:'السماء والظواهر',sol:'الشمس والمجموعة الشمسية',str:'النجوم والمجرات',phy:'الفيزياء',crs:'كورسات وحاسبات'}, show:(a,b)=>`يظهر ${a} من ${b} قسمًا`, none:'لا توجد أقسام مطابقة', go:'افتح ←', stats:[['12','قسمًا تفاعليًا'],['5044','نجمًا في الأطلس'],['9000','نجم حقيقي على مخطط HR'],['110','جرم من فهرس مسييه'],['33','مسألة محلولة خطوة بخطوة'],['2','لغتان: العربية والإنجليزية']],
+  cards:[['eclipses.html','🌑','الكسوف: كتالوج البيانات والصور','كتالوج منظّم لبيانات وصور الكسوف الكلي المفتوحة للعلماء وللجمهور: FITS وخام وHDR واستقطاب وصور معالجة، مع الترخيص وطريقة الاستشهاد ورابط المصدر.',1],['atlas.html','🌌','أطلس السماء','سماء موقعك الآن بأسماء النجوم العربية، والكواكب والقمر بأطواره، وعرض ثنائي وكرة سماوية 3D، ووجّه موبايلك نحو السماء.',1],
    ['events.html','📅','تقويم الظواهر','ميلاد الهلال وبدايات الشهور (أم القرى، ومصر، وعودة)، والكسوف والخسوف من موقعك، والاقترانات، والشهب، والفصول، ومرور المحطة الدولية.',1],
    ['prayer.html','🕋','مواقيت الصلاة والقبلة','مواقيت الصلاة لموقعك بطرق الحساب المعتمدة (الهيئة المصرية، أم القرى، وغيرها)، وجدول شهري، واتجاه القبلة، وشرح طريقة الحساب.',1],
    ['sun.html','☀️','الشمس ونشاطها','تركيب الشمس، والبقع، والتوهجات ببيانات GOES حقيقية، والانبعاثات الكتلية ونموذج وصولها للأرض، والطقس الفضائي، وصور SDO الحية.',1],
@@ -61,8 +72,8 @@ const S={
    ['spherical-course.html','📘','الفلك الكروي: شرح ومسائل محلولة','11 فصلًا من المثلثات الكروية حتى المبادرة، مع اشتقاق القوانين و33 مسألة محلولة خطوة بخطوة (من السنة الأولى إلى الرابعة) يمكن تغيير معطياتها، وتمارين بإجابات.',1]]},
  en:{title:'The Universe in Your Hands',lead:'An interactive astronomy program: your sky moment by moment, upcoming events, the Solar System and the Galaxy, the lives of stars and the physics of gravity, with real observational images and videos.',
   who:'By Khaled Mohamed · Physics TA, Kazan Federal University – Cairo Branch · MSc researcher in solar physics, Cairo University · Member of the African Astronomical Society (AfAS) and the Arab Union for Astronomy and Space Sciences (AUASS)',
-  loc:'Your location', ready:'Ready', soon:'In progress',
-  cards:[['atlas.html','🌌','Sky Atlas','Your sky right now with Arabic star names, planets and Moon phases, 2D and a 3D celestial sphere, and point-your-phone mode.',1],
+  loc:'Your location', ready:'Ready', soon:'In progress', newb:'New', by:'Interactive astronomy program · Khaled Mohamed', cta1:'🌌 Open your sky now', cta2:'🌑 Eclipse catalogue', ph:'Search sections: stars, eclipse, Sun, Kepler…', all:'All', cats:{sky:'Sky & events',sol:'Sun & Solar System',str:'Stars & galaxies',phy:'Physics',crs:'Courses & calculators'}, show:(a,b)=>`Showing ${a} of ${b} sections`, none:'No matching sections', go:'Open →', stats:[['12','interactive sections'],['5044','stars in the atlas'],['9000','real stars on the HR diagram'],['110','Messier objects'],['33','problems solved step by step'],['2','languages: Arabic & English']],
+  cards:[['eclipses.html','🌑','Eclipses: data & image catalogue','A curated catalogue of open total-eclipse datasets and photos for scientists and the public: FITS, raw, HDR, polarization and processed images, with licence, citation and source link.',1],['atlas.html','🌌','Sky Atlas','Your sky right now with Arabic star names, planets and Moon phases, 2D and a 3D celestial sphere, and point-your-phone mode.',1],
    ['events.html','📅','Sky Events','New crescent and Hijri month starts (Umm al-Qura, Egypt, Odeh), eclipses from your location, conjunctions, meteor showers, seasons and ISS passes.',1],
    ['prayer.html','🕋','Prayer times & Qibla','Prayer times for your location by the main methods (Egyptian Survey, Umm al-Qura and more), a monthly table, the Qibla direction, and how it is computed.',1],
    ['sun.html','☀️','The Sun & its activity','Solar structure, sunspots, flares with real GOES data, CMEs and their arrival model, space weather and live SDO images.',1],
@@ -73,21 +84,34 @@ const S={
    ['gravity.html','🕳️','Gravity & spacetime','From Newton to Einstein: an orbit lab with Mercury’s precession, gravitational lensing, GPS time dilation and real LIGO gravitational-wave data.',1],
    ['spherical.html','📐','Spherical astronomy','Spherical triangles, coordinate transforms, computing transit, rise and set, Kepler\'s equation and orbits step by step.',1],
    ['spherical-course.html','📘','Spherical astronomy: theory & solved problems','11 chapters from spherical trigonometry to precession, with derivations and 33 problems solved step by step (1st to 4th year) whose data you can change, plus exercises with answers.',1]]}};
+// here is the modification of the home page: stats bar, search, category filters, section cards
+const CAT={"atlas.html": "sky", "events.html": "sky", "prayer.html": "sky", "sun.html": "sol", "solar-system.html": "sol", "moon.html": "sol", "galaxy.html": "str", "stars.html": "str", "gravity.html": "phy", "spherical.html": "crs", "spherical-course.html": "crs", "eclipses.html": "sky"};let fcat='all';
 function render(){
  const s=S[lang]; document.documentElement.lang=lang; document.documentElement.dir=lang==='ar'?'rtl':'ltr'; document.body.lang=lang;
- document.querySelectorAll('[data-i]').forEach(e=>e.textContent=s[e.dataset.i]);
- $('btnLang').textContent=lang==='ar'?'EN':'ع'; $('logo').innerHTML=KH.logoSVG(96);
+ document.querySelectorAll('[data-i]').forEach(e=>{const v=s[e.dataset.i];if(typeof v==='string')e.textContent=v;});
+ $('btnLang').textContent=lang==='ar'?'EN':'ع'; $('logo').innerHTML=KH.logoSVG(96); $('logoS').innerHTML=KH.logoSVG(34);
  const l=KH.getLoc(); $('locline').innerHTML=`${s.loc}: <b>${(KH.CITIES.find(c=>c.id===l.id)||{})[lang]||(l.lat.toFixed(2)+', '+l.lon.toFixed(2))}</b>`;
- $('cards').innerHTML=s.cards.map(c=>`<a class="cardx${c[4]?'':' dis'}" ${c[4]?`href="${c[0]}"`:''}><span class="st${c[4]?'':' soon'}">${c[4]?s.ready:s.soon}</span><div class="em">${c[1]}</div><h3>${c[2]}</h3><p>${c[3]}</p></a>`).join('');
+ $('stats').innerHTML=s.stats.map(x=>`<div class="stat"><b>${KH.digits(Number(x[0]).toLocaleString('en'),lang)}</b><span>${x[1]}</span></div>`).join('');
+ $('q').placeholder=s.ph;
+ $('flt').innerHTML=[['all',s.all],...Object.entries(s.cats)].map(c=>`<button class="chip${c[0]===fcat?' on':''}" data-c="${c[0]}">${c[1]}</button>`).join('');
+ $('flt').querySelectorAll('.chip').forEach(b=>b.onclick=()=>{fcat=b.dataset.c;render();});
+ drawCards();
  $('foot').innerHTML=s.who; document.title=s.title+' — '+(lang==='ar'?'خالد محمد':'Khaled Mohamed');
 }
+function drawCards(){
+ const s=S[lang],q=KH.normAr($('q').value);
+ const list=s.cards.filter(c=>(fcat==='all'||CAT[c[0]]===fcat)&&(!q||KH.normAr(c[2]+' '+c[3]).includes(q)));
+ $('cnt').textContent=s.show(KH.digits(list.length,lang),KH.digits(s.cards.length,lang));
+ $('cards').innerHTML=list.length?list.map(c=>`<a class="cardx" href="${c[0]}"><div class="top"><div class="em">${c[1]}</div><span class="tag ${c[0]==='eclipses.html'?'gold':'ok'}">${c[0]==='eclipses.html'?s.newb:s.ready}</span></div><h3>${c[2]}</h3><p>${c[3]}</p><span class="go">${s.go}</span></a>`).join(''):`<div class="empty">${s.none}</div>`;
+}
+$('q').oninput=drawCards;
 $('btnLang').onclick=()=>{lang=lang==='ar'?'en':'ar';KH.setLang(lang);render();};
 render();
 // starfield
 const c=$('bg'),g=c.getContext('2d');let W,H,st=[];
 function rs(){W=c.width=innerWidth;H=c.height=innerHeight;st=Array.from({length:Math.round(W*H/2500)},()=>({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.3+.2,p:Math.random()*6}));}
 addEventListener('resize',rs);rs();
-(function f(t){g.fillStyle='#0a0f1e';g.fillRect(0,0,W,H);const gr=g.createRadialGradient(W*.7,-H*.1,0,W*.7,-H*.1,H*1.1);gr.addColorStop(0,'#1d2a5a');gr.addColorStop(1,'#0a0f1e00');g.fillStyle=gr;g.fillRect(0,0,W,H);
+(function f(t){g.fillStyle='#07090f';g.fillRect(0,0,W,H);const gr=g.createRadialGradient(W*.75,-H*.12,0,W*.75,-H*.12,H*1.1);gr.addColorStop(0,'#2a2210');gr.addColorStop(1,'#07090f00');g.fillStyle=gr;g.fillRect(0,0,W,H);
  for(const s of st){const a=.45+.55*Math.sin(t/900+s.p);g.fillStyle=`rgba(230,236,255,${a})`;g.beginPath();g.arc(s.x,s.y,s.r,0,7);g.fill();}requestAnimationFrame(f);})(0);
 })();
 </script>

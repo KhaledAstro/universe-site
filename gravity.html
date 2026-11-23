@@ -2,31 +2,32 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
+<script>try{document.documentElement.dataset.theme=JSON.parse(localStorage.getItem("khSky.theme"))||"dark"}catch(e){document.documentElement.dataset.theme="dark"}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0a0f1e">
+<meta name="theme-color" content="#07090f">
 <title>الجاذبية وانحناء الزمكان | Gravity & Spacetime</title>
 <link rel="stylesheet" href="css/app.css">
 <link rel="stylesheet" href="css/page.css">
 <style>
 .stage{position:relative}
-#well{width:100%;height:min(68vh,560px);display:block;background:#02040a;border-radius:16px;touch-action:none}
+#well{width:100%;height:min(68vh,560px);display:block;background:var(--viz);border-radius:16px;touch-action:none}
 .hud{position:absolute;top:10px;inset-inline-start:10px;font-size:12px;line-height:1.65;background:#000b;border-radius:10px;padding:6px 10px;font-variant-numeric:tabular-nums;max-width:70%;pointer-events:none}
 .ctl{display:grid;grid-template-columns:auto 1fr auto;gap:6px 10px;align-items:center;margin-top:10px;font-size:13px}
 .ctl input[type=range]{width:100%;accent-color:var(--gold)}
 .ctl output{font-variant-numeric:tabular-nums;color:var(--gold-l);min-width:70px;text-align:end}
 .row{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;align-items:center}
-details.math{margin-top:10px;border:1px solid var(--line);border-radius:12px;padding:8px 12px;background:#0b1430}
+details.math{margin-top:10px;border:1px solid var(--line);border-radius:12px;padding:8px 12px;background:var(--card2)}
 details.math summary{cursor:pointer;color:var(--gold-l);font-weight:600}
 details.math p,details.math li{font-size:13.3px;line-height:1.85}
-.eq{direction:ltr;text-align:center;font-family:"Cambria Math","STIX Two Math","Times New Roman",serif;font-size:16px;margin:8px 0;color:#fff;background:#ffffff08;border-radius:8px;padding:6px}
+.eq{direction:ltr;text-align:center;font-family:"Cambria Math","STIX Two Math","Times New Roman",serif;font-size:16px;margin:8px 0;color:var(--txt);background:var(--line);border-radius:8px;padding:6px}
 #lens{width:100%;max-width:520px;aspect-ratio:1/1;display:block;margin:0 auto;border-radius:16px;background:#000;touch-action:none;cursor:crosshair}
 .clocks{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:10px}
 .clk{text-align:center;font-size:12.5px}.clk canvas{width:110px;height:110px;display:block;margin:0 auto 4px}
 .clk b{display:block;color:var(--gold-l);font-size:13.5px}
-#gw{width:100%;height:280px;display:block;background:#050915;border-radius:14px}
+#gw{width:100%;height:280px;display:block;background:var(--viz);border-radius:14px}
 .big{font-size:22px;color:var(--gold-l);font-weight:700;font-variant-numeric:tabular-nums}
 .note{font-size:12.5px;color:var(--muted);line-height:1.75}
-table.t2{border-collapse:collapse;width:100%;font-size:13px}table.t2 td,table.t2 th{padding:6px;border-bottom:1px solid #ffffff12;text-align:start}table.t2 td:last-child{font-variant-numeric:tabular-nums;direction:ltr;text-align:end}
+table.t2{border-collapse:collapse;width:100%;font-size:13px}table.t2 td,table.t2 th{padding:6px;border-bottom:1px solid var(--line);text-align:start}table.t2 td:last-child{font-variant-numeric:tabular-nums;direction:ltr;text-align:end}
 </style>
 </head>
 <body>
@@ -35,7 +36,7 @@ table.t2{border-collapse:collapse;width:100%;font-size:13px}table.t2 td,table.t2
   <button class="ibtn" id="btnLang">EN</button>
 </header>
 <main class="wrap">
-  <p class="lead" data-h="lead" style="font-size:14.5px;color:#d9e0f2"></p>
+  <p class="lead" data-h="lead" style="font-size:14.5px;color:var(--txt2)"></p>
 
   <!-- 1. spacetime well + orbit sandbox -->
   <h2 class="sec" data-i="h1"></h2>
@@ -68,8 +69,8 @@ table.t2{border-collapse:collapse;width:100%;font-size:13px}table.t2 td,table.t2
     </div>
     <p class="note" data-h="lensNote" style="margin-top:8px"></p>
     <div class="grid2" style="margin-top:10px">
-      <div class="panel" style="background:#0b1430"><h3 data-i="sunBend"></h3><div class="kv" id="sunKV"></div></div>
-      <div class="panel" style="background:#0b1430"><h3 data-i="realImgs"></h3><div id="realLinks" class="note"></div></div>
+      <div class="panel" style="background:var(--card2)"><h3 data-i="sunBend"></h3><div class="kv" id="sunKV"></div></div>
+      <div class="panel" style="background:var(--card2)"><h3 data-i="realImgs"></h3><div id="realLinks" class="note"></div></div>
     </div>
     <details class="math"><summary data-i="mathT"></summary><div data-h="m2"></div></details>
   </div>

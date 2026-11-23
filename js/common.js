@@ -67,5 +67,68 @@
   function logoSVG(size) {
     return `<svg viewBox="0 0 64 64" width="${size}" height="${size}" aria-hidden="true"><defs><linearGradient id="lg-gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6e3a1"/><stop offset=".55" stop-color="#d4a73c"/><stop offset="1" stop-color="#a87b1f"/></linearGradient></defs><circle cx="32" cy="32" r="31" fill="#0b1430" stroke="url(#lg-gold)" stroke-width="1.5"/><path d="M14 34c0-5 4-8 8-8 7 0 13 16 20 16 4 0 8-3 8-8s-4-8-8-8c-7 0-13 16-20 16-4 0-8-3-8-8z" fill="none" stroke="url(#lg-gold)" stroke-width="3" stroke-linecap="round"/><path d="M32 8l2.2 6.3 6.6.2-5.3 4 1.9 6.4L32 21l-5.4 3.9 1.9-6.4-5.3-4 6.6-.2z" fill="url(#lg-gold)"/></svg>`;
   }
-  root.KH = { store, CITIES, getLoc, setLoc, getLang, setLang, digits, num, fmtTime, fmtDate, tzOf, tzOffsetMin, normAr, compass, logoSVG };
+
+  // here is the modification of the shared site chrome: theme (dark/light) + navigation header + drawer
+  const NAV = [
+    ['index.html', '🏠', 'الرئيسية', 'Home', 0],
+    ['atlas.html', '🌌', 'أطلس السماء', 'Sky Atlas', 1],
+    ['events.html', '📅', 'الظواهر', 'Events', 1],
+    ['eclipses.html', '🌑', 'الكسوف', 'Eclipses', 1],
+    ['sun.html', '☀️', 'الشمس', 'The Sun', 1],
+    ['solar-system.html', '🪐', 'المجموعة الشمسية', 'Solar System', 1],
+    ['stars.html', '⭐', 'النجوم', 'Stars', 1],
+    ['galaxy.html', '🌀', 'المجرة', 'Galaxy', 1],
+    ['spherical-course.html', '📘', 'الفلك الكروي', 'Spherical', 1],
+    ['moon.html', '🌕', 'نشأة القمر', 'Moon origin', 0],
+    ['gravity.html', '🕳️', 'الجاذبية', 'Gravity', 0],
+    ['spherical.html', '📐', 'حاسبة الفلك الكروي', 'Spherical calculator', 0],
+    ['prayer.html', '🕋', 'الصلاة والقبلة', 'Prayer & Qibla', 0]
+  ];
+  function getTheme() { return store.get('theme', 'dark'); }
+  function applyTheme(t) {
+    document.documentElement.dataset.theme = t;
+    const m = document.querySelector('meta[name=theme-color]'); if (m) m.content = t === 'light' ? '#f5f3ee' : '#07090f';
+    document.querySelectorAll('.kh-theme').forEach(b => { b.textContent = t === 'light' ? '🌙' : '☀️'; b.title = t === 'light' ? 'Dark' : 'Light'; });
+  }
+  function setTheme(t) { store.set('theme', t); applyTheme(t); try { window.dispatchEvent(new CustomEvent('kh-theme', { detail: t })); } catch (e) { } }
+  function here() { const f = (location.pathname.split('/').pop() || 'index.html'); return f || 'index.html'; }
+  function renderNav() {
+    const hdr = document.querySelector('header.pg-top'); if (!hdr || document.documentElement.dataset.nonav) return;
+    const lang = document.documentElement.dataset.navlang || getLang(), cur = here(), L = lang === 'ar' ? 2 : 3;
+    let nav = hdr.querySelector('.kh-nav'), acts = hdr.querySelector('.kh-acts');
+    if (!nav) {
+      nav = document.createElement('nav'); nav.className = 'kh-nav';
+      acts = document.createElement('div'); acts.className = 'kh-acts';
+      const firstBtn = hdr.querySelector('.ibtn');
+      hdr.insertBefore(nav, firstBtn || null); hdr.insertBefore(acts, firstBtn || null);
+      if (firstBtn) { acts.appendChild(firstBtn); }
+    }
+    nav.innerHTML = NAV.filter(n => n[4]).map(n => `<a class="nl${n[0] === cur ? ' cur' : ''}" href="${n[0]}">${n[L]}</a>`).join('');
+    let th = acts.querySelector('.kh-theme'), cta = acts.querySelector('.kh-cta'), bg = acts.querySelector('.kh-burger');
+    if (!th) {
+      cta = document.createElement('a'); cta.className = 'btn kh-cta'; cta.href = 'atlas.html';
+      th = document.createElement('button'); th.className = 'ibtn kh-theme'; th.onclick = () => setTheme(getTheme() === 'light' ? 'dark' : 'light');
+      bg = document.createElement('button'); bg.className = 'ibtn kh-burger'; bg.textContent = '☰'; bg.onclick = openDrawer;
+      acts.insertBefore(th, acts.firstChild); acts.insertBefore(cta, acts.firstChild); acts.appendChild(bg);
+    }
+    cta.innerHTML = `🌌 <span class="tx">${lang === 'ar' ? 'السماء الآن' : 'Sky now'}</span>`;
+    if (cur === 'atlas.html') cta.style.display = 'none';
+    applyTheme(getTheme());
+    const setH = () => document.documentElement.style.setProperty('--hdr', hdr.offsetHeight + 'px'); setH();
+    if (!hdr._rh) { hdr._rh = 1; addEventListener('resize', setH); }
+  }
+  function openDrawer() {
+    const lang = document.documentElement.dataset.navlang || getLang(), cur = here(), L = lang === 'ar' ? 2 : 3;
+    let d = document.getElementById('khDrawer');
+    if (!d) { d = document.createElement('div'); d.id = 'khDrawer'; d.className = 'kh-drawer'; d.onclick = e => { if (e.target === d) d.hidden = true; }; document.body.appendChild(d); }
+    d.innerHTML = `<div class="dw"><div class="dh"><span>${lang === 'ar' ? 'أقسام البرنامج' : 'Sections'}</span><button class="ibtn" onclick="this.closest('.kh-drawer').hidden=true">✕</button></div>` +
+      NAV.map(n => `<a class="${n[0] === cur ? 'cur' : ''}" href="${n[0]}"><span>${n[1]}</span>${n[L]}</a>`).join('') + '</div>';
+    d.hidden = false;
+  }
+  applyTheme(getTheme());
+  const _setLang = setLang;
+  function setLang2(l) { _setLang(l); setTimeout(renderNav, 0); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', renderNav); else setTimeout(renderNav, 0);
+
+  root.KH = { store, CITIES, getLoc, setLoc, getLang, setLang: setLang2, getTheme, setTheme, renderNav, NAV, digits, num, fmtTime, fmtDate, tzOf, tzOffsetMin, normAr, compass, logoSVG };
 })(window);

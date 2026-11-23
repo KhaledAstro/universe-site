@@ -2,19 +2,20 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
+<script>try{document.documentElement.dataset.theme=JSON.parse(localStorage.getItem("khSky.theme"))||"dark"}catch(e){document.documentElement.dataset.theme="dark"}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0a0f1e">
+<meta name="theme-color" content="#07090f">
 <title>مواقيت الصلاة والقبلة | Prayer Times & Qibla</title>
 <link rel="stylesheet" href="css/app.css">
 <link rel="stylesheet" href="css/page.css">
 <style>
 .pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 @media(max-width:560px){.pgrid{grid-template-columns:repeat(2,1fr)}}
-.pt{padding:14px;text-align:center;border-radius:16px;border:1px solid var(--line);background:linear-gradient(160deg,#16214acc,#0d1430cc)}
+.pt{padding:14px;text-align:center;border-radius:16px;border:1px solid var(--line);background:linear-gradient(160deg,var(--card),var(--card))}
 .pt .nm{color:var(--muted);font-size:13px}.pt .tm{font-size:24px;font-weight:700;font-variant-numeric:tabular-nums;margin-top:4px}
-.pt.next{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset;background:linear-gradient(160deg,#3a2f12cc,#1a1430cc)}
+.pt.next{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset;background:color-mix(in srgb,var(--gold) 15%,var(--card))}
 .pt.next .nm{color:var(--gold-l)}
-.countdown{text-align:center;margin:14px 0 4px;font-size:15px;color:#d9e0f2}.countdown b{color:var(--gold-l);font-size:22px;font-variant-numeric:tabular-nums}
+.countdown{text-align:center;margin:14px 0 4px;font-size:15px;color:var(--txt2)}.countdown b{color:var(--gold-l);font-size:22px;font-variant-numeric:tabular-nums}
 .opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
 @media(max-width:560px){.opts{grid-template-columns:1fr}}
 .dnav{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
@@ -150,7 +151,7 @@ function renderMonth(){
  const ds0=dayStart(dayOff),d0=new Date(ds0+12*3600000),y=d0.getUTCFullYear(),m=d0.getUTCMonth(),first=Date.UTC(y,m,1,12),n=new Date(Date.UTC(y,m+1,0)).getUTCDate();
  const o=KH.tzOffsetMin(first,loc)*MIN;let rows='';
  for(let i=0;i<n;i++){const mid=first+i*DAY,ds=Math.floor((mid+o)/DAY)*DAY-KH.tzOffsetMin(mid,loc)*MIN,r=P.times(ds,loc,opt);
-  rows+=`<tr${i===d0.getUTCDate()-1?' style="background:#d4a73c22"':''}><td>${KH.fmtDate(mid,loc,lang,{weekday:'short',day:'numeric',month:undefined,year:undefined})}</td>${KEYS.map(k=>`<td>${ft(r[k])}</td>`).join('')}</tr>`;}
+  rows+=`<tr${i===d0.getUTCDate()-1?' style="background:color-mix(in srgb,var(--gold) 14%,transparent)"':''}><td>${KH.fmtDate(mid,loc,lang,{weekday:'short',day:'numeric',month:undefined,year:undefined})}</td>${KEYS.map(k=>`<td>${ft(r[k])}</td>`).join('')}</tr>`;}
  $('month').innerHTML=`<div style="margin-bottom:6px;color:var(--gold-l)">${KH.fmtDate(first,loc,lang,{weekday:undefined,day:undefined,month:'long',year:'numeric'})} · ${P.METHODS[opt.method][lang]}</div><table class="t"><thead><tr><th></th>${KEYS.map(k=>`<th>${t('names')[k]}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table>`;
 }
 ui();render();

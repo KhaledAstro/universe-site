@@ -2,37 +2,38 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
+<script>try{document.documentElement.dataset.theme=JSON.parse(localStorage.getItem("khSky.theme"))||"dark"}catch(e){document.documentElement.dataset.theme="dark"}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0a0f1e">
+<meta name="theme-color" content="#07090f">
 <title>حياة النجوم | The Lives of Stars</title>
 <link rel="stylesheet" href="css/app.css">
 <link rel="stylesheet" href="css/page.css">
 <style>
-#hr{width:100%;aspect-ratio:1/1.3;max-height:82vh;display:block;background:#050915;border-radius:16px;touch-action:none}@media(min-width:900px){#hr{aspect-ratio:1.25/1}}
+#hr{width:100%;aspect-ratio:1/1.3;max-height:82vh;display:block;background:var(--viz);border-radius:16px;touch-action:none}@media(min-width:900px){#hr{aspect-ratio:1.25/1}}
 .mrow{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none}.mrow::-webkit-scrollbar{display:none}
 .ctl{display:flex;gap:8px;align-items:center;margin-top:10px}.ctl input[type=range]{flex:1;accent-color:var(--gold)}
 .starbox{display:grid;grid-template-columns:150px 1fr;gap:12px;align-items:center}@media(max-width:520px){.starbox{grid-template-columns:110px 1fr}}
 #disc{width:150px;height:150px}@media(max-width:520px){#disc{width:110px;height:110px}}
 .stage{font-size:17px;color:var(--gold-l);font-weight:700;margin-bottom:4px}
-.desc{font-size:13.5px;line-height:1.8;color:#d9e0f2;margin-top:8px}
+.desc{font-size:13.5px;line-height:1.8;color:var(--txt2);margin-top:8px}
 #tl{width:100%;height:46px;display:block;margin-top:10px}
-details.math{margin-top:10px;border:1px solid var(--line);border-radius:12px;padding:8px 12px;background:#0b1430}
+details.math{margin-top:10px;border:1px solid var(--line);border-radius:12px;padding:8px 12px;background:var(--card2)}
 details.math summary{cursor:pointer;color:var(--gold-l);font-weight:600}
 details.math p{font-size:13.3px;line-height:1.85}
-.eq{direction:ltr;text-align:center;font-family:"Cambria Math","STIX Two Math","Times New Roman",serif;font-size:16px;margin:8px 0;color:#fff;background:#ffffff08;border-radius:8px;padding:6px}
-table.t2{border-collapse:collapse;width:100%;font-size:13px}table.t2 td,table.t2 th{padding:7px 6px;border-bottom:1px solid #ffffff12;text-align:start;vertical-align:top}table.t2 th{color:var(--gold-l)}
+.eq{direction:ltr;text-align:center;font-family:"Cambria Math","STIX Two Math","Times New Roman",serif;font-size:16px;margin:8px 0;color:var(--txt);background:var(--line);border-radius:8px;padding:6px}
+table.t2{border-collapse:collapse;width:100%;font-size:13px}table.t2 td,table.t2 th{padding:7px 6px;border-bottom:1px solid var(--line);text-align:start;vertical-align:top}table.t2 th{color:var(--gold-l)}
 .imgs{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
-.imgs a{display:block;padding:12px;border-radius:14px;background:#0b1430;border:1px solid var(--line);color:inherit;text-decoration:none;font-size:13px;line-height:1.7}
+.imgs a{display:block;padding:12px;border-radius:14px;background:var(--card2);border:1px solid var(--line);color:inherit;text-decoration:none;font-size:13px;line-height:1.7}
 .imgs a b{color:var(--gold-l);display:block;font-size:14.5px}
 .note{font-size:12.5px;color:var(--muted);line-height:1.75}
 /* here is the modification of stage photo + image cards */
-.stfig{margin:12px auto 0;max-width:560px;border-radius:14px;overflow:hidden;background:#060b1c;border:1px solid var(--line)}
-.ph{display:block}.stfig .ph{position:relative;aspect-ratio:16/9;background:#050915}
+.stfig{margin:12px auto 0;max-width:560px;border-radius:14px;overflow:hidden;background:var(--viz);border:1px solid var(--line)}
+.ph{display:block}.stfig .ph{position:relative;aspect-ratio:16/9;background:var(--viz)}
 .stfig img,.imgs img{width:100%;height:100%;object-fit:cover;display:block}
-.fb{position:absolute;inset:0;display:none;align-items:center;justify-content:center;text-align:center;padding:14px;font-size:13px;color:#b9c6e6;background:radial-gradient(circle at 50% 40%,#1a2550,#050915)}
+.fb{position:absolute;inset:0;display:none;align-items:center;justify-content:center;text-align:center;padding:14px;font-size:13px;color:var(--txt2);background:radial-gradient(circle at 50% 40%,#1a2550,var(--viz))}
 .ph.err img{display:none}.ph.err .fb{display:flex}
-.stfig figcaption{padding:9px 12px;font-size:12.5px;line-height:1.7;color:#d9e0f2}.stfig figcaption i{color:var(--muted);font-style:normal;display:block;font-size:11.5px}
-.imgs a{padding:0;overflow:hidden}.imgs a .ph{display:block;position:relative;aspect-ratio:4/3;background:#050915}.imgs a .tx{display:block;padding:10px 12px}
+.stfig figcaption{padding:9px 12px;font-size:12.5px;line-height:1.7;color:var(--txt2)}.stfig figcaption i{color:var(--muted);font-style:normal;display:block;font-size:11.5px}
+.imgs a{padding:0;overflow:hidden}.imgs a .ph{display:block;position:relative;aspect-ratio:4/3;background:var(--viz)}.imgs a .tx{display:block;padding:10px 12px}
 .disccap{font-size:11.5px;color:var(--muted);text-align:center;margin-top:4px}
 </style>
 </head>
@@ -42,7 +43,7 @@ table.t2{border-collapse:collapse;width:100%;font-size:13px}table.t2 td,table.t2
   <button class="ibtn" id="btnLang">EN</button>
 </header>
 <main class="wrap">
-  <p class="lead" data-h="lead" style="font-size:14.5px;color:#d9e0f2"></p>
+  <p class="lead" data-h="lead" style="font-size:14.5px;color:var(--txt2)"></p>
   <h2 class="sec" data-i="h1"></h2>
   <p class="lead" data-h="l1"></p>
   <div class="mrow" id="masses"></div>

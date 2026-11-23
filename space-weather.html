@@ -1,26 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-navlang="en">
 <head>
 <meta charset="utf-8">
+<script>try{document.documentElement.dataset.theme=JSON.parse(localStorage.getItem("khSky.theme"))||"dark"}catch(e){document.documentElement.dataset.theme="dark"}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#07090f">
+<link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/page.css">
 <title>Types of space weather events &mdash; physics, signatures and data sources</title>
 <style>
   :root{
-    --bg:#0e1420; --panel:#161f30; --card:#1b2740; --ink:#e8eef7;
-    --dim:#93a4bd; --line:#2a3852;
+    --panel:var(--card); --ink:var(--txt); --dim:var(--muted);
     --sun:#ffb020; --flare:#ffd166; --sep:#c77dff; --shock:#ff6b4a;
     --sheath:#e0a03c; --ejecta:#6fb3a0; --wind:#5b9bd5; --earth:#4ea3ff;
     --rose:#c7686b; --good:#6fb3a0;
   }
+  [data-theme=light]{--sun:#b26a00;--flare:#9a6b00;--sep:#7a3fb0;--shock:#c2401f;--sheath:#9a6512;--ejecta:#2f7a66;--wind:#2b6aa8;--earth:#1d63b8;--rose:#a3383c;--good:#2f7a66}
   *{box-sizing:border-box;}
   body{margin:0;background:var(--bg);color:var(--ink);
-    font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-    line-height:1.55;padding:22px;}
-  .wrap{max-width:1240px;margin:0 auto;}
+    font-family:var(--font);
+    line-height:1.55;}
+  .wrap{max-width:1240px;margin:0 auto;padding:22px;}
   h1{font-size:26px;margin:0 0 6px;}
   h2{font-size:20px;margin:34px 0 10px;color:var(--sun);
      border-bottom:1px solid var(--line);padding-bottom:6px;}
-  h3{font-size:16px;margin:22px 0 6px;color:#cfe0f5;}
+  h3{font-size:16px;margin:22px 0 6px;color:var(--txt2);}
   h4{font-size:13.5px;margin:18px 0 6px;color:var(--dim);
      text-transform:uppercase;letter-spacing:.08em;}
   p.sub{color:var(--dim);margin:0 0 20px;}
@@ -39,25 +43,25 @@
   .evt.c-mag{border-left-color:var(--earth);}
   .tag{display:inline-block;font-size:11.5px;font-weight:700;
        letter-spacing:.06em;text-transform:uppercase;
-       background:#22314a;color:var(--dim);border:1px solid var(--line);
+       background:var(--card2);color:var(--dim);border:1px solid var(--line);
        border-radius:5px;padding:2px 8px;margin-left:8px;vertical-align:3px;}
   table{width:100%;border-collapse:collapse;margin:10px 0 6px;font-size:13.5px;}
   th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;
         vertical-align:top;}
-  th{background:#22314a;color:#cfe0f5;font-weight:600;font-size:12.5px;
+  th{background:var(--card2);color:var(--txt2);font-weight:600;font-size:12.5px;
      letter-spacing:.03em;}
   td{background:var(--card);color:var(--ink);}
-  tr:nth-child(even) td{background:#182238;}
+  tr:nth-child(even) td{background:color-mix(in srgb,var(--txt) 3%,var(--card));}
   td.src{font-weight:600;white-space:nowrap;}
   td.lim{color:var(--dim);}
   a{color:var(--sun);text-decoration:none;word-break:break-word;}
   a:hover{text-decoration:underline;}
-  code{background:#22314a;border:1px solid var(--line);border-radius:4px;
-       padding:1px 5px;font-size:12.5px;color:#cfe0f5;}
+  code{background:var(--card2);border:1px solid var(--line);border-radius:4px;
+       padding:1px 5px;font-size:12.5px;color:var(--txt2);}
   .eq{background:var(--card);border:1px solid var(--line);border-radius:8px;
       padding:12px 14px;margin:12px 0;font-size:14.5px;text-align:center;
-      color:#cfe0f5;overflow-x:auto;}
-  .note{background:#1a2438;border:1px solid var(--line);
+      color:var(--txt2);overflow-x:auto;}
+  .note{background:var(--card2);border:1px solid var(--line);
         border-left:3px solid var(--sun);border-radius:6px;
         padding:10px 14px;margin:14px 0;font-size:13.5px;color:var(--dim);}
   .warn{border-left-color:var(--rose);}
@@ -67,13 +71,16 @@
   footer{margin-top:44px;padding-top:14px;border-top:1px solid var(--line);
          color:var(--dim);font-size:13px;}
   @media(max-width:640px){
-    body{padding:14px;} h1{font-size:21px;} h2{font-size:17px;}
+    .wrap{padding:14px;} h1{font-size:21px;} h2{font-size:17px;}
     table{font-size:12.5px;} th,td{padding:6px 7px;}
     td.src{white-space:normal;}
   }
 </style>
 </head>
-<body><div style="position:sticky;top:0;z-index:9;display:flex;gap:10px;align-items:center;padding:10px 14px;background:#0a0f1ef2;border-bottom:1px solid #2a3852;font-family:Segoe UI,Tahoma,sans-serif"><a href="sun.html" style="color:#f1d27a;text-decoration:none;font-weight:700">← الشمس ونشاطها / The Sun</a><span style="flex:1"></span><a href="index.html" style="color:#9fb0d6;text-decoration:none;font-size:13px">الرئيسية · Home</a></div>
+<body><header class="pg-top">
+  <a class="brand" href="sun.html"><span id="logo"></span><div><h1>Space weather events</h1><div class="sub">Physics, signatures &amp; data sources</div></div></a>
+  <button class="ibtn" id="btnLang" onclick="location.href='sun.html'" title="Back to The Sun">↩</button>
+</header>
 <div class="wrap">
 
 <h1>Types of space weather events</h1>
@@ -646,5 +653,7 @@ sit outside all of them.<br><br>By Khaled Mohamed · Physics TA, Kazan Federal U
 </footer>
 
 </div>
+<script src="js/common.js"></script>
+<script>document.getElementById("logo").innerHTML=KH.logoSVG(34)</script>
 </body>
 </html>

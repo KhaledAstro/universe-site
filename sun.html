@@ -2,8 +2,9 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
+<script>try{document.documentElement.dataset.theme=JSON.parse(localStorage.getItem("khSky.theme"))||"dark"}catch(e){document.documentElement.dataset.theme="dark"}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0a0f1e">
+<meta name="theme-color" content="#07090f">
 <title>الشمس ونشاطها | The Sun & its Activity</title>
 <link rel="stylesheet" href="css/app.css">
 <link rel="stylesheet" href="css/page.css">
@@ -13,7 +14,7 @@
 .sunball{width:180px;height:180px;border-radius:50%;margin:auto;background:radial-gradient(circle at 45% 40%,#fff6c8 0,#ffd36b 35%,#ff9a2a 70%,#c2410c 100%);box-shadow:0 0 60px 18px #ff9a2a66,0 0 140px 40px #ff6a0033;cursor:pointer;position:relative;overflow:hidden}
 .sunball img{width:100%;height:100%;object-fit:cover;border-radius:50%;opacity:.9;mix-blend-mode:screen}
 .facts{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-top:10px}
-.fact{padding:9px 10px;border-radius:12px;border:1px solid var(--line);background:#0e1630aa;font-size:12.5px}.fact b{display:block;color:var(--gold-l);font-size:15px}
+.fact{padding:9px 10px;border-radius:12px;border:1px solid var(--line);background:var(--card2);font-size:12.5px}.fact b{display:block;color:var(--gold-l);font-size:15px}
 .tabs2{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
 .live-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
 .live-grid figure{margin:0;text-align:center}.live-grid img{width:100%;aspect-ratio:1;border-radius:12px;background:#000;object-fit:cover;border:1px solid var(--line)}
@@ -22,8 +23,8 @@
 @media(max-width:700px){.layers{grid-template-columns:1fr}}
 .lay-info h3{margin:0 0 6px;color:var(--gold-l)}
 .phen{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
-.phen .panel h3{margin:0 0 6px;font-size:16px;color:#fff}.phen .panel p{margin:0;font-size:13.3px;line-height:1.75;color:#d5ddf1}
-.eq{direction:ltr;text-align:center;font-family:"Cambria Math","STIX Two Math","Times New Roman",serif;font-size:15px;margin:8px 0;color:#fff;background:#0b1229;border-radius:10px;padding:8px}
+.phen .panel h3{margin:0 0 6px;font-size:16px;color:var(--txt)}.phen .panel p{margin:0;font-size:13.3px;line-height:1.75;color:var(--txt2)}
+.eq{direction:ltr;text-align:center;font-family:"Cambria Math","STIX Two Math","Times New Roman",serif;font-size:15px;margin:8px 0;color:var(--txt);background:#0b1229;border-radius:10px;padding:8px}
 canvas.plot{width:100%;height:260px;display:block;background:#070b18;border-radius:12px}
 .rng{width:100%;accent-color:var(--gold)}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:560px){.row2{grid-template-columns:1fr}}
@@ -31,8 +32,8 @@ canvas.plot{width:100%;height:260px;display:block;background:#070b18;border-radi
 .vid video{width:100%;border-radius:12px;background:#000}
 .small{font-size:12px;color:var(--muted)}
 .chain{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px}
-.chain .st{flex:0 0 auto;min-width:120px;padding:10px;border-radius:12px;border:1px solid var(--line);background:#0e1630;font-size:12.5px;text-align:center;cursor:pointer}
-.chain .st.on{border-color:var(--gold);background:#2a2412}
+.chain .st{flex:0 0 auto;min-width:120px;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--card2);font-size:12.5px;text-align:center;cursor:pointer}
+.chain .st.on{border-color:var(--gold);background:color-mix(in srgb,var(--gold) 14%,transparent)}
 .chain .st b{display:block;color:var(--gold-l);font-size:13.5px;margin-bottom:3px}
 </style>
 </head>
@@ -44,7 +45,7 @@ canvas.plot{width:100%;height:260px;display:block;background:#070b18;border-radi
 <main class="wrap">
   <section class="panel hero">
     <div class="sunball" id="sun3d" title="3D" style="background:#000"><img src="img/solo_eui174_2022-04-01.jpg" alt="" style="mix-blend-mode:normal;opacity:1;transform:scale(1.25)"></div>
-    <div><p class="lead" style="font-size:14.5px;color:#d9e0f2" data-i="intro"></p><button class="btn sm" id="btn3d" data-i="open3d"></button><div class="facts" id="facts"></div></div>
+    <div><p class="lead" style="font-size:14.5px;color:var(--txt2)" data-i="intro"></p><button class="btn sm" id="btn3d" data-i="open3d"></button><div class="facts" id="facts"></div></div>
   </section>
 
   <h2 class="sec" data-i="hLive"></h2>
@@ -55,7 +56,7 @@ canvas.plot{width:100%;height:260px;display:block;background:#070b18;border-radi
   </section>
 
   <h2 class="sec" data-i="hStruct"></h2>
-  <section class="panel layers"><svg id="layersSvg" viewBox="0 0 360 360" width="100%"></svg><div class="lay-info" id="layInfo"></div></section>
+  <section class="panel layers"><svg id="layersSvg" class="viz" viewBox="0 0 360 360" width="100%"></svg><div class="lay-info" id="layInfo"></div></section>
 
   <h2 class="sec" data-i="hFlare"></h2>
   <p class="lead" data-i="flareLead"></p>
@@ -188,7 +189,7 @@ function renderLive(){let bad=0;const tap=lang==='ar'?'↗ اضغط لفتح أ�
  $('liveImgs').innerHTML=LIVE.map((x,i)=>`<figure><a href="${x[3]}" target="_blank" rel="noopener"><img loading="lazy" src="${x[0]}" data-i="${i}" alt=""></a><figcaption>${lang==='ar'?x[1]:x[2]}<br><a href="${x[3]}" target="_blank" rel="noopener" style="color:var(--gold-l);font-size:11px">${tap}</a></figcaption></figure>`).join('');
  $('liveImgs').querySelectorAll('img').forEach(im=>{im.onerror=()=>{bad++;const x=LIVE[+im.dataset.i];
    if(x[4]){im.onerror=null;im.src=x[4];im.style.opacity=1;const fc=im.closest('figure').querySelector('figcaption');fc.insertAdjacentHTML('afterbegin',`<span style="color:#ffcf8a">${lang==='ar'?'📁 أرشيف حقيقي: ':'📁 Real archive: '}${lang==='ar'?x[5]:x[6]}</span><br>`);}
-   else{const d=document.createElement('div');d.style.cssText='aspect-ratio:1;border-radius:12px;border:1px dashed #ffffff33;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:#070b18;text-align:center;padding:8px;font-size:12px;color:#9fb0d6;line-height:1.5';d.innerHTML='<span style="font-size:28px">📡</span>'+(lang==='ar'?'الصورة الحية تُعرض عند الاتصال بالإنترنت<br><b style="color:#f1d27a">اضغط لفتحها على موقع NASA</b>':'The live image appears when online<br><b style="color:#f1d27a">Tap to open it on NASA</b>');im.replaceWith(d);}
+   else{const d=document.createElement('div');d.style.cssText='aspect-ratio:1;border-radius:12px;border:1px dashed #ffffff33;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:#070b18;text-align:center;padding:8px;font-size:12px;color:#9fb0d6;line-height:1.5';d.innerHTML='<span style="font-size:28px">📡</span>'+(lang==='ar'?'الصورة الحية تُعرض عند الاتصال بالإنترنت<br><b style="color:var(--gold-l)">اضغط لفتحها على موقع NASA</b>':'The live image appears when online<br><b style="color:var(--gold-l)">Tap to open it on NASA</b>');im.replaceWith(d);}
    if(bad>=3)$('liveNote').textContent=t('liveBlocked');};});}
 // ---------- GOES plot ----------
 function setupCanvas(cv){const r=cv.getBoundingClientRect(),d=Math.min(2,devicePixelRatio||1);cv.width=r.width*d;cv.height=r.height*d;const g=cv.getContext('2d');g.setTransform(d,0,0,d,0,0);return [g,r.width,r.height];}
@@ -268,7 +269,7 @@ const VIDS=[['media/sdo_x9_flare_2024-10-03.mp4','https://svs.gsfc.nasa.gov/1470
 function renderVids(){const ph=lang==='ar'?'صورة حقيقية مؤقتة من SDO/Solar Orbiter حتى يُضاف الفيديو':'Temporary real SDO/Solar Orbiter image until the video is added';
  $('vids').innerHTML=VIDS.map(v=>`<div class="panel"><video controls preload="metadata" playsinline poster="${v[4]}" src="${v[0]}"></video><div style="margin-top:6px;font-size:13.5px">${lang==='ar'?v[2]:v[3]}</div><a class="small" href="${v[1]}" target="_blank" rel="noopener" style="color:var(--gold-l)">${t('watch')}</a></div>`).join('');
  $('vids').querySelectorAll('video').forEach((vd,i)=>vd.addEventListener('error',()=>{const v=VIDS[i];const a=document.createElement('a');a.href=v[1];a.target='_blank';a.rel='noopener';a.style.cssText='display:block;position:relative;border-radius:12px;overflow:hidden;aspect-ratio:16/10;background:#000';
-  a.innerHTML=`<img src="${v[4]}" style="width:100%;height:100%;object-fit:cover;opacity:.85"><span style="position:absolute;inset:0;display:grid;place-items:center;font-size:54px;color:#fff;text-shadow:0 2px 12px #000">▶</span><span style="position:absolute;bottom:0;left:0;right:0;padding:6px 8px;font-size:11px;background:#000a;color:#cdd6ee">${ph}</span>`;vd.replaceWith(a);},true));}
+  a.innerHTML=`<img src="${v[4]}" style="width:100%;height:100%;object-fit:cover;opacity:.85"><span style="position:absolute;inset:0;display:grid;place-items:center;font-size:54px;color:var(--txt);text-shadow:0 2px 12px #000">▶</span><span style="position:absolute;bottom:0;left:0;right:0;padding:6px 8px;font-size:11px;background:#000a;color:var(--txt2)">${ph}</span>`;vd.replaceWith(a);},true));}
 // ---------- UI ----------
 function ui(){document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr';document.body.lang=lang;
  document.querySelectorAll('[data-i]').forEach(e=>{const v=t(e.dataset.i);if(typeof v==='string')e.textContent=v;});

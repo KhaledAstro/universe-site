@@ -2,8 +2,9 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
+<script>try{document.documentElement.dataset.theme=JSON.parse(localStorage.getItem("khSky.theme"))||"dark"}catch(e){document.documentElement.dataset.theme="dark"}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0a0f1e">
+<meta name="theme-color" content="#07090f">
 <title>نشأة القمر | Origin of the Moon</title>
 <link rel="stylesheet" href="css/app.css">
 <link rel="stylesheet" href="css/page.css">
@@ -12,18 +13,18 @@
 .thr .chip{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:9px 13px;border-radius:14px;min-width:150px}
 .thr .chip small{font-size:11px;opacity:.85}
 .simwrap{position:relative}
-#sim{width:100%;aspect-ratio:1/1;max-height:70vh;display:block;background:#02040a;border-radius:16px;touch-action:none}
+#sim{width:100%;aspect-ratio:1/1;max-height:70vh;display:block;background:var(--viz);border-radius:16px;touch-action:none}
 .hud{position:absolute;top:10px;inset-inline-start:10px;font-size:12px;line-height:1.6;background:#000a;border-radius:10px;padding:6px 10px;font-variant-numeric:tabular-nums;max-width:62%}
 .leg{position:absolute;bottom:10px;inset-inline-start:10px;font-size:11.5px;background:#000a;border-radius:10px;padding:5px 9px}
 .leg i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-inline-end:5px;vertical-align:middle}
 .ctl{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;align-items:center}
-.acc{height:12px;border-radius:6px;background:#ffffff14;overflow:hidden;margin:6px 0 2px}.acc span{display:block;height:100%;background:linear-gradient(90deg,#d4a73c,#f1d27a)}
+.acc{height:12px;border-radius:6px;background:var(--line);overflow:hidden;margin:6px 0 2px}.acc span{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-l))}
 .pc{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.pc{grid-template-columns:1fr}}
 .pc ul{margin:4px 0 0;padding-inline-start:18px;line-height:1.8;font-size:13.5px}
 .good h4{color:#7ee2a8;margin:0}.bad h4{color:#ff9fb3;margin:0}
-table.evm{border-collapse:collapse;width:100%;font-size:13px;min-width:620px}table.evm th,table.evm td{padding:7px 6px;border-bottom:1px solid #ffffff12;text-align:center}table.evm th:first-child,table.evm td:first-child{text-align:start;position:sticky;inset-inline-start:0;background:#0d1530;z-index:1;min-width:120px}
-table.evm tr.on{background:#d4a73c22}
-.y{color:#7ee2a8;font-weight:700}.n{color:#ff8a9e;font-weight:700}.p{color:#f1d27a;font-weight:700}
+table.evm{border-collapse:collapse;width:100%;font-size:13px;min-width:620px}table.evm th,table.evm td{padding:7px 6px;border-bottom:1px solid var(--line);text-align:center}table.evm th:first-child,table.evm td:first-child{text-align:start;position:sticky;inset-inline-start:0;background:#0d1530;z-index:1;min-width:120px}
+table.evm tr.on{background:color-mix(in srgb,var(--gold) 14%,transparent)}
+.y{color:#7ee2a8;font-weight:700}.n{color:#ff8a9e;font-weight:700}.p{color:var(--gold-l);font-weight:700}
 .facts{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}.facts .panel{font-size:13.3px;line-height:1.75}.facts b{color:var(--gold-l);display:block;font-size:15px;margin-bottom:3px}
 .vidcard{display:grid;grid-template-columns:1fr;gap:8px}
 .ref{font-size:12px;color:var(--muted);line-height:1.7}
@@ -35,7 +36,7 @@ table.evm tr.on{background:#d4a73c22}
   <button class="ibtn" id="btnLang">EN</button>
 </header>
 <main class="wrap">
-  <p class="lead" data-i="lead" style="font-size:14.5px;color:#d9e0f2"></p>
+  <p class="lead" data-i="lead" style="font-size:14.5px;color:var(--txt2)"></p>
   <h2 class="sec" data-i="hPick"></h2>
   <div class="thr" id="thr"></div>
 
@@ -44,7 +45,7 @@ table.evm tr.on{background:#d4a73c22}
     <div class="ref" id="thWho"></div>
     <div class="acc"><span id="accBar"></span></div><div class="small" id="accTxt" style="font-size:12.5px;color:var(--muted)"></div>
     <p id="thStory" style="line-height:1.9;font-size:14.3px;margin:10px 0"></p>
-    <div class="simwrap" id="simBox"><div id="sim3" style="width:100%;aspect-ratio:1/1;max-height:72vh;border-radius:16px;overflow:hidden;background:#02040a"></div><canvas id="sim" style="display:none"></canvas><div id="moonLbl" style="position:absolute;z-index:3;display:none;transform:translate(-50%,-160%);color:#f1d27a;font-weight:700;font-size:13px;text-shadow:0 1px 4px #000;pointer-events:none"></div><div class="hud" id="hud"></div><div class="leg" id="leg"></div></div>
+    <div class="simwrap" id="simBox"><div id="sim3" style="width:100%;aspect-ratio:1/1;max-height:72vh;border-radius:16px;overflow:hidden;background:var(--viz)"></div><canvas id="sim" style="display:none"></canvas><div id="moonLbl" style="position:absolute;z-index:3;display:none;transform:translate(-50%,-160%);color:var(--gold-l);font-weight:700;font-size:13px;text-shadow:0 1px 4px #000;pointer-events:none"></div><div class="hud" id="hud"></div><div class="leg" id="leg"></div></div>
     <div class="ctl" id="ctl"></div>
     <div class="note2" id="simNote"></div>
     <div class="pc" style="margin-top:12px"><div class="panel good"><h4 data-i="pros"></h4><ul id="pros"></ul></div><div class="panel bad"><h4 data-i="cons"></h4><ul id="cons"></ul></div></div>
@@ -208,7 +209,7 @@ function page(){document.documentElement.lang=lang;document.documentElement.dir=
  const F=lang==='ar'?[['كثافة القمر ٣٫٣٤ جم/سم³','أقل بكثير من كثافة الأرض (٥٫٥١)، أي أن حديده قليل جدًا. نصف قطر نواته نحو ٣٣٠ كم فقط، أي ١–٢٪ من كتلته (من زلازل أبولو، Weber ٢٠١١).'],['نظائر شبه متطابقة','تطابق نسب نظائر الأكسجين (Δ¹⁷O) والتيتانيوم والكروم والتنجستن في صخور القمر نظيرتها في الأرض حتى أجزاء من المليون، بينما يختلف المريخ والنيازك.'],['فقير في المتطايرات','البوتاسيوم والزنك والصوديوم قليلة، ونظائرها أثقل، وهذا دليل على أن المادة تبخرت وفقدت الخفيف منها.'],['محيط صهارة','مرتفعات القمر الفاتحة من صخر الأنورثوسيت الذي طفا على محيط صهارة عميق، أي أن القمر كان منصهرًا في بدايته.'],['العمر ≈ ٤٫٥١ مليار سنة','من بلورات الزركون في عينات أبولو (Barboni ٢٠١٧)، أي بعد تكوّن المجموعة الشمسية بنحو ٥٠–٦٠ مليون سنة.'],['يبتعد ٣٫٨ سم سنويًا','مقيس بالليزر على عاكسات أبولو. يبطّئ المدُّ دوران الأرض ويدفع القمر إلى الخارج، فلو عدنا بالزمن لوجدناه أقرب بكثير والأرض أسرع دورانًا.'],['ميل المدار ٥°','مدار القمر مائل على مستوى مدار الأرض لا على استوائها، وهذا قيد مهم على النظريات.'],['زخم زاوي كبير','الزخم الزاوي لنظام الأرض والقمر كبير على نحو غير معتاد، ويجب أن يكون الحدث الذي كوّن القمر مصدره.']]
  :[['Density 3.34 g/cm³','Much lower than Earth (5.51): very little iron. The core is only ~330 km in radius, 1–2% of the mass (Apollo seismology, Weber 2011).'],['Near-identical isotopes','O (Δ¹⁷O), Ti, Cr and W isotopes match Earth to parts per million, while Mars and meteorites differ.'],['Volatile-poor','K, Zn and Na are depleted and isotopically heavy: a sign of vaporisation and loss of the light fraction.'],['Magma ocean','The bright highlands are anorthosite that floated on a deep magma ocean: the young Moon was molten.'],['Age ≈ 4.51 Gyr','From zircons in Apollo samples (Barboni 2017): about 50–60 Myr after the Solar System formed.'],['Receding 3.8 cm/yr','Measured by laser ranging to Apollo reflectors. Tides slow Earth\'s spin and push the Moon out; in the past it was much closer and Earth spun faster.'],['5° orbital tilt','The orbit is tilted to the ecliptic, not to Earth\'s equator: a key constraint.'],['Large angular momentum','The Earth–Moon system has unusually high angular momentum; the Moon-forming event must supply it.']];
  $('facts').innerHTML=F.map(f=>`<div class="panel"><b>${f[0]}</b>${f[1]}</div>`).join('');
- $('vid').innerHTML=`<div class="vidcard"><a href="https://images.nasa.gov/details-ARC-20221004-AAV3443-MoonOrigin-Social-NASAWeb-1080p" target="_blank" rel="noopener" style="display:block;position:relative;border-radius:12px;overflow:hidden;aspect-ratio:16/9;background:radial-gradient(circle at 40% 50%,#ff9a2a 0,#a33c12 18%,#1a0d08 40%,#02040a 70%)"><span style="position:absolute;inset:0;display:grid;place-items:center;font-size:56px;color:#fff;text-shadow:0 2px 12px #000">▶</span><span style="position:absolute;bottom:0;left:0;right:0;padding:8px 10px;background:#000a;font-size:13px">${lang==='ar'?'Collision May Have Formed the Moon in Mere Hours: محاكاة NASA Ames وجامعة دورهام (Kegerreis وآخرون ٢٠٢٢)':'Collision May Have Formed the Moon in Mere Hours: NASA Ames & Durham (Kegerreis et al. 2022)'}</span></a>
+ $('vid').innerHTML=`<div class="vidcard"><a href="https://images.nasa.gov/details-ARC-20221004-AAV3443-MoonOrigin-Social-NASAWeb-1080p" target="_blank" rel="noopener" style="display:block;position:relative;border-radius:12px;overflow:hidden;aspect-ratio:16/9;background:radial-gradient(circle at 40% 50%,#ff9a2a 0,#a33c12 18%,#1a0d08 40%,var(--viz) 70%)"><span style="position:absolute;inset:0;display:grid;place-items:center;font-size:56px;color:var(--txt);text-shadow:0 2px 12px #000">▶</span><span style="position:absolute;bottom:0;left:0;right:0;padding:8px 10px;background:#000a;font-size:13px">${lang==='ar'?'Collision May Have Formed the Moon in Mere Hours: محاكاة NASA Ames وجامعة دورهام (Kegerreis وآخرون ٢٠٢٢)':'Collision May Have Formed the Moon in Mere Hours: NASA Ames & Durham (Kegerreis et al. 2022)'}</span></a>
   <div class="small" style="font-size:12.5px">${lang==='ar'?'سيُعرض الفيديو هنا دون اتصال بعد تنزيله وإضافته إلى البرنامج.':'Once you download and send the video, it will play here offline.'}</div></div>
   <button class="btn sm" id="moon3d" style="margin-top:10px">${lang==='ar'?'🌐 القمر 3D بخريطته الحقيقية (المرتفعات والبحار)':'🌐 The Moon in 3D (see highlands and maria)'}</button>`;
  $('moon3d').onclick=()=>Body3D.open('moon',null,{lang});

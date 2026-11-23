@@ -2,31 +2,32 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
+<script>try{document.documentElement.dataset.theme=JSON.parse(localStorage.getItem("khSky.theme"))||"dark"}catch(e){document.documentElement.dataset.theme="dark"}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0a0f1e">
+<meta name="theme-color" content="#07090f">
 <title>درب التبانة والمجرات | The Milky Way & Galaxies</title>
 <link rel="stylesheet" href="css/app.css">
 <link rel="stylesheet" href="css/page.css">
 <style>
 .stage{position:relative;overflow:hidden;border-radius:16px}
-#mw{width:100%;height:min(70vh,580px);display:block;background:#02030a;touch-action:none;cursor:grab}
-.lbl{position:absolute;transform:translate(-50%,-50%);font-size:11.5px;color:#e8edf9;text-shadow:0 1px 4px #000,0 0 2px #000;pointer-events:none;white-space:nowrap}
-.lbl.sun{color:#f1d27a;font-weight:700;font-size:13px}.lbl.arm{color:#9fc2ff;font-style:italic}
+#mw{width:100%;height:min(70vh,580px);display:block;background:var(--viz);touch-action:none;cursor:grab}
+.lbl{position:absolute;transform:translate(-50%,-50%);font-size:11.5px;color:var(--txt2);text-shadow:0 1px 4px #000,0 0 2px #000;pointer-events:none;white-space:nowrap}
+.lbl.sun{color:var(--gold-l);font-weight:700;font-size:13px}.lbl.arm{color:var(--accent);font-style:italic}
 .row{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;align-items:center}
-#rc{width:100%;height:300px;display:block;background:#050915;border-radius:14px}
+#rc{width:100%;height:300px;display:block;background:var(--viz);border-radius:14px}
 .ctl{display:grid;grid-template-columns:auto 1fr auto;gap:6px 10px;align-items:center;margin-top:10px;font-size:13px}
 .ctl input[type=range]{width:100%;accent-color:var(--gold)}.ctl output{font-variant-numeric:tabular-nums;color:var(--gold-l);min-width:80px;text-align:end;direction:ltr}
 .fork{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
-.fork button{background:#0b1430;border:1px solid var(--line);border-radius:14px;padding:10px;color:inherit;font:inherit;cursor:pointer;text-align:center}
-.fork button.on{border-color:var(--gold);background:#d4a73c22}.fork svg{width:100%;height:70px;display:block}
+.fork button{background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:10px;color:inherit;font:inherit;cursor:pointer;text-align:center}
+.fork button.on{border-color:var(--gold);background:color-mix(in srgb,var(--gold) 14%,transparent)}.fork svg{width:100%;height:70px;display:block}
 .fork b{display:block;color:var(--gold-l);font-size:14px;margin-top:4px}
 #forkInfo{margin-top:10px;font-size:13.5px;line-height:1.8}
 .imgs{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
-.imgs a{display:block;padding:12px;border-radius:14px;background:#0b1430;border:1px solid var(--line);color:inherit;text-decoration:none;font-size:13px;line-height:1.7}.imgs a b{color:var(--gold-l);display:block;font-size:14.5px}
-table.t2{border-collapse:collapse;width:100%;font-size:13px}table.t2 td,table.t2 th{padding:7px 6px;border-bottom:1px solid #ffffff12;text-align:start}table.t2 th{color:var(--gold-l)}table.t2 td.n{direction:ltr;text-align:end;font-variant-numeric:tabular-nums}
-details.math{margin-top:10px;border:1px solid var(--line);border-radius:12px;padding:8px 12px;background:#0b1430}
+.imgs a{display:block;padding:12px;border-radius:14px;background:var(--card2);border:1px solid var(--line);color:inherit;text-decoration:none;font-size:13px;line-height:1.7}.imgs a b{color:var(--gold-l);display:block;font-size:14.5px}
+table.t2{border-collapse:collapse;width:100%;font-size:13px}table.t2 td,table.t2 th{padding:7px 6px;border-bottom:1px solid var(--line);text-align:start}table.t2 th{color:var(--gold-l)}table.t2 td.n{direction:ltr;text-align:end;font-variant-numeric:tabular-nums}
+details.math{margin-top:10px;border:1px solid var(--line);border-radius:12px;padding:8px 12px;background:var(--card2)}
 details.math summary{cursor:pointer;color:var(--gold-l);font-weight:600}details.math p{font-size:13.3px;line-height:1.85}
-.eq{direction:ltr;text-align:center;font-family:"Cambria Math","STIX Two Math","Times New Roman",serif;font-size:15.5px;margin:7px 0;color:#fff;background:#ffffff08;border-radius:8px;padding:6px;overflow-x:auto}
+.eq{direction:ltr;text-align:center;font-family:"Cambria Math","STIX Two Math","Times New Roman",serif;font-size:15.5px;margin:7px 0;color:var(--txt);background:var(--line);border-radius:8px;padding:6px;overflow-x:auto}
 .note{font-size:12.5px;color:var(--muted);line-height:1.75}
 </style>
 </head>
@@ -36,7 +37,7 @@ details.math summary{cursor:pointer;color:var(--gold-l);font-weight:600}details.
   <button class="ibtn" id="btnLang">EN</button>
 </header>
 <main class="wrap">
-  <p class="lead" data-h="lead" style="font-size:14.5px;color:#d9e0f2"></p>
+  <p class="lead" data-h="lead" style="font-size:14.5px;color:var(--txt2)"></p>
 
   <h2 class="sec" data-i="h1"></h2>
   <p class="lead" data-h="l1"></p>

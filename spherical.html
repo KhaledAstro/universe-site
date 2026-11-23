@@ -2,32 +2,33 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
+<script>try{document.documentElement.dataset.theme=JSON.parse(localStorage.getItem("khSky.theme"))||"dark"}catch(e){document.documentElement.dataset.theme="dark"}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0a0f1e">
+<meta name="theme-color" content="#07090f">
 <title>الفلك الكروي | Spherical Astronomy</title>
 <link rel="stylesheet" href="css/app.css">
 <link rel="stylesheet" href="css/page.css">
 <style>
-#sph{width:100%;aspect-ratio:1/1;max-height:72vh;display:block;background:#050915;border-radius:16px;touch-action:none;cursor:grab}
-#kep{width:100%;aspect-ratio:1.5/1;display:block;background:#050915;border-radius:16px}
+#sph{width:100%;aspect-ratio:1/1;max-height:72vh;display:block;background:var(--viz);border-radius:16px;touch-action:none;cursor:grab}
+#kep{width:100%;aspect-ratio:1.5/1;display:block;background:var(--viz);border-radius:16px}
 .ctl{display:grid;grid-template-columns:auto 1fr auto;gap:6px 10px;align-items:center;margin-top:10px;font-size:13px}
 .ctl input[type=range]{width:100%;accent-color:var(--gold)}.ctl output{font-variant-numeric:tabular-nums;color:var(--gold-l);min-width:64px;text-align:end;direction:ltr}
 .tri{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}@media(max-width:600px){.tri{grid-template-columns:1fr}}
 .kv b{color:var(--muted)}
-details.math{margin-top:10px;border:1px solid var(--line);border-radius:12px;padding:8px 12px;background:#0b1430}
+details.math{margin-top:10px;border:1px solid var(--line);border-radius:12px;padding:8px 12px;background:var(--card2)}
 details.math summary{cursor:pointer;color:var(--gold-l);font-weight:600}
 details.math p,details.math li{font-size:13.3px;line-height:1.85}
-.eq{direction:ltr;text-align:center;font-family:"Cambria Math","STIX Two Math","Times New Roman",serif;font-size:15.5px;margin:7px 0;color:#fff;background:#ffffff08;border-radius:8px;padding:6px;overflow-x:auto}
+.eq{direction:ltr;text-align:center;font-family:"Cambria Math","STIX Two Math","Times New Roman",serif;font-size:15.5px;margin:7px 0;color:var(--txt);background:var(--line);border-radius:8px;padding:6px;overflow-x:auto}
 .steps{counter-reset:s;margin:0;padding:0;list-style:none}
-.steps li{counter-increment:s;position:relative;padding:9px 12px 9px 12px;padding-inline-start:44px;margin-bottom:7px;border-radius:12px;background:#0b1430;border:1px solid var(--line);font-size:13.5px;line-height:1.75}
-.steps li::before{content:counter(s);position:absolute;inset-inline-start:10px;top:9px;width:24px;height:24px;border-radius:50%;background:var(--gold);color:#0a0f1e;font-weight:700;display:grid;place-items:center;font-size:13px}
+.steps li{counter-increment:s;position:relative;padding:9px 12px 9px 12px;padding-inline-start:44px;margin-bottom:7px;border-radius:12px;background:var(--card2);border:1px solid var(--line);font-size:13.5px;line-height:1.75}
+.steps li::before{content:counter(s);position:absolute;inset-inline-start:10px;top:9px;width:24px;height:24px;border-radius:50%;background:var(--gold);color:var(--bg);font-weight:700;display:grid;place-items:center;font-size:13px}
 .steps .eq{font-size:14.5px}
 .res{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-top:10px}
-.res div{background:#0b1430;border:1px solid var(--line);border-radius:12px;padding:8px 10px;text-align:center;font-size:12.5px;color:var(--muted)}
+.res div{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:8px 10px;text-align:center;font-size:12.5px;color:var(--muted)}
 .res b{display:block;font-size:19px;color:var(--gold-l);font-variant-numeric:tabular-nums}
 .inrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .inrow .inp{flex:1;min-width:120px}
-table.it{border-collapse:collapse;width:100%;font-size:13px;direction:ltr}table.it td,table.it th{padding:5px 8px;border-bottom:1px solid #ffffff12;text-align:center;font-variant-numeric:tabular-nums}table.it th{color:var(--gold-l)}
+table.it{border-collapse:collapse;width:100%;font-size:13px;direction:ltr}table.it td,table.it th{padding:5px 8px;border-bottom:1px solid var(--line);text-align:center;font-variant-numeric:tabular-nums}table.it th{color:var(--gold-l)}
 .note{font-size:12.5px;color:var(--muted);line-height:1.75}
 </style>
 </head>
@@ -37,7 +38,7 @@ table.it{border-collapse:collapse;width:100%;font-size:13px;direction:ltr}table.
   <button class="ibtn" id="btnLang">EN</button>
 </header>
 <main class="wrap">
-  <p class="lead" data-h="lead" style="font-size:14.5px;color:#d9e0f2"></p>
+  <p class="lead" data-h="lead" style="font-size:14.5px;color:var(--txt2)"></p>
   <a href="spherical-course.html" class="panel" style="display:block;text-decoration:none;color:inherit;border-color:var(--gold);margin-bottom:6px"><b style="color:var(--gold-l);font-size:16px" id="crsT"></b><div class="small" id="crsD" style="margin-top:4px;line-height:1.7"></div></a>
 
   <h2 class="sec" data-i="h1"></h2>
@@ -103,7 +104,7 @@ sides:'أضلاع المثلث',angles:'زوايا المثلث',
 sPZ:'PZ = 90° − φ (تمام العرض)',sPX:'PX = 90° − δ (تمام الميل)',sZX:'ZX = 90° − h (المسافة السمتية z)',
 aP:'الزاوية عند P = H (الزاوية الساعية)',aZ:'الزاوية عند Z = السمت A (أو 360° − A)',aX:'الزاوية عند X = q (الزاوية الاختلافية)',
 alt:'الارتفاع h',az:'السمت A (من الشمال)',
-sphNote:'الألوان: <span style="color:#7ee2a8">الأفق</span>، <span style="color:#f1d27a">خط الاستواء السماوي</span>، <span style="color:#ff9f5a">المسار اليومي للنجم</span>، <span style="color:#c39bff">خط الزوال</span>. الأجزاء خلف الكرة مرسومة متقطعة. جرّب φ = 90° (القطب: النجوم تدور موازية للأفق) و φ = 0° (الاستواء: كل النجوم تشرق عمودية على الأفق).',
+sphNote:'الألوان: <span style="color:#7ee2a8">الأفق</span>، <span style="color:var(--gold-l)">خط الاستواء السماوي</span>، <span style="color:#ff9f5a">المسار اليومي للنجم</span>، <span style="color:#c39bff">خط الزوال</span>. الأجزاء خلف الكرة مرسومة متقطعة. جرّب φ = 90° (القطب: النجوم تدور موازية للأفق) و φ = 0° (الاستواء: كل النجوم تشرق عمودية على الأفق).',
 mathT:'📐 التفاصيل الرياضية',
 m1:`<p><b>قانون جيب التمام</b> للمثلث الكروي (الضلع ZX مقابل الزاوية H):</p><div class="eq">cos z = cos(90°−φ) cos(90°−δ) + sin(90°−φ) sin(90°−δ) cos H</div><div class="eq">⇒  sin h = sin φ sin δ + cos φ cos δ cos H</div>
 <p>وللسمت (مقيسًا من الشمال نحو الشرق):</p><div class="eq">tan A = − sin H / ( tan δ cos φ − sin φ cos H )</div>
@@ -143,7 +144,7 @@ sides:'Sides',angles:'Angles',
 sPZ:'PZ = 90° − φ (co-latitude)',sPX:'PX = 90° − δ (co-declination)',sZX:'ZX = 90° − h (zenith distance z)',
 aP:'Angle at P = H (hour angle)',aZ:'Angle at Z = azimuth A (or 360° − A)',aX:'Angle at X = q (parallactic angle)',
 alt:'Altitude h',az:'Azimuth A (from north)',
-sphNote:'Colours: <span style="color:#7ee2a8">horizon</span>, <span style="color:#f1d27a">celestial equator</span>, <span style="color:#ff9f5a">the star’s diurnal circle</span>, <span style="color:#c39bff">meridian</span>. Parts behind the sphere are dashed. Try φ = 90° (pole: stars circle parallel to the horizon) and φ = 0° (equator: every star rises perpendicular to the horizon).',
+sphNote:'Colours: <span style="color:#7ee2a8">horizon</span>, <span style="color:var(--gold-l)">celestial equator</span>, <span style="color:#ff9f5a">the star’s diurnal circle</span>, <span style="color:#c39bff">meridian</span>. Parts behind the sphere are dashed. Try φ = 90° (pole: stars circle parallel to the horizon) and φ = 0° (equator: every star rises perpendicular to the horizon).',
 mathT:'📐 Mathematical details',
 m1:`<p>The spherical <b>cosine rule</b> (side ZX opposite angle H):</p><div class="eq">cos z = cos(90°−φ) cos(90°−δ) + sin(90°−φ) sin(90°−δ) cos H</div><div class="eq">⇒  sin h = sin φ sin δ + cos φ cos δ cos H</div><p>Azimuth (from north through east):</p><div class="eq">tan A = − sin H / ( tan δ cos φ − sin φ cos H )</div><p>The <b>sine rule</b>:</p><div class="eq">sin H / sin z = sin A / sin(90°−δ) = sin q / sin(90°−φ)</div><p>The parallactic angle q (needed to orient images and to draw the crescent):</p><div class="eq">tan q = sin H / ( tan φ cos δ − sin δ cos H )</div><p>Direct consequences: transit altitude h<sub>max</sub> = 90° − |φ − δ|; a star is circumpolar if δ &gt; 90° − φ and never rises if δ &lt; −(90° − φ); the pole’s altitude equals the latitude — how Arab navigators found latitude from the altitude of Polaris.</p>`,
 h2:'⏱️ Rise, transit and set — step by step',
