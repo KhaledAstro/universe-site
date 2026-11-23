@@ -213,7 +213,7 @@ function page(){document.documentElement.lang=lang;document.documentElement.dir=
   <button class="btn sm" id="moon3d" style="margin-top:10px">${lang==='ar'?'🌐 القمر 3D بخريطته الحقيقية (المرتفعات والبحار)':'🌐 The Moon in 3D (see highlands and maria)'}</button>`;
  $('moon3d').onclick=()=>Body3D.open('moon',null,{lang});
  $('refs').innerHTML=['Hartmann & Davis (1975) Icarus 24, 504','Cameron & Ward (1976) LPSC 7, 120','Canup & Asphaug (2001) Nature 412, 708','Canup (2012) Science 338, 1052','Ćuk & Stewart (2012) Science 338, 1047','Lock et al. (2018) JGR Planets 123, 910','Rufu, Aharonson & Perets (2017) Nature Geoscience 10, 89','Kegerreis et al. (2022) ApJL 937, L40','Young et al. (2016) Science 351, 493','Wang & Jacobsen (2016) Nature 538, 487','Barboni et al. (2017) Science Advances 3, e1602365','Darwin (1879) Phil. Trans. R. Soc. 170, 447'].map(r=>'• '+r).join('<br>');
- $('foot').innerHTML=`${KH.logoSVG(30)}<br>${lang==='ar'?'إعداد: خالد محمد · عضو AfAS وAUASS':'By Khaled Mohamed · Member of AfAS and AUASS'}<br><a href="index.html">${lang==='ar'?'الرئيسية':'Home'}</a>`;
+ $('foot').innerHTML=`${KH.logoSVG(30)}<br>${lang==='ar'?'إعداد: خالد محمد · معيد الفيزياء، جامعة قازان الفيدرالية – فرع القاهرة · عضو AfAS وAUASS':'By Khaled Mohamed · Physics TA, Kazan Federal University – Cairo Branch · Member of AfAS and AUASS'}<br><a href="index.html">${lang==='ar'?'الرئيسية':'Home'}</a>`;
  document.title=t('title')+' — '+(lang==='ar'?'خالد محمد':'Khaled Mohamed');pick(cur);}
 $('btnLang').onclick=()=>{lang=lang==='ar'?'en':'ar';KH.setLang(lang);page();};
 addEventListener('resize',()=>draw());

@@ -27,7 +27,7 @@ const T = {
       'ارتفاع الجدي عن الأفق يساوي تقريبًا <b>خط عرضك</b>. أنت الآن على خط عرض ' + lat + '°، والجدي على ارتفاع <b id="polAlt"></b>.',
       'نقطة الأفق الواقعة تحت الجدي هي <b>الشمال الحقيقي</b>. استخدمها الملاحون العرب لتحديد الاتجاه والعرض الجغرافي.'],
     polarisSouth: 'أنت في نصف الكرة الجنوبي، والجدي تحت الأفق؛ ابحث بدلًا منه عن الصليب الجنوبي.',
-    aboutHTML: `<div class="who">${KH.logoSVG(54)}<div><b style="color:var(--gold-l);font-size:16px">خالد محمد</b><br><small style="color:var(--muted)">باحث ماجستير في فيزياء الشمس، قسم الفلك وعلوم الفضاء والأرصاد الجوية، كلية العلوم، جامعة القاهرة</small></div></div>
+    aboutHTML: `<div class="who">${KH.logoSVG(54)}<div><b style="color:var(--gold-l);font-size:16px">خالد محمد</b><br><small style="color:var(--muted)">معيد الفيزياء، جامعة قازان الفيدرالية – فرع القاهرة<br>باحث ماجستير في فيزياء الشمس، قسم الفلك وعلوم الفضاء والأرصاد الجوية، كلية العلوم، جامعة القاهرة</small></div></div>
       <p>عضو <b>الجمعية الفلكية الأفريقية (AfAS)</b> و<b>الاتحاد العربي لعلوم الفلك والفضاء (AUASS)</b>.</p>
       <p>أطلس تفاعلي يحسب مواقع النجوم والشمس والقمر والكواكب لحظيًا لموقعك. الحسابات مبنية على: الزمن النجمي (Meeus 12.4)، والمبادرة من J2000 (Meeus 21)، ونظرية القمر المختصرة (Meeus 47)، وعناصر JPL المدارية التقريبية للكواكب. اختُبرت الدقة مقابل مكتبة Astropy، والخطأ أقل من ٥′ قوسية.</p>
       <p><b>البيانات:</b> كتالوج هيباركوس/يايل للنجوم حتى القدر ٦ (٥٠٤٤ نجمًا)، وخطوط الكوكبات وحدودها والأسماء العربية من مشروع d3-celestial (Olaf Frohn، رخصة BSD)، وكتالوج مسييه، ونموذج درب التبانة.</p>
@@ -52,7 +52,7 @@ const T = {
       'Polaris\' altitude above the horizon ≈ your <b>latitude</b>. You are at ' + lat + '°, and Polaris is at <b id="polAlt"></b>.',
       'The horizon point below Polaris is <b>true north</b>, which Arab navigators used to find direction and latitude.'],
     polarisSouth: 'You are in the southern hemisphere, so Polaris is below the horizon. Look for the Southern Cross instead.',
-    aboutHTML: `<div class="who">${KH.logoSVG(54)}<div><b style="color:var(--gold-l);font-size:16px">Khaled Mohamed</b><br><small style="color:var(--muted)">MSc researcher in solar physics, Astronomy, Space Science & Meteorology Dept., Faculty of Science, Cairo University</small></div></div>
+    aboutHTML: `<div class="who">${KH.logoSVG(54)}<div><b style="color:var(--gold-l);font-size:16px">Khaled Mohamed</b><br><small style="color:var(--muted)">Physics TA, Kazan Federal University – Cairo Branch<br>MSc researcher in solar physics, Astronomy, Space Science & Meteorology Dept., Faculty of Science, Cairo University</small></div></div>
       <p>Member of the <b>African Astronomical Society (AfAS)</b> and the <b>Arab Union for Astronomy and Space Sciences (AUASS)</b>.</p>
       <p>An interactive atlas that computes the positions of stars, the Sun, the Moon and the planets in real time for your location. Methods: sidereal time (Meeus 12.4), precession from J2000 (Meeus 21), abridged lunar theory (Meeus 47) and JPL approximate planetary elements. Checked against Astropy: errors are below 5 arcmin.</p>
       <p><b>Data:</b> Hipparcos/Yale bright stars to mag 6 (5044 stars), constellation lines and Arabic names from d3-celestial (Olaf Frohn, BSD licence), the Messier catalogue and a Milky Way model.</p>
@@ -721,40 +721,69 @@ addEventListener('keydown', e => { if (e.target.tagName === 'INPUT') return; if 
 // ---------- gyro ----------
 let gyroSeen = false, gyroTimer = null;
 function inFrame() { try { return window.self !== window.top; } catch (e) { return true; } }
-function onOri(e) {
-  let a = e.alpha, b = e.beta, gm = e.gamma;
-  if (e.webkitCompassHeading != null) a = 360 - e.webkitCompassHeading;
-  if (a == null || b == null) return; gyroSeen = true;
-  a *= D2R; b *= D2R; gm *= D2R;
-  const cA = Math.cos(a), sA = Math.sin(a), cB = Math.cos(b), sB = Math.sin(b), cG = Math.cos(gm), sG = Math.sin(gm);
-  // columns of R (device -> earth ENU)
-  let X = [cA * cG - sA * sB * sG, cG * sA + cA * sB * sG, -cB * sG];
-  let Y = [-cB * sA, cA * cB, sB];
-  const Z = [cA * sG + cG * sA * sB, sA * sG - cA * cG * sB, cB * cG];
-  const ang = ((screen.orientation && screen.orientation.angle) || window.orientation || 0) * D2R;
-  if (ang) { const c = Math.cos(ang), s = Math.sin(ang); const X2 = X.map((x, i) => x * c + Y[i] * s), Y2 = X.map((x, i) => -x * s + Y[i] * c); X = X2; Y = Y2; }
-  let f = [-Z[0], -Z[1], -Z[2]], u = Y;
+// here is the modification of the gyro: one basis builder used by both the quaternion sensor and the Euler event
+function setBasis(X, Y, Z) {
+  let f = [-Z[0], -Z[1], -Z[2]], u = Y;               // camera looks out of the back of the phone; screen top = up
   const prev = gyroBasis ? gyroBasis.enu : null;
-  if (prev) { const k = 0.25; f = f.map((x, i) => prev.f[i] + (x - prev.f[i]) * k); u = u.map((x, i) => prev.u[i] + (x - prev.u[i]) * k); }
+  if (prev) { const k = 0.35; f = f.map((x, i) => prev.f[i] + (x - prev.f[i]) * k); u = u.map((x, i) => prev.u[i] + (x - prev.u[i]) * k); }
   const nf = Math.hypot(...f); f = f.map(x => x / nf);
-  let r = [f[1] * u[2] - f[2] * u[1], f[2] * u[0] - f[0] * u[2], f[0] * u[1] - f[1] * u[0]]; const nr = Math.hypot(...r); r = r.map(x => x / nr);
+  let r = [f[1] * u[2] - f[2] * u[1], f[2] * u[0] - f[0] * u[2], f[0] * u[1] - f[1] * u[0]]; const nr = Math.hypot(...r) || 1; r = r.map(x => x / nr);
   u = [r[1] * f[2] - r[2] * f[1], r[2] * f[0] - r[0] * f[2], r[0] * f[1] - r[1] * f[0]];
   const cvt = v => [v[1], v[0], v[2]]; // ENU -> [n,e,u]
   gyroBasis = { f: cvt(f), r: cvt(r), u: cvt(u), enu: { f, u } };
-  st.dirty = true;
+  gyroSeen = true; st.dirty = true;
 }
+// here is the modification of the screen-rotation fix (landscape signs were reversed)
+function screenRot(X, Y) {
+  const ang = ((screen.orientation && screen.orientation.angle) || window.orientation || 0) * D2R;
+  if (!ang) return [X, Y];
+  const c = Math.cos(ang), s = Math.sin(ang);
+  return [X.map((x, i) => x * c - Y[i] * s), X.map((x, i) => x * s + Y[i] * c)];
+}
+function onOri(e) {
+  if (sensorOn) return;                               // the quaternion sensor is running and is better
+  let a = e.alpha, b = e.beta, gm = e.gamma;
+  if (e.webkitCompassHeading != null) a = 360 - e.webkitCompassHeading;
+  if (a == null || b == null) return;
+  a *= D2R; b *= D2R; gm *= D2R;
+  const cA = Math.cos(a), sA = Math.sin(a), cB = Math.cos(b), sB = Math.sin(b), cG = Math.cos(gm), sG = Math.sin(gm);
+  // columns of R = Rz(alpha)·Rx(beta)·Ry(gamma) (device -> earth ENU)
+  let X = [cA * cG - sA * sB * sG, cG * sA + cA * sB * sG, -cB * sG];
+  let Y = [-cB * sA, cA * cB, sB];
+  const Z = [cA * sG + cG * sA * sB, sA * sG - cA * cG * sB, cB * cG];
+  [X, Y] = screenRot(X, Y);
+  setBasis(X, Y, Z);
+}
+// here is the modification: Android Chrome AbsoluteOrientationSensor (quaternion, no gimbal lock, fused gyro+compass)
+let sensor = null, sensorOn = false;
+function startSensor() {
+  if (!('AbsoluteOrientationSensor' in window)) return;
+  try {
+    sensor = new AbsoluteOrientationSensor({ frequency: 60, referenceFrame: 'screen' });
+    sensor.addEventListener('reading', () => {
+      const [x, y, z, w] = sensor.quaternion;          // rotation device(screen) -> earth (x East, y North, z Up)
+      const X = [1 - 2 * (y * y + z * z), 2 * (x * y + w * z), 2 * (x * z - w * y)];
+      const Y = [2 * (x * y - w * z), 1 - 2 * (x * x + z * z), 2 * (y * z + w * x)];
+      const Z = [2 * (x * z + w * y), 2 * (y * z - w * x), 1 - 2 * (x * x + y * y)];
+      sensorOn = true; setBasis(X, Y, Z);
+    });
+    sensor.addEventListener('error', () => { sensorOn = false; try { sensor.stop(); } catch (e) {} sensor = null; });
+    sensor.start();
+  } catch (e) { sensor = null; sensorOn = false; }
+}
+function stopSensor() { if (sensor) { try { sensor.stop(); } catch (e) {} } sensor = null; sensorOn = false; }
 function setGyro(on) {
   if (on) {
     const start = () => {
       const ev = ('ondeviceorientationabsolute' in window) ? 'deviceorientationabsolute' : 'deviceorientation';
-      addEventListener(ev, onOri); st.gyro = true; st.view.fov = 75; toast(t('gyroOn'));
+      addEventListener(ev, onOri); startSensor(); st.gyro = true; st.view.fov = 75; toast(t('gyroOn'));
       clearTimeout(gyroTimer); gyroTimer = setTimeout(() => { if (!gyroSeen) { toast(inFrame() ? t('sandboxGyro') : t('noGyro')); setGyro(false); } }, 2500);
       $('cGyro').classList.add('on');
     };
     if (typeof DeviceOrientationEvent !== 'undefined' && DeviceOrientationEvent.requestPermission) DeviceOrientationEvent.requestPermission().then(r => r === 'granted' ? start() : toast(inFrame() ? t('sandboxGyro') : t('noGyro'))).catch(() => toast(inFrame() ? t('sandboxGyro') : t('noGyro')));
     else if (typeof DeviceOrientationEvent !== 'undefined') start(); else toast(t('noGyro'));
   } else {
-    removeEventListener('deviceorientationabsolute', onOri); removeEventListener('deviceorientation', onOri);
+    removeEventListener('deviceorientationabsolute', onOri); removeEventListener('deviceorientation', onOri); stopSensor();
     if (st.gyro && gyroBasis) { const f = gyroBasis.f; st.view.az = (Math.atan2(f[1], f[0]) * R2D + 360) % 360; st.view.alt = Math.asin(f[2]) * R2D; }
     st.gyro = false; gyroBasis = null; $('cGyro').classList.remove('on');
   }

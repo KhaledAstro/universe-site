@@ -309,7 +309,7 @@ function page(){
   $('kPre').innerHTML=t('pres').map(p=>`<button class="chip" data-e="${p[1]}">${p[0]} · e = ${KH.digits(String(p[1]),lang)}</button>`).join('');
   $('kPre').querySelectorAll('.chip').forEach(b=>b.onclick=()=>{$('sE').value=b.dataset.e;drawKepler();});
   $('refs').innerHTML=['Smart, W. M. & Green, R. M. (1977) Textbook on Spherical Astronomy, 6th ed., Cambridge University Press','Meeus, J. (1998) Astronomical Algorithms, 2nd ed., Willmann-Bell — ch. 12, 13, 15, 21, 30','Green, R. M. (1985) Spherical Astronomy, Cambridge University Press','Roy, A. E. & Clarke, D. (2003) Astronomy: Principles and Practice, 4th ed.','<b>'+(lang==='ar'?'إحداثيات النجوم':'Star positions')+':</b> Hipparcos (via d3-celestial), J2000'].map(x=>'• '+x).join('<br>');
-  $('foot').innerHTML=`${KH.logoSVG(30)}<br>${lang==='ar'?'إعداد: خالد محمد · قسم الفلك وعلوم الفضاء والأرصاد الجوية، كلية العلوم، جامعة القاهرة · عضو AfAS وAUASS':'By Khaled Mohamed · Astronomy, Space Science & Meteorology Dept., Faculty of Science, Cairo University · Member of AfAS and AUASS'}<br><a href="index.html">${lang==='ar'?'الرئيسية':'Home'}</a>`;
+  $('foot').innerHTML=`${KH.logoSVG(30)}<br>${lang==='ar'?'إعداد: خالد محمد · معيد الفيزياء، جامعة قازان الفيدرالية – فرع القاهرة · قسم الفلك وعلوم الفضاء والأرصاد الجوية، كلية العلوم، جامعة القاهرة · عضو AfAS وAUASS':'By Khaled Mohamed · Physics TA, Kazan Federal University – Cairo Branch · Astronomy, Space Science & Meteorology Dept., Faculty of Science, Cairo University · Member of AfAS and AUASS'}<br><a href="index.html">${lang==='ar'?'الرئيسية':'Home'}</a>`;
   document.title=t('title')+' — '+(lang==='ar'?'خالد محمد':'Khaled Mohamed');
   drawSphere();computeRS();drawKepler();
 }

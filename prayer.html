@@ -101,7 +101,7 @@ function ui(){
  $('ramadan').checked=!!opt.ramadan;
  $('placeLbl').textContent=(KH.CITIES.find(c=>c.id===loc.id)||{})[lang]||`${loc.lat.toFixed(2)}, ${loc.lon.toFixed(2)}`;
  $('how').innerHTML=t('how');
- $('foot').innerHTML=`${KH.logoSVG(30)}<br>${lang==='ar'?'إعداد: خالد محمد · عضو AfAS وAUASS':'By Khaled Mohamed · Member of AfAS and AUASS'}<br><a href="index.html">${lang==='ar'?'الصفحة الرئيسية':'Home'}</a> · <a href="events.html">${lang==='ar'?'تقويم الظواهر':'Sky Events'}</a>`;
+ $('foot').innerHTML=`${KH.logoSVG(30)}<br>${lang==='ar'?'إعداد: خالد محمد · معيد الفيزياء، جامعة قازان الفيدرالية – فرع القاهرة · عضو AfAS وAUASS':'By Khaled Mohamed · Physics TA, Kazan Federal University – Cairo Branch · Member of AfAS and AUASS'}<br><a href="index.html">${lang==='ar'?'الصفحة الرئيسية':'Home'}</a> · <a href="events.html">${lang==='ar'?'تقويم الظواهر':'Sky Events'}</a>`;
  document.title=t('title')+' — '+(lang==='ar'?'خالد محمد':'Khaled Mohamed');
 }
 function save(){KH.store.set('prayerOpt',opt);}
