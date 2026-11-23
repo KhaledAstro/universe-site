@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0f1e">
+<title>الفلك الكروي | Spherical Astronomy</title>
+<link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/page.css">
+<style>
+#sph{width:100%;aspect-ratio:1/1;max-height:72vh;display:block;background:#050915;border-radius:16px;touch-action:none;cursor:grab}
+#kep{width:100%;aspect-ratio:1.5/1;display:block;background:#050915;border-radius:16px}
+.ctl{display:grid;grid-template-columns:auto 1fr auto;gap:6px 10px;align-items:center;margin-top:10px;font-size:13px}
+.ctl input[type=range]{width:100%;accent-color:var(--gold)}.ctl output{font-variant-numeric:tabular-nums;color:var(--gold-l);min-width:64px;text-align:end;direction:ltr}
+.tri{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}@media(max-width:600px){.tri{grid-template-columns:1fr}}
+.kv b{color:var(--muted)}
+details.math{margin-top:10px;border:1px solid var(--line);border-radius:12px;padding:8px 12px;background:#0b1430}
+details.math summary{cursor:pointer;color:var(--gold-l);font-weight:600}
+details.math p,details.math li{font-size:13.3px;line-height:1.85}
+.eq{direction:ltr;text-align:center;font-family:"Cambria Math","STIX Two Math","Times New Roman",serif;font-size:15.5px;margin:7px 0;color:#fff;background:#ffffff08;border-radius:8px;padding:6px;overflow-x:auto}
+.steps{counter-reset:s;margin:0;padding:0;list-style:none}
+.steps li{counter-increment:s;position:relative;padding:9px 12px 9px 12px;padding-inline-start:44px;margin-bottom:7px;border-radius:12px;background:#0b1430;border:1px solid var(--line);font-size:13.5px;line-height:1.75}
+.steps li::before{content:counter(s);position:absolute;inset-inline-start:10px;top:9px;width:24px;height:24px;border-radius:50%;background:var(--gold);color:#0a0f1e;font-weight:700;display:grid;place-items:center;font-size:13px}
+.steps .eq{font-size:14.5px}
+.res{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-top:10px}
+.res div{background:#0b1430;border:1px solid var(--line);border-radius:12px;padding:8px 10px;text-align:center;font-size:12.5px;color:var(--muted)}
+.res b{display:block;font-size:19px;color:var(--gold-l);font-variant-numeric:tabular-nums}
+.inrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.inrow .inp{flex:1;min-width:120px}
+table.it{border-collapse:collapse;width:100%;font-size:13px;direction:ltr}table.it td,table.it th{padding:5px 8px;border-bottom:1px solid #ffffff12;text-align:center;font-variant-numeric:tabular-nums}table.it th{color:var(--gold-l)}
+.note{font-size:12.5px;color:var(--muted);line-height:1.75}
+</style>
+</head>
+<body>
+<header class="pg-top">
+  <a class="brand" href="index.html"><span id="logo"></span><div><h1 data-i="title"></h1><div class="sub" data-i="sub"></div></div></a>
+  <button class="ibtn" id="btnLang">EN</button>
+</header>
+<main class="wrap">
+  <p class="lead" data-h="lead" style="font-size:14.5px;color:#d9e0f2"></p>
+  <a href="spherical-course.html" class="panel" style="display:block;text-decoration:none;color:inherit;border-color:var(--gold);margin-bottom:6px"><b style="color:var(--gold-l);font-size:16px" id="crsT"></b><div class="small" id="crsD" style="margin-top:4px;line-height:1.7"></div></a>
+
+  <h2 class="sec" data-i="h1"></h2>
+  <p class="lead" data-h="l1"></p>
+  <div class="panel">
+    <canvas id="sph"></canvas>
+    <div class="ctl">
+      <span data-i="lat"></span><input type="range" id="sLat" min="-90" max="90" step="0.5" value="30"><output id="oLat"></output>
+      <span data-i="dec"></span><input type="range" id="sDec" min="-89" max="89" step="0.5" value="20"><output id="oDec"></output>
+      <span data-i="ha"></span><input type="range" id="sHA" min="-180" max="180" step="0.5" value="-50"><output id="oHA"></output>
+    </div>
+    <div class="inrow" style="margin-top:8px"><button class="btn sm" id="bRun"></button><label class="small" style="display:flex;gap:5px;align-items:center"><input type="checkbox" id="cTri" checked><span data-i="showTri"></span></label></div>
+    <div class="tri"><div class="kv" id="triSides"></div><div class="kv" id="triAngles"></div></div>
+    <p class="note" data-h="sphNote"></p>
+    <details class="math"><summary data-i="mathT"></summary><div data-h="m1"></div></details>
+  </div>
+
+  <h2 class="sec" data-i="h2"></h2>
+  <p class="lead" data-h="l2"></p>
+  <div class="panel">
+    <div class="inrow">
+      <select class="inp" id="selStar"></select>
+      <select class="inp" id="selCity"></select>
+      <input class="inp" type="date" id="inDate" style="max-width:170px">
+    </div>
+    <div class="res" id="rsRes"></div>
+    <ol class="steps" id="rsSteps" style="margin-top:12px"></ol>
+    <p class="note" data-h="rsNote"></p>
+  </div>
+
+  <h2 class="sec" data-i="h3"></h2>
+  <p class="lead" data-h="l3"></p>
+  <div class="panel">
+    <canvas id="kep"></canvas>
+    <div class="inrow" style="margin-top:8px" id="kPre"></div>
+    <div class="ctl">
+      <span data-i="ecc"></span><input type="range" id="sE" min="0" max="0.97" step="0.001" value="0.2056"><output id="oE"></output>
+      <span data-i="meanAn"></span><input type="range" id="sM" min="0" max="360" step="0.5" value="60"><output id="oM"></output>
+    </div>
+    <div class="inrow" style="margin-top:8px"><button class="btn sm" id="bKep"></button><label class="small" style="display:flex;gap:5px;align-items:center"><input type="checkbox" id="cArea" checked><span data-i="areas"></span></label></div>
+    <div class="tri"><div class="kv" id="kKV"></div><div style="overflow-x:auto"><table class="it" id="kIt"></table></div></div>
+    <details class="math"><summary data-i="mathT"></summary><div data-h="m3"></div></details>
+  </div>
+
+  <h2 class="sec" data-i="hRef"></h2>
+  <div class="panel note" id="refs"></div>
+  <footer id="foot" style="text-align:center;color:var(--muted);font-size:12.5px;margin-top:26px;line-height:1.8"></footer>
+</main>
+<script src="js/common.js"></script>
+<script src="js/astro.js"></script>
+<script src="js/skydata.js"></script>
+<script>
+(function(){
+const $=id=>document.getElementById(id);let lang=KH.getLang();const N=(x,d)=>KH.num(x,d,lang);
+const D=Math.PI/180,R=180/Math.PI;
+const L={ar:{
+title:'الفلك الكروي',sub:'المثلث الفلكي، والشروق والعبور والغروب، ومعادلة كبلر',
+lead:'نرى النجوم كأنها مثبتة على كرة كبيرة تدور حولنا: «الكرة السماوية». الفلك الكروي هو هندسة هذه الكرة، وبه نحوّل الإحداثيات، ونحسب أوقات الشروق والغروب والعبور، ومواقيت الصلاة، واتجاه القبلة. ثم ننتقل إلى معادلة كبلر التي تحدد موضع الكوكب في مداره في أي لحظة.',
+h1:'🌐 الكرة السماوية والمثلث الفلكي PZX',
+l1:'اسحب لتدوير الكرة. غيّر خط عرض الراصد φ، وميل النجم δ، وزاويته الساعية H، وشاهد كيف يتغير «المثلث الفلكي» الذي رؤوسه: القطب السماوي P، والسمت (سمت الرأس) Z، والنجم X. كل حسابات الفلك الكروي هي حل لهذا المثلث.',
+lat:'خط عرض الراصد φ',dec:'ميل النجم δ',ha:'الزاوية الساعية H',run:'▶ دوران يومي',stop:'⏸ إيقاف',showTri:'إظهار المثلث',
+sides:'أضلاع المثلث',angles:'زوايا المثلث',
+sPZ:'PZ = 90° − φ (تمام العرض)',sPX:'PX = 90° − δ (تمام الميل)',sZX:'ZX = 90° − h (المسافة السمتية z)',
+aP:'الزاوية عند P = H (الزاوية الساعية)',aZ:'الزاوية عند Z = السمت A (أو 360° − A)',aX:'الزاوية عند X = q (الزاوية الاختلافية)',
+alt:'الارتفاع h',az:'السمت A (من الشمال)',
+sphNote:'الألوان: <span style="color:#7ee2a8">الأفق</span>، <span style="color:#f1d27a">خط الاستواء السماوي</span>، <span style="color:#ff9f5a">المسار اليومي للنجم</span>، <span style="color:#c39bff">خط الزوال</span>. الأجزاء خلف الكرة مرسومة متقطعة. جرّب φ = 90° (القطب: النجوم تدور موازية للأفق) و φ = 0° (الاستواء: كل النجوم تشرق عمودية على الأفق).',
+mathT:'📐 التفاصيل الرياضية',
+m1:`<p><b>قانون جيب التمام</b> للمثلث الكروي (الضلع ZX مقابل الزاوية H):</p><div class="eq">cos z = cos(90°−φ) cos(90°−δ) + sin(90°−φ) sin(90°−δ) cos H</div><div class="eq">⇒  sin h = sin φ sin δ + cos φ cos δ cos H</div>
+<p>وللسمت (مقيسًا من الشمال نحو الشرق):</p><div class="eq">tan A = − sin H / ( tan δ cos φ − sin φ cos H )</div>
+<p><b>قانون الجيوب</b>:</p><div class="eq">sin H / sin z = sin A / sin(90°−δ) = sin q / sin(90°−φ)</div>
+<p>والزاوية الاختلافية q (مهمة لتوجيه صور الأجرام ولرسم الهلال):</p><div class="eq">tan q = sin H / ( tan φ cos δ − sin δ cos H )</div>
+<p>نتائج مباشرة: ارتفاع النجم عند العبور h<sub>max</sub> = 90° − |φ − δ|، والنجم لا يغرب (حول قطبي) إذا كان δ &gt; 90° − φ، ولا يشرق أبدًا إذا كان δ &lt; −(90° − φ). وارتفاع القطب السماوي فوق الأفق يساوي خط العرض φ، وهي الطريقة التي حدد بها الملاحون العرب العرض بقياس ارتفاع الجدي.</p>`,
+h2:'⏱️ حساب الشروق والعبور والغروب خطوة بخطوة',
+l2:'اختر نجمًا وموقعًا وتاريخًا، وتابع الحساب كما يُكتب في كراسة المحاضرة: كل خطوة بمعادلتها وأرقامها الفعلية.',
+star:'النجم',city:'المكان',
+rise:'الشروق',transit:'العبور',set:'الغروب',hmax:'أقصى ارتفاع',azR:'سمت الشروق',azS:'سمت الغروب',circ:'لا يغرب (حول قطبي)',never:'لا يشرق من هذا المكان',
+rsNote:'نعتبر h₀ = −0°34′ (أثر الانكسار عند الأفق) للنجوم؛ وللشمس h₀ = −0°50′ لإضافة نصف قطرها. الفرق عن الحساب الدقيق في الأطلس (الذي يتتبع الارتفاع عدديًا) أقل من دقيقة واحدة للنجوم.',
+steps:{
+s1:(p)=>`<b>الإحداثيات لتاريخ الرصد.</b> نجم ${p.name}: α₂₀₀₀ = ${p.a0}، δ₂₀₀₀ = ${p.d0}. بعد تصحيح المبادرة من J2000 إلى تاريخ الرصد (Meeus 21.2): α = ${p.a}، δ = ${p.d}.`,
+s2:(p)=>`<b>الزاوية الساعية عند الشروق/الغروب</b> من قانون جيب التمام بوضع h = h₀ = ${p.h0}:<div class="eq">cos H₀ = (sin h₀ − sin φ sin δ) / (cos φ cos δ) = ${p.cosH0}</div>${p.H0txt}`,
+s3:(p)=>`<b>الزمن النجمي في غرينتش عند 0ʰ UT</b> لليوم (JD = ${p.jd0}):<div class="eq">θ₀ = 100.46061837° + 36000.770053608° T + … = ${p.th0}</div>`,
+s4:(p)=>`<b>لحظة العبور.</b> يعبر النجم خط الزوال عندما يصبح الزمن النجمي المحلي مساويًا لمطلعه المستقيم: θ₀ + 360.985647° m + λ = α، أي:<div class="eq">m₀ = (α − λ − θ₀) / 360.985647° = ${p.m0}  يوم</div>أي ${p.tUT} بالتوقيت العالمي = ${p.tLoc} بالتوقيت المحلي.`,
+s5:(p)=>`<b>الشروق والغروب</b> قبل العبور وبعده بمقدار H₀ (محوّلة إلى زمن شمسي بالقسمة على 1.0027379):<div class="eq">m₁ = m₀ − H₀/360.985647° ,  m₂ = m₀ + H₀/360.985647°</div>وإذا خرجت m خارج المدى [0, 1) نضيف أو نطرح يومًا نجميًا (0.99727 يوم شمسي) حتى يقع الحدث في اليوم المطلوب. الشروق ${p.rise}، والغروب ${p.set} (بالتوقيت المحلي).`,
+s6:(p)=>`<b>السمت عند الشروق</b> (من الشمال):<div class="eq">cos A = (sin δ − sin φ sin h₀) / (cos φ cos h₀) = ${p.cosA}  ⇒  A = ${p.A}</div>وأقصى ارتفاع عند العبور h<sub>max</sub> = 90° − |φ − δ| = ${p.hmax}.`},
+h3:'🪐 معادلة كبلر: أين الكوكب الآن؟',
+l3:'الكوكب يتحرك أسرع قرب الحضيض وأبطأ قرب الأوج (قانون كبلر الثاني: مساحات متساوية في أزمنة متساوية). لمعرفة موضعه بعد زمن t نحل معادلة كبلر M = E − e sin E، وهي لا تُحل جبريًا، لذلك نحلّها بالتكرار (طريقة نيوتن). جرّب مذنب هالي!',
+ecc:'الاختلاف المركزي e',meanAn:'الشذوذ المتوسط M',kRun:'▶ تحريك الكوكب',kStop:'⏸ إيقاف',areas:'إظهار المساحات المتساوية',
+kE:'الشذوذ اللامركزي E',kNu:'الشذوذ الحقيقي ν',kR:'البعد r / a',kV:'السرعة v / v_متوسطة',kIt:'تكرارات نيوتن',
+pres:[['عطارد',0.2056],['الأرض',0.0167],['المريخ',0.0934],['مذنب هالي',0.967]],
+m3:`<p><b>الشذوذ المتوسط</b> يزداد بانتظام مع الزمن: M = n (t − τ) حيث n = 2π/P و τ لحظة المرور بالحضيض.</p><div class="eq">M = E − e sin E   (معادلة كبلر)</div>
+<p>الحل بطريقة نيوتن–رافسون لدالة f(E) = E − e sin E − M:</p><div class="eq">E<sub>k+1</sub> = E<sub>k</sub> − (E<sub>k</sub> − e sin E<sub>k</sub> − M) / (1 − e cos E<sub>k</sub>)</div>
+<p>نبدأ بـ E₀ = M (أو E₀ = π عندما e &gt; 0.8 لضمان التقارب). التقارب تربيعي: يتضاعف عدد الأرقام الصحيحة تقريبًا في كل خطوة، كما يظهر في الجدول.</p>
+<p>ثم الشذوذ الحقيقي والبعد:</p><div class="eq">tan(ν/2) = √[(1+e)/(1−e)] · tan(E/2) ,   r = a (1 − e cos E)</div>
+<p>والسرعة من معادلة الحيوية (vis-viva): v² = GM (2/r − 1/a)، فنسبة سرعة الحضيض إلى الأوج = (1+e)/(1−e)، وهي لمذنب هالي ≈ 60.</p>`,
+hRef:'📚 المراجع'
+},en:{
+title:'Spherical Astronomy',sub:'The PZX triangle, rise–transit–set, and Kepler’s equation',
+lead:'We see the stars as if fixed on a huge sphere turning around us: the celestial sphere. Spherical astronomy is the geometry of that sphere — how we convert coordinates and compute rising, transit and setting times, prayer times and the Qibla. Then we move to Kepler’s equation, which gives a planet’s position in its orbit at any moment.',
+h1:'🌐 The celestial sphere and the PZX triangle',
+l1:'Drag to rotate the sphere. Change the observer’s latitude φ, the star’s declination δ and hour angle H, and watch the astronomical triangle whose vertices are the celestial pole P, the zenith Z and the star X. Every spherical-astronomy calculation is a solution of this triangle.',
+lat:'Observer latitude φ',dec:'Star declination δ',ha:'Hour angle H',run:'▶ Diurnal motion',stop:'⏸ Stop',showTri:'Show triangle',
+sides:'Sides',angles:'Angles',
+sPZ:'PZ = 90° − φ (co-latitude)',sPX:'PX = 90° − δ (co-declination)',sZX:'ZX = 90° − h (zenith distance z)',
+aP:'Angle at P = H (hour angle)',aZ:'Angle at Z = azimuth A (or 360° − A)',aX:'Angle at X = q (parallactic angle)',
+alt:'Altitude h',az:'Azimuth A (from north)',
+sphNote:'Colours: <span style="color:#7ee2a8">horizon</span>, <span style="color:#f1d27a">celestial equator</span>, <span style="color:#ff9f5a">the star’s diurnal circle</span>, <span style="color:#c39bff">meridian</span>. Parts behind the sphere are dashed. Try φ = 90° (pole: stars circle parallel to the horizon) and φ = 0° (equator: every star rises perpendicular to the horizon).',
+mathT:'📐 Mathematical details',
+m1:`<p>The spherical <b>cosine rule</b> (side ZX opposite angle H):</p><div class="eq">cos z = cos(90°−φ) cos(90°−δ) + sin(90°−φ) sin(90°−δ) cos H</div><div class="eq">⇒  sin h = sin φ sin δ + cos φ cos δ cos H</div><p>Azimuth (from north through east):</p><div class="eq">tan A = − sin H / ( tan δ cos φ − sin φ cos H )</div><p>The <b>sine rule</b>:</p><div class="eq">sin H / sin z = sin A / sin(90°−δ) = sin q / sin(90°−φ)</div><p>The parallactic angle q (needed to orient images and to draw the crescent):</p><div class="eq">tan q = sin H / ( tan φ cos δ − sin δ cos H )</div><p>Direct consequences: transit altitude h<sub>max</sub> = 90° − |φ − δ|; a star is circumpolar if δ &gt; 90° − φ and never rises if δ &lt; −(90° − φ); the pole’s altitude equals the latitude — how Arab navigators found latitude from the altitude of Polaris.</p>`,
+h2:'⏱️ Rise, transit and set — step by step',
+l2:'Pick a star, place and date, and follow the computation as you would write it in lecture notes: every step with its formula and the actual numbers.',
+star:'Star',city:'Place',
+rise:'Rise',transit:'Transit',set:'Set',hmax:'Max altitude',azR:'Rising azimuth',azS:'Setting azimuth',circ:'Never sets (circumpolar)',never:'Never rises here',
+rsNote:'We use h₀ = −0°34′ (horizon refraction) for stars; for the Sun h₀ = −0°50′ adds its semi-diameter. The difference from the exact numerical tracking in the Atlas is under one minute for stars.',
+steps:{
+s1:(p)=>`<b>Coordinates of date.</b> ${p.name}: α₂₀₀₀ = ${p.a0}, δ₂₀₀₀ = ${p.d0}. After precession from J2000 to the date (Meeus 21.2): α = ${p.a}, δ = ${p.d}.`,
+s2:(p)=>`<b>Hour angle at rising/setting</b> from the cosine rule with h = h₀ = ${p.h0}:<div class="eq">cos H₀ = (sin h₀ − sin φ sin δ) / (cos φ cos δ) = ${p.cosH0}</div>${p.H0txt}`,
+s3:(p)=>`<b>Greenwich sidereal time at 0ʰ UT</b> of the day (JD = ${p.jd0}):<div class="eq">θ₀ = 100.46061837° + 36000.770053608° T + … = ${p.th0}</div>`,
+s4:(p)=>`<b>Transit.</b> The star crosses the meridian when local sidereal time equals its right ascension: θ₀ + 360.985647° m + λ = α, so<div class="eq">m₀ = (α − λ − θ₀) / 360.985647° = ${p.m0}  day</div>i.e. ${p.tUT} UT = ${p.tLoc} local time.`,
+s5:(p)=>`<b>Rise and set</b> are H₀ before and after transit (converted to solar time by dividing by 1.0027379):<div class="eq">m₁ = m₀ − H₀/360.985647° ,  m₂ = m₀ + H₀/360.985647°</div>If m falls outside [0, 1) we add or subtract one sidereal day (0.99727 solar day) so the event lies on the chosen date. Rise ${p.rise}, set ${p.set} (local time).`,
+s6:(p)=>`<b>Rising azimuth</b> (from north):<div class="eq">cos A = (sin δ − sin φ sin h₀) / (cos φ cos h₀) = ${p.cosA}  ⇒  A = ${p.A}</div>Transit altitude h<sub>max</sub> = 90° − |φ − δ| = ${p.hmax}.`},
+h3:'🪐 Kepler’s equation: where is the planet now?',
+l3:'A planet moves faster near perihelion and slower near aphelion (Kepler’s second law: equal areas in equal times). To find its position after time t we solve Kepler’s equation M = E − e sin E, which has no algebraic solution, so we iterate (Newton’s method). Try Halley’s comet!',
+ecc:'Eccentricity e',meanAn:'Mean anomaly M',kRun:'▶ Move the planet',kStop:'⏸ Stop',areas:'Show equal areas',
+kE:'Eccentric anomaly E',kNu:'True anomaly ν',kR:'Distance r / a',kV:'Speed v / v_mean',kIt:'Newton iterations',
+pres:[['Mercury',0.2056],['Earth',0.0167],['Mars',0.0934],['Halley’s comet',0.967]],
+m3:`<p>The <b>mean anomaly</b> grows uniformly with time: M = n (t − τ), with n = 2π/P and τ the perihelion time.</p><div class="eq">M = E − e sin E   (Kepler’s equation)</div><p>Newton–Raphson for f(E) = E − e sin E − M:</p><div class="eq">E<sub>k+1</sub> = E<sub>k</sub> − (E<sub>k</sub> − e sin E<sub>k</sub> − M) / (1 − e cos E<sub>k</sub>)</div><p>Start from E₀ = M (or E₀ = π when e &gt; 0.8, to guarantee convergence). Convergence is quadratic: the number of correct digits roughly doubles each step, as the table shows.</p><p>Then the true anomaly and distance:</p><div class="eq">tan(ν/2) = √[(1+e)/(1−e)] · tan(E/2) ,   r = a (1 − e cos E)</div><p>Speed from the vis-viva equation v² = GM (2/r − 1/a): the perihelion-to-aphelion speed ratio is (1+e)/(1−e), about 60 for Halley’s comet.</p>`,
+hRef:'📚 References'
+}};
+const t=k=>L[lang][k];
+const fmtDeg=(x,dp)=>N(x,dp===undefined?2:dp)+'°';
+function dms(x){const s=x<0?'−':'+';x=Math.abs(x);let d=Math.floor(x),m=Math.floor((x-d)*60),sec=Math.round(((x-d)*60-m)*60);if(sec===60){sec=0;m++;}if(m===60){m=0;d++;}return KH.digits(`${s}${d}° ${String(m).padStart(2,'0')}′ ${String(sec).padStart(2,'0')}″`,lang);}
+function hms(deg){let h=((deg%360)+360)%360/15;let H=Math.floor(h),m=Math.floor((h-H)*60),s=Math.round(((h-H)*60-m)*60);if(s===60){s=0;m++;}if(m===60){m=0;H=(H+1)%24;}return KH.digits(`${H}ʰ ${String(m).padStart(2,'0')}ᵐ ${String(s).padStart(2,'0')}ˢ`,lang);}
+
+// ================= 1. celestial sphere =================
+const cv=$('sph');let yaw=-0.75,pitch=0.32,runAnim=false;
+function starNEU(phi,dec,H){ // horizon vector [N,E,U]
+  const sh=Math.sin(phi)*Math.sin(dec)+Math.cos(phi)*Math.cos(dec)*Math.cos(H);
+  const cAs=Math.sin(phi)*Math.cos(dec)*Math.cos(H)-Math.cos(phi)*Math.sin(dec); // cos h cos A_south
+  const sAs=Math.cos(dec)*Math.sin(H); // cos h sin A_south (westward)
+  return [-cAs,-sAs,sh];
+}
+function slerp(a,b,n){const d=Math.acos(Math.max(-1,Math.min(1,a[0]*b[0]+a[1]*b[1]+a[2]*b[2])));const out=[];for(let i=0;i<=n;i++){const s=i/n;if(d<1e-6){out.push(a);continue;}const k1=Math.sin((1-s)*d)/Math.sin(d),k2=Math.sin(s*d)/Math.sin(d);out.push([a[0]*k1+b[0]*k2,a[1]*k1+b[1]*k2,a[2]*k1+b[2]*k2]);}return out;}
+function drawSphere(){
+  const dpr=Math.min(2,devicePixelRatio||1),W=cv.clientWidth,H=cv.clientHeight;cv.width=W*dpr;cv.height=H*dpr;const g=cv.getContext('2d');g.scale(dpr,dpr);g.direction='ltr';
+  const phi=+$('sLat').value*D,dec=+$('sDec').value*D,ha=+$('sHA').value*D,Rr=Math.min(W,H)*0.38,cx=W/2,cy=H/2+4;
+  // view: rotate [N,E,U] by yaw about U then pitch about screen x
+  const cyw=Math.cos(yaw),syw=Math.sin(yaw),cp=Math.cos(pitch),sp=Math.sin(pitch);
+  const P=v=>{const x=v[1]*cyw-v[0]*syw,y0=v[1]*syw+v[0]*cyw;const y=y0*cp-v[2]*sp*0,z=v[2];// x right, y depth
+    const Y=z*cp-y0*sp,D_=y0*cp+z*sp;return [cx+x*Rr,cy-Y*Rr,D_];};
+  const curve=(pts,col,w,dashBack)=>{g.lineWidth=w;g.strokeStyle=col;for(let i=1;i<pts.length;i++){const a=P(pts[i-1]),b=P(pts[i]);const back=(a[2]+b[2])/2>0.0;g.setLineDash(back&&dashBack!==false?[4,4]:[]);g.globalAlpha=back?0.45:1;g.beginPath();g.moveTo(a[0],a[1]);g.lineTo(b[0],b[1]);g.stroke();}g.setLineDash([]);g.globalAlpha=1;};
+  // sphere outline
+  g.fillStyle='rgba(30,50,110,.18)';g.beginPath();g.arc(cx,cy,Rr,0,7);g.fill();g.strokeStyle='rgba(255,255,255,.25)';g.lineWidth=1;g.stroke();
+  // horizon plane
+  const hz=[];for(let a=0;a<=360;a+=4)hz.push([Math.cos(a*D),Math.sin(a*D),0]);
+  g.fillStyle='rgba(126,226,168,.10)';g.beginPath();hz.forEach((v,i)=>{const p=P(v);i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]);});g.fill();
+  curve(hz,'#7ee2a8',1.8);
+  // meridian (N-Z-S-Nadir)
+  const mer=[];for(let a=0;a<=360;a+=4)mer.push([Math.cos(a*D),0,Math.sin(a*D)]);curve(mer,'#c39bff',1.2);
+  // celestial equator: points with dec=0
+  const eq=[];for(let h=-180;h<=180;h+=4)eq.push(starNEU(phi,0,h*D));curve(eq,'#f1d27a',1.6);
+  // star diurnal circle
+  const dc=[];for(let h=-180;h<=180;h+=3)dc.push(starNEU(phi,dec,h*D));curve(dc,'#ff9f5a',1.6);
+  // axis
+  const Pn=[Math.cos(phi),0,Math.sin(phi)],Ps=[-Pn[0],0,-Pn[2]];const a1=P(Pn),a2=P(Ps);g.strokeStyle='rgba(255,255,255,.4)';g.setLineDash([2,4]);g.beginPath();g.moveTo(a1[0],a1[1]);g.lineTo(a2[0],a2[1]);g.stroke();g.setLineDash([]);
+  const Z=[0,0,1],X=starNEU(phi,dec,ha);
+  // triangle
+  if($('cTri').checked){g.fillStyle='rgba(111,168,255,.18)';const tri=[...slerp(Pn,Z,30),...slerp(Z,X,30),...slerp(X,Pn,30)];g.beginPath();tri.forEach((v,i)=>{const p=P(v);i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]);});g.fill();
+    curve(slerp(Pn,Z,40),'#6fa8ff',2.6,false);curve(slerp(Z,X,40),'#6fa8ff',2.6,false);curve(slerp(X,Pn,40),'#6fa8ff',2.6,false);}
+  // points & labels
+  const lab=(v,txt,col,r)=>{const p=P(v);g.globalAlpha=p[2]>0?0.55:1;g.fillStyle=col;g.beginPath();g.arc(p[0],p[1],r||4,0,7);g.fill();g.font='bold 14px sans-serif';g.fillText(txt,p[0]+7,p[1]-7);g.globalAlpha=1;};
+  const ar=lang==='ar';
+  [['N',ar?'ش':'N',0],['E',ar?'ق':'E',90],['S',ar?'ج':'S',180],['W',ar?'غ':'W',270]].forEach(c=>lab([Math.cos(c[2]*D),Math.sin(c[2]*D),0],c[1],'#7ee2a8',3));
+  lab(Z,'Z','#fff');lab(Pn,'P','#f1d27a');const sx=P(X);g.fillStyle='rgba(255,200,120,.35)';g.beginPath();g.arc(sx[0],sx[1],12,0,7);g.fill();lab(X,'X ★','#ffcf7a',5);
+  // observer
+  g.fillStyle='#fff';g.beginPath();g.arc(cx,cy,3,0,7);g.fill();
+  // readouts
+  const h=Math.asin(X[2])*R,A=(Math.atan2(X[1],X[0])*R+360)%360;
+  const q=Math.atan2(Math.sin(ha),Math.tan(phi)*Math.cos(dec)-Math.sin(dec)*Math.cos(ha))*R;
+  $('oLat').textContent=fmtDeg(+$('sLat').value,1);$('oDec').textContent=fmtDeg(+$('sDec').value,1);$('oHA').textContent=N(+$('sHA').value,1)+'° = '+N(+$('sHA').value/15,2)+'ʰ';
+  $('triSides').innerHTML=`<b style="grid-column:1/-1;color:var(--gold-l)">${t('sides')}</b><b>${t('sPZ')}</b><span>${fmtDeg(90-phi*R)}</span><b>${t('sPX')}</b><span>${fmtDeg(90-dec*R)}</span><b>${t('sZX')}</b><span>${fmtDeg(90-h)}</span><b>${t('alt')}</b><span>${fmtDeg(h)}</span>`;
+  $('triAngles').innerHTML=`<b style="grid-column:1/-1;color:var(--gold-l)">${t('angles')}</b><b>${t('aP')}</b><span>${fmtDeg(+$('sHA').value)}</span><b>${t('aZ')}</b><span>${fmtDeg(A)}</span><b>${t('aX')}</b><span>${fmtDeg(q)}</span><b>${t('az')}</b><span>${fmtDeg(A)} ${KH.compass?'('+KH.compass(A,lang)+')':''}</span>`;
+}
+let drag=null;cv.addEventListener('pointerdown',e=>{drag=[e.clientX,e.clientY,yaw,pitch];cv.setPointerCapture(e.pointerId);});
+cv.addEventListener('pointermove',e=>{if(!drag)return;yaw=drag[2]+(e.clientX-drag[0])*0.008;pitch=Math.max(-1.2,Math.min(1.45,drag[3]+(e.clientY-drag[1])*0.006));drawSphere();});
+cv.addEventListener('pointerup',()=>drag=null);
+['sLat','sDec','sHA','cTri'].forEach(id=>$(id).oninput=drawSphere);
+
+// ================= 2. rise/transit/set =================
+const SD=window.SKYDATA;const A=window.Astro;
+const STARS=[['Sirius','الشعرى اليمانية',32349],['Canopus','سهيل',30438],['Arcturus','السماك الرامح',69673],['Vega','النسر الواقع',91262],['Capella','العيوق',24608],['Rigel','رجل الجبار',24436],['Betelgeuse','منكب الجوزاء',27989],['Aldebaran','الدبران',21421],['Antares','قلب العقرب',80763],['Spica','السماك الأعزل',65474],['Altair','النسر الطائر',97649],['Deneb','ذنب الدجاجة',102098],['Regulus','قلب الأسد',49669],['Fomalhaut','فم الحوت',113368],['Polaris','الجدي',11767]];
+function starRD(hip){for(const k in SD.N){if(SD.N[k][4]===hip){const s=SD.S[+k];return [s[0],s[1]];}}return null;}
+function computeRS(){
+  const st=STARS[+$('selStar').value],city=KH.CITIES[+$('selCity').value];const rd=starRD(st[2]);if(!rd){$('rsSteps').innerHTML='?';return;}
+  const dstr=$('inDate').value;const [Y,Mo,Dd]=dstr.split('-').map(Number);const t0=Date.UTC(Y,Mo-1,Dd);
+  const J0=A.jd(new Date(t0)),T=A.cent(J0);const Pm=A.precMatrix(T);const v=A.apply(Pm,A.radec2vec(rd[0],rd[1]));const rr=A.vec2radec(v);let a=rr[0],d=rr[1];if(a<0)a+=360;
+  const phi=city.lat*D,lam=city.lon,h0=-0.5667;
+  const cosH0=(Math.sin(h0*D)-Math.sin(phi)*Math.sin(d*D))/(Math.cos(phi)*Math.cos(d*D));
+  const th0=A.norm360(100.46061837+36000.770053608*T+0.000387933*T*T-T*T*T/38710000);
+  let m0=((a-lam-th0)/360.985647)%1;if(m0<0)m0+=1;
+  const ms=m=>t0+m*86400000;const loc={tz:city.tz};
+  const ft=x=>KH.fmtTime(x,loc,lang,true),fu=x=>KH.digits(new Date(x).toISOString().substr(11,8),lang);
+  const hmax=90-Math.abs(city.lat-d);
+  let res=`<div>${t('transit')}<b>${ft(ms(m0))}</b></div><div>${t('hmax')}<b>${fmtDeg(hmax,1)}</b></div>`;
+  let H0txt,rise='—',set='—',cosA='—',Az='—';
+  if(cosH0<-1){H0txt=`<div style="color:#7ee2a8">cos H₀ &lt; −1 ⇒ ${t('circ')}</div>`;res=`<div>${t('rise')}<b style="font-size:14px">${t('circ')}</b></div>`+res;}
+  else if(cosH0>1){H0txt=`<div style="color:#ff9fb3">cos H₀ &gt; 1 ⇒ ${t('never')}</div>`;res=`<div>${t('rise')}<b style="font-size:14px">${t('never')}</b></div>`;}
+  else{const H0=Math.acos(cosH0)*R;H0txt=`<div class="eq">H₀ = ${N(H0,4)}° = ${N(H0/15,4)}ʰ</div>`;
+    let m1=m0-H0/360.985647,m2=m0+H0/360.985647;const SDAY=360/360.985647;if(m1<0)m1+=SDAY;if(m2>=1)m2-=SDAY; /* here is the modification: keep events within the chosen date (one sidereal day = 0.99727 solar day) */rise=ft(ms(m1));set=ft(ms(m2));
+    const ca=(Math.sin(d*D)-Math.sin(phi)*Math.sin(h0*D))/(Math.cos(phi)*Math.cos(h0*D));cosA=N(ca,5);Az=fmtDeg(Math.acos(ca)*R,2);
+    res=`<div>${t('rise')}<b>${rise}</b></div>`+res+`<div>${t('set')}<b>${set}</b></div><div>${t('azR')}<b>${fmtDeg(Math.acos(ca)*R,1)}</b></div><div>${t('azS')}<b>${fmtDeg(360-Math.acos(ca)*R,1)}</b></div>`;}
+  $('rsRes').innerHTML=res;
+  const iso=x=>`<span dir="ltr" style="unicode-bidi:isolate">${x}</span>`;const p0={name:lang==='ar'?st[1]:st[0],a0:hms(rd[0]),d0:dms(rd[1]),a:hms(a),d:dms(d),h0:'−0° 34′',cosH0:N(cosH0,5),H0txt,jd0:N(J0,1),th0:N(th0,4)+'° = '+hms(th0),m0:N(m0,5),tUT:fu(ms(m0)),tLoc:ft(ms(m0)),rise,set,cosA,A:Az,hmax:fmtDeg(hmax,2)};const p={};for(const k in p0)p[k]=(k==='name'||k==='H0txt'||p0[k]==='—')?p0[k]:iso(p0[k]);
+  const S=t('steps');let html=['s1','s2','s3','s4'].map(k=>`<li>${S[k](p)}</li>`).join('');if(Math.abs(cosH0)<=1)html+=`<li>${S.s5(p)}</li><li>${S.s6(p)}</li>`;
+  $('rsSteps').innerHTML=html;
+}
+
+// ================= 3. Kepler =================
+const kc=$('kep');let kRun=false,kM=60;
+function solveKepler(M,e){const it=[];let E=e>0.8?Math.PI:M;for(let k=0;k<12;k++){const f=E-e*Math.sin(E)-M;it.push([k,E,f]);if(Math.abs(f)<1e-14)break;E=E-f/(1-e*Math.cos(E));}return {E,it};}
+function drawKepler(){
+  const dpr=Math.min(2,devicePixelRatio||1),W=kc.clientWidth,H=kc.clientHeight;kc.width=W*dpr;kc.height=H*dpr;const g=kc.getContext('2d');g.scale(dpr,dpr);g.direction='ltr';
+  const e=+$('sE').value,M=kM*D;$('oE').textContent=N(e,4);$('oM').textContent=N(kM,1)+'°';
+  const a=Math.min(W*0.42/(1),H*0.45/Math.sqrt(1-e*e)*1),b=a*Math.sqrt(1-e*e);const cx=W/2,cy=H/2;const fx=cx+a*e; // focus (Sun) at +ae
+  // to fit: ellipse centred
+  g.strokeStyle='rgba(111,168,255,.6)';g.lineWidth=1.5;g.beginPath();g.ellipse(cx,cy,a,b,0,0,7);g.stroke();
+  // auxiliary circle
+  g.strokeStyle='rgba(255,255,255,.12)';g.setLineDash([3,4]);g.beginPath();g.arc(cx,cy,a,0,7);g.stroke();g.setLineDash([]);
+  const pos=Mx=>{const E=solveKepler(Mx,e).E;return [cx+a*Math.cos(E),cy-b*Math.sin(E),E];};
+  // equal areas: 12 equal time slices
+  if($('cArea').checked){for(let k=0;k<12;k++){const M0=k*30*D,M1=(k+1)*30*D;g.fillStyle=k%2?'rgba(241,210,122,.13)':'rgba(111,168,255,.13)';g.beginPath();g.moveTo(fx,cy);for(let s=0;s<=20;s++){const p=pos(M0+(M1-M0)*s/20);g.lineTo(p[0],p[1]);}g.closePath();g.fill();
+    const p=pos(M0);g.fillStyle='rgba(255,255,255,.5)';g.beginPath();g.arc(p[0],p[1],2,0,7);g.fill();}}
+  // Sun
+  const gr=g.createRadialGradient(fx,cy,0,fx,cy,14);gr.addColorStop(0,'#fff6d0');gr.addColorStop(0.5,'#ffc35a');gr.addColorStop(1,'rgba(255,160,40,0)');g.fillStyle=gr;g.beginPath();g.arc(fx,cy,14,0,7);g.fill();
+  // empty focus
+  g.fillStyle='rgba(255,255,255,.3)';g.beginPath();g.arc(cx-a*e,cy,2.5,0,7);g.fill();
+  const sol=solveKepler(M,e),E=sol.E,px=cx+a*Math.cos(E),py=cy-b*Math.sin(E);
+  // E construction: point on auxiliary circle
+  const qx=cx+a*Math.cos(E),qy=cy-a*Math.sin(E);g.strokeStyle='rgba(195,155,255,.8)';g.setLineDash([3,3]);g.beginPath();g.moveTo(cx,cy);g.lineTo(qx,qy);g.lineTo(px,py);g.stroke();g.setLineDash([]);
+  g.fillStyle='#c39bff';g.font='12px sans-serif';g.fillText('E',cx+18*Math.cos(E/2),cy-18*Math.sin(E/2));
+  // radius vector
+  g.strokeStyle='#f1d27a';g.lineWidth=1.6;g.beginPath();g.moveTo(fx,cy);g.lineTo(px,py);g.stroke();
+  g.fillStyle='#6fa8ff';g.beginPath();g.arc(px,py,6,0,7);g.fill();
+  // apsides labels
+  g.fillStyle='#9fb0d6';g.font='11.5px sans-serif';g.fillText(lang==='ar'?'الحضيض':'perihelion',cx+a-58,cy+16);g.fillText(lang==='ar'?'الأوج':'aphelion',cx-a+2,cy+16);
+  const nu=2*Math.atan2(Math.sqrt(1+e)*Math.sin(E/2),Math.sqrt(1-e)*Math.cos(E/2));const r=1-e*Math.cos(E);const v=Math.sqrt(2/r-1);
+  $('kKV').innerHTML=`<b>${t('meanAn')}</b><span>${fmtDeg(kM,2)}</span><b>${t('kE')}</b><span>${fmtDeg(E*R,4)}</span><b>${t('kNu')}</b><span>${fmtDeg(((nu*R)+360)%360,4)}</span><b>${t('kR')}</b><span>${N(r,4)}</span><b>${t('kV')}</b><span>${N(v,3)}</span>`;
+  $('kIt').innerHTML=`<tr><th>k</th><th>E<sub>k</sub> (rad)</th><th>f(E<sub>k</sub>)</th></tr>`+sol.it.map(x=>`<tr><td>${x[0]}</td><td>${x[1].toFixed(12)}</td><td>${x[2].toExponential(2)}</td></tr>`).join('');
+}
+$('sE').oninput=drawKepler;$('sM').oninput=()=>{kM=+$('sM').value;drawKepler();};
+
+let last=performance.now();
+function loop(now){const dt=(now-last)/1000;last=now;
+  if(runAnim){let h=+$('sHA').value+dt*30;if(h>180)h-=360;$('sHA').value=h;drawSphere();}
+  if(kRun){kM=(kM+dt*25)%360;$('sM').value=kM;drawKepler();}
+  requestAnimationFrame(loop);}
+
+function page(){
+  document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr';
+  document.querySelectorAll('[data-i]').forEach(e=>{const v=t(e.dataset.i);if(typeof v==='string')e.textContent=v;});
+  document.querySelectorAll('[data-h]').forEach(e=>{e.innerHTML=t(e.dataset.h);});
+  $('btnLang').textContent=lang==='ar'?'EN':'ع';$('logo').innerHTML=KH.logoSVG(36);
+  $('crsT').textContent=lang==='ar'?'📘 الشرح الكامل والمسائل المحلولة ←':'📘 Full theory and solved problems →';$('crsD').textContent=lang==='ar'?'11 فصلًا و33 مسألة محلولة خطوة بخطوة من السنة الأولى إلى الرابعة، بمعطيات قابلة للتغيير.':'11 chapters and 33 problems solved step by step, 1st to 4th year, with editable data.';
+  $('bRun').textContent=runAnim?t('stop'):t('run');$('bKep').textContent=kRun?t('kStop'):t('kRun');
+  const sv=$('selStar').value||'0',cv_=$('selCity').value;
+  $('selStar').innerHTML=STARS.map((s,i)=>`<option value="${i}">${lang==='ar'?s[1]:s[0]}</option>`).join('');$('selStar').value=sv;
+  const l=KH.getLoc();const ci=KH.CITIES.findIndex(c=>Math.abs(c.lat-l.lat)<0.01&&Math.abs(c.lon-l.lon)<0.01);
+  $('selCity').innerHTML=KH.CITIES.map((c,i)=>`<option value="${i}">${lang==='ar'?c.ar:c.en}</option>`).join('');$('selCity').value=cv_||String(Math.max(0,ci));
+  if(!$('inDate').value){const d=new Date();$('inDate').value=d.toISOString().slice(0,10);}
+  $('kPre').innerHTML=t('pres').map(p=>`<button class="chip" data-e="${p[1]}">${p[0]} · e = ${KH.digits(String(p[1]),lang)}</button>`).join('');
+  $('kPre').querySelectorAll('.chip').forEach(b=>b.onclick=()=>{$('sE').value=b.dataset.e;drawKepler();});
+  $('refs').innerHTML=['Smart, W. M. & Green, R. M. (1977) Textbook on Spherical Astronomy, 6th ed., Cambridge University Press','Meeus, J. (1998) Astronomical Algorithms, 2nd ed., Willmann-Bell — ch. 12, 13, 15, 21, 30','Green, R. M. (1985) Spherical Astronomy, Cambridge University Press','Roy, A. E. & Clarke, D. (2003) Astronomy: Principles and Practice, 4th ed.','<b>'+(lang==='ar'?'إحداثيات النجوم':'Star positions')+':</b> Hipparcos (via d3-celestial), J2000'].map(x=>'• '+x).join('<br>');
+  $('foot').innerHTML=`${KH.logoSVG(30)}<br>${lang==='ar'?'إعداد: خالد محمد · قسم الفلك وعلوم الفضاء والأرصاد الجوية، كلية العلوم، جامعة القاهرة · عضو AfAS وAUASS':'By Khaled Mohamed · Astronomy, Space Science & Meteorology Dept., Faculty of Science, Cairo University · Member of AfAS and AUASS'}<br><a href="index.html">${lang==='ar'?'الرئيسية':'Home'}</a>`;
+  document.title=t('title')+' — '+(lang==='ar'?'خالد محمد':'Khaled Mohamed');
+  drawSphere();computeRS();drawKepler();
+}
+$('bRun').onclick=()=>{runAnim=!runAnim;$('bRun').textContent=runAnim?t('stop'):t('run');};
+$('bKep').onclick=()=>{kRun=!kRun;$('bKep').textContent=kRun?t('kStop'):t('kRun');};
+['selStar','selCity','inDate'].forEach(id=>$(id).onchange=computeRS);
+$('btnLang').onclick=()=>{lang=lang==='ar'?'en':'ar';KH.setLang(lang);page();};
+addEventListener('resize',()=>{drawSphere();drawKepler();});
+page();requestAnimationFrame(loop);
+window.__sph={computeRS,solveKepler};
+})();
+</script>
+</body>
+</html>

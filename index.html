@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0f1e">
+<title>الكون بين يديك | The Universe in Your Hands — خالد محمد</title>
+<link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/page.css">
+<style>
+#bg{position:fixed;inset:0;z-index:-1}
+.hero{text-align:center;padding:calc(36px + env(safe-area-inset-top)) 16px 10px}
+.hero .lg{display:inline-block;filter:drop-shadow(0 6px 24px #d4a73c55)}
+.hero h1{font-size:clamp(28px,6vw,46px);margin:14px 0 4px;background:linear-gradient(90deg,#f6e3a1,#d4a73c,#f6e3a1);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:var(--muted);max-width:620px;margin:6px auto;line-height:1.8;font-size:15px}
+.hero .who{font-size:13px;color:#cdd6ee;margin-top:10px}
+.topbar{position:fixed;top:calc(8px + env(safe-area-inset-top));inset-inline-end:12px;z-index:3;display:flex;gap:8px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px;margin-top:18px}
+.cardx{position:relative;display:block;text-decoration:none;color:inherit;padding:18px;border-radius:18px;border:1px solid var(--line);background:linear-gradient(160deg,#16214acc,#0d1430cc);backdrop-filter:blur(8px);overflow:hidden;transition:transform .2s,border-color .2s;min-height:150px}
+.cardx:hover{transform:translateY(-3px);border-color:#d4a73c88}
+.cardx .em{font-size:34px}
+.cardx h3{margin:8px 0 6px;font-size:18px;color:#fff}
+.cardx p{margin:0;color:var(--muted);font-size:13.5px;line-height:1.7}
+.cardx .st{position:absolute;top:14px;inset-inline-end:14px;font-size:11px;padding:3px 9px;border-radius:999px;background:#1f6f4a;color:#c9ffe3;font-weight:700}
+.cardx .st.soon{background:#3b3a5a;color:#d8d4ff}
+.cardx.dis{opacity:.75;cursor:default}
+.locline{margin-top:14px;font-size:13px;color:var(--muted)}
+.locline b{color:var(--gold-l)}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="topbar"><button class="ibtn" id="btnLang">EN</button></div>
+<header class="hero">
+  <span class="lg" id="logo"></span>
+  <h1 data-i="title"></h1>
+  <p data-i="lead"></p>
+  <div class="who" data-i="who"></div>
+  <div class="locline" id="locline"></div>
+</header>
+<main class="wrap"><div class="cards" id="cards"></div></main>
+<footer class="pg-foot" id="foot"></footer>
+<script src="js/common.js"></script>
+<script>
+(function(){
+const $=id=>document.getElementById(id); let lang=KH.getLang();
+const S={
+ ar:{title:'الكون بين يديك',lead:'برنامج فلكي تعليمي تفاعلي: سماء موقعك لحظة بلحظة، وظواهرها القادمة، والمجموعة الشمسية والمجرة، ودورة حياة النجوم، وفيزياء الجاذبية، بصور وفيديوهات رصد حقيقية.',
+  who:'إعداد: خالد محمد · باحث ماجستير في فيزياء الشمس، جامعة القاهرة · عضو الجمعية الفلكية الأفريقية (AfAS) والاتحاد العربي لعلوم الفلك والفضاء (AUASS)',
+  loc:'موقعك الحالي', ready:'متاح', soon:'قيد الإعداد',
+  cards:[['atlas.html','🌌','أطلس السماء','سماء موقعك الآن بأسماء النجوم العربية، والكواكب والقمر بأطواره، وعرض ثنائي وكرة سماوية 3D، ووجّه موبايلك نحو السماء.',1],
+   ['events.html','📅','تقويم الظواهر','ميلاد الهلال وبدايات الشهور (أم القرى، ومصر، وعودة)، والكسوف والخسوف من موقعك، والاقترانات، والشهب، والفصول، ومرور المحطة الدولية.',1],
+   ['prayer.html','🕋','مواقيت الصلاة والقبلة','مواقيت الصلاة لموقعك بطرق الحساب المعتمدة (الهيئة المصرية، أم القرى، وغيرها)، وجدول شهري، واتجاه القبلة، وشرح طريقة الحساب.',1],
+   ['sun.html','☀️','الشمس ونشاطها','تركيب الشمس، والبقع، والتوهجات ببيانات GOES حقيقية، والانبعاثات الكتلية ونموذج وصولها للأرض، والطقس الفضائي، وصور SDO الحية.',1],
+   ['solar-system.html','🪐','المجموعة الشمسية 3D','الكواكب و١٣ قمرًا بخرائطها الحقيقية، في مواقعها الفعلية لأي تاريخ، ومداراتها بالحركة، مع التبديل بين المقياس الحقيقي والتوضيحي.',1],
+   ['galaxy.html','🌀','درب التبانة والمجرات','مجرتنا من الخارج ومكان الشمس فيها، ومنحنى الدوران والمادة المظلمة، وأنواع المجرات، وسلّم المسافات.',1],
+   ['stars.html','⭐','حياة النجوم','اختر كتلة النجم وشاهد ميلاده وتطوره ونهايته على مخطط HR: قزم أبيض، أو نجم نيوتروني، أو ثقب أسود.',1],
+   ['moon.html','🌕','نشأة القمر','٧ نظريات لتكوّن القمر بمحاكاة جسيمية لكل واحدة، ونسبة قبولها، ومميزاتها وعيوبها، وجدول مقارنتها بالأدلة.',1],
+   ['gravity.html','🕳️','الجاذبية والزمكان','من نيوتن إلى أينشتاين: مختبر مدارات ومبادرة عطارد، وعدسات الجاذبية، وتباطؤ الزمن في GPS، وبيانات LIGO الحقيقية لموجات الجاذبية.',1],
+   ['spherical.html','📐','الفلك الكروي','المثلث الكروي، وتحويل الإحداثيات، وحساب العبور والشروق والغروب، ومعادلة كبلر والمدارات خطوة بخطوة.',1],
+   ['spherical-course.html','📘','الفلك الكروي: شرح ومسائل محلولة','11 فصلًا من المثلثات الكروية حتى المبادرة، مع اشتقاق القوانين و33 مسألة محلولة خطوة بخطوة (من السنة الأولى إلى الرابعة) يمكن تغيير معطياتها، وتمارين بإجابات.',1]]},
+ en:{title:'The Universe in Your Hands',lead:'An interactive astronomy program: your sky moment by moment, upcoming events, the Solar System and the Galaxy, the lives of stars and the physics of gravity, with real observational images and videos.',
+  who:'By Khaled Mohamed · MSc researcher in solar physics, Cairo University · Member of the African Astronomical Society (AfAS) and the Arab Union for Astronomy and Space Sciences (AUASS)',
+  loc:'Your location', ready:'Ready', soon:'In progress',
+  cards:[['atlas.html','🌌','Sky Atlas','Your sky right now with Arabic star names, planets and Moon phases, 2D and a 3D celestial sphere, and point-your-phone mode.',1],
+   ['events.html','📅','Sky Events','New crescent and Hijri month starts (Umm al-Qura, Egypt, Odeh), eclipses from your location, conjunctions, meteor showers, seasons and ISS passes.',1],
+   ['prayer.html','🕋','Prayer times & Qibla','Prayer times for your location by the main methods (Egyptian Survey, Umm al-Qura and more), a monthly table, the Qibla direction, and how it is computed.',1],
+   ['sun.html','☀️','The Sun & its activity','Solar structure, sunspots, flares with real GOES data, CMEs and their arrival model, space weather and live SDO images.',1],
+   ['solar-system.html','🪐','Solar System 3D','Planets and 13 moons with real surface maps, at their true positions for any date, animated orbits, true or illustrative scale.',1],
+   ['galaxy.html','🌀','Milky Way & galaxies','Our galaxy from outside and the Sun\'s place in it, the rotation curve and dark matter, galaxy types, and the distance ladder.',1],
+   ['stars.html','⭐','Lives of stars','Pick a stellar mass and watch birth, evolution and death on the HR diagram: white dwarf, neutron star or black hole.',1],
+   ['moon.html','🌕','Origin of the Moon','Seven Moon-origin theories, each with a particle simulation, acceptance level, strengths, weaknesses and an evidence table.',1],
+   ['gravity.html','🕳️','Gravity & spacetime','From Newton to Einstein: an orbit lab with Mercury’s precession, gravitational lensing, GPS time dilation and real LIGO gravitational-wave data.',1],
+   ['spherical.html','📐','Spherical astronomy','Spherical triangles, coordinate transforms, computing transit, rise and set, Kepler\'s equation and orbits step by step.',1],
+   ['spherical-course.html','📘','Spherical astronomy: theory & solved problems','11 chapters from spherical trigonometry to precession, with derivations and 33 problems solved step by step (1st to 4th year) whose data you can change, plus exercises with answers.',1]]}};
+function render(){
+ const s=S[lang]; document.documentElement.lang=lang; document.documentElement.dir=lang==='ar'?'rtl':'ltr'; document.body.lang=lang;
+ document.querySelectorAll('[data-i]').forEach(e=>e.textContent=s[e.dataset.i]);
+ $('btnLang').textContent=lang==='ar'?'EN':'ع'; $('logo').innerHTML=KH.logoSVG(96);
+ const l=KH.getLoc(); $('locline').innerHTML=`${s.loc}: <b>${(KH.CITIES.find(c=>c.id===l.id)||{})[lang]||(l.lat.toFixed(2)+', '+l.lon.toFixed(2))}</b>`;
+ $('cards').innerHTML=s.cards.map(c=>`<a class="cardx${c[4]?'':' dis'}" ${c[4]?`href="${c[0]}"`:''}><span class="st${c[4]?'':' soon'}">${c[4]?s.ready:s.soon}</span><div class="em">${c[1]}</div><h3>${c[2]}</h3><p>${c[3]}</p></a>`).join('');
+ $('foot').innerHTML=s.who; document.title=s.title+' — '+(lang==='ar'?'خالد محمد':'Khaled Mohamed');
+}
+$('btnLang').onclick=()=>{lang=lang==='ar'?'en':'ar';KH.setLang(lang);render();};
+render();
+// starfield
+const c=$('bg'),g=c.getContext('2d');let W,H,st=[];
+function rs(){W=c.width=innerWidth;H=c.height=innerHeight;st=Array.from({length:Math.round(W*H/2500)},()=>({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.3+.2,p:Math.random()*6}));}
+addEventListener('resize',rs);rs();
+(function f(t){g.fillStyle='#0a0f1e';g.fillRect(0,0,W,H);const gr=g.createRadialGradient(W*.7,-H*.1,0,W*.7,-H*.1,H*1.1);gr.addColorStop(0,'#1d2a5a');gr.addColorStop(1,'#0a0f1e00');g.fillStyle=gr;g.fillRect(0,0,W,H);
+ for(const s of st){const a=.45+.55*Math.sin(t/900+s.p);g.fillStyle=`rgba(230,236,255,${a})`;g.beginPath();g.arc(s.x,s.y,s.r,0,7);g.fill();}requestAnimationFrame(f);})(0);
+})();
+</script>
+</body>
+</html>

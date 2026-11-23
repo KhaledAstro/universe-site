@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0f1e">
+<title>درب التبانة والمجرات | The Milky Way & Galaxies</title>
+<link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/page.css">
+<style>
+.stage{position:relative;overflow:hidden;border-radius:16px}
+#mw{width:100%;height:min(70vh,580px);display:block;background:#02030a;touch-action:none;cursor:grab}
+.lbl{position:absolute;transform:translate(-50%,-50%);font-size:11.5px;color:#e8edf9;text-shadow:0 1px 4px #000,0 0 2px #000;pointer-events:none;white-space:nowrap}
+.lbl.sun{color:#f1d27a;font-weight:700;font-size:13px}.lbl.arm{color:#9fc2ff;font-style:italic}
+.row{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;align-items:center}
+#rc{width:100%;height:300px;display:block;background:#050915;border-radius:14px}
+.ctl{display:grid;grid-template-columns:auto 1fr auto;gap:6px 10px;align-items:center;margin-top:10px;font-size:13px}
+.ctl input[type=range]{width:100%;accent-color:var(--gold)}.ctl output{font-variant-numeric:tabular-nums;color:var(--gold-l);min-width:80px;text-align:end;direction:ltr}
+.fork{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.fork button{background:#0b1430;border:1px solid var(--line);border-radius:14px;padding:10px;color:inherit;font:inherit;cursor:pointer;text-align:center}
+.fork button.on{border-color:var(--gold);background:#d4a73c22}.fork svg{width:100%;height:70px;display:block}
+.fork b{display:block;color:var(--gold-l);font-size:14px;margin-top:4px}
+#forkInfo{margin-top:10px;font-size:13.5px;line-height:1.8}
+.imgs{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.imgs a{display:block;padding:12px;border-radius:14px;background:#0b1430;border:1px solid var(--line);color:inherit;text-decoration:none;font-size:13px;line-height:1.7}.imgs a b{color:var(--gold-l);display:block;font-size:14.5px}
+table.t2{border-collapse:collapse;width:100%;font-size:13px}table.t2 td,table.t2 th{padding:7px 6px;border-bottom:1px solid #ffffff12;text-align:start}table.t2 th{color:var(--gold-l)}table.t2 td.n{direction:ltr;text-align:end;font-variant-numeric:tabular-nums}
+details.math{margin-top:10px;border:1px solid var(--line);border-radius:12px;padding:8px 12px;background:#0b1430}
+details.math summary{cursor:pointer;color:var(--gold-l);font-weight:600}details.math p{font-size:13.3px;line-height:1.85}
+.eq{direction:ltr;text-align:center;font-family:"Cambria Math","STIX Two Math","Times New Roman",serif;font-size:15.5px;margin:7px 0;color:#fff;background:#ffffff08;border-radius:8px;padding:6px;overflow-x:auto}
+.note{font-size:12.5px;color:var(--muted);line-height:1.75}
+</style>
+</head>
+<body>
+<header class="pg-top">
+  <a class="brand" href="index.html"><span id="logo"></span><div><h1 data-i="title"></h1><div class="sub" data-i="sub"></div></div></a>
+  <button class="ibtn" id="btnLang">EN</button>
+</header>
+<main class="wrap">
+  <p class="lead" data-h="lead" style="font-size:14.5px;color:#d9e0f2"></p>
+
+  <h2 class="sec" data-i="h1"></h2>
+  <p class="lead" data-h="l1"></p>
+  <div class="panel">
+    <div class="stage"><canvas id="mw"></canvas><div id="labels"></div></div>
+    <div class="row"><button class="chip" id="vTop"></button><button class="chip" id="vEdge"></button><button class="chip" id="vSun"></button><button class="chip" id="vSpin"></button></div>
+    <div class="kv" id="mwKV" style="margin-top:10px"></div>
+    <p class="note" data-h="mwNote"></p>
+  </div>
+
+  <h2 class="sec" data-i="h2"></h2>
+  <p class="lead" data-h="l2"></p>
+  <div class="panel">
+    <canvas id="rc"></canvas>
+    <div class="ctl">
+      <span data-i="halo"></span><input type="range" id="sH" min="0" max="2" step="0.05" value="1"><output id="oH"></output>
+      <span data-i="disk"></span><input type="range" id="sD" min="2" max="8" step="0.1" value="5"><output id="oD"></output>
+    </div>
+    <p class="note" data-h="rcNote"></p>
+    <details class="math"><summary data-i="mathT"></summary><div data-h="m2"></div></details>
+  </div>
+
+  <h2 class="sec" data-i="h3"></h2>
+  <p class="lead" data-i="l3"></p>
+  <div class="panel"><div class="fork" id="fork"></div><div id="forkInfo"></div></div>
+
+  <h2 class="sec" data-i="h4"></h2>
+  <div class="imgs" id="imgs"></div>
+
+  <h2 class="sec" data-i="h5"></h2>
+  <div class="panel" style="overflow-x:auto"><table class="t2" id="scale"></table><p class="note" data-h="scaleNote"></p></div>
+
+  <h2 class="sec" data-i="hRef"></h2>
+  <div class="panel note" id="refs"></div>
+  <footer id="foot" style="text-align:center;color:var(--muted);font-size:12.5px;margin-top:26px;line-height:1.8"></footer>
+</main>
+<script src="js/common.js"></script>
+<script src="js/three.min.js"></script>
+<script>
+(function(){
+const $=id=>document.getElementById(id);let lang=KH.getLang();const N=(x,d)=>KH.num(x,d,lang);
+const L={ar:{
+title:'درب التبانة والمجرات',sub:'مجرتنا من الخارج، والمادة المظلمة، وأنواع المجرات',
+lead:'الشمس واحدة من نحو ١٠٠–٤٠٠ مليار نجم في مجرة درب التبانة، وهي مجرة حلزونية ذات قضيب قطر قرصها نحو ١٠٠ ألف سنة ضوئية. ولأننا داخلها لا نستطيع تصويرها من الخارج أبدًا، لذلك رسمنا خريطتها من قياسات المسافات والسرعات: من القمر الصناعي «جايا» (Gaia)، ومن الأرصاد الراديوية لغاز الهيدروجين والمايزرات.',
+h1:'🌌 درب التبانة من الخارج',
+l1:'نموذج ثلاثي الأبعاد مبني على المقاييس المرصودة للمجرة: القضيب المركزي، والأذرع الحلزونية الأربعة، وموقع الشمس على بُعد ٢٦٫٥ ألف سنة ضوئية من المركز. اسحب للتدوير، واستخدم عجلة الفأرة أو الأزرار للتكبير.',
+top:'🔝 من فوق',edge:'↔️ من الحافة',sun:'☀️ اقترب من الشمس',spin:'🔄 تدوير تلقائي',
+kv:[['قطر القرص النجمي','≈ 100 000 سنة ضوئية (30 كيلوفرسك)'],['بُعد الشمس عن المركز','8.12 كيلوفرسك ≈ 26 500 سنة ضوئية (GRAVITY 2018)'],['سرعة الشمس حول المركز','≈ 229 كم/ث (Eilers وآخرون 2019)'],['زمن الدورة الواحدة (السنة المجرية)','≈ 220–230 مليون سنة'],['كتلة الثقب الأسود المركزي Sgr A*','4.3 مليون كتلة شمسية'],['الكتلة الكلية (مع المادة المظلمة)','≈ 1–1.5 × 10¹² كتلة شمسية']],
+lbl:{sun:'☉ الشمس',gc:'Sgr A* (المركز)',bar:'القضيب',per:'ذراع فرساوس',sag:'ذراع القوس–القاعدة',sct:'ذراع الترس–قنطورس',nor:'ذراع المسطرة',ori:'ذراع الجبار (حيث نحن)',ring:'10 كيلوفرسك'},
+mwNote:'⚠️ هذا نموذج علمي مرسوم من بيانات القياس، لا صورة حقيقية؛ فلا توجد ولن توجد صورة لمجرتنا من الخارج. شكل الأذرع وعددها ما زال موضع بحث: الذراعان الرئيسيتان (فرساوس والترس–قنطورس) أغنى بالنجوم القديمة، والأخريان تظهران أكثر في الغاز ومناطق تكوّن النجوم. اللون الوردي يمثّل مناطق الهيدروجين المتأين (حضانات النجوم).',
+h2:'🌀 منحنى الدوران واكتشاف المادة المظلمة',
+l2:'لو كانت كتلة المجرة كلها هي المادة المرئية (النجوم والغاز) لتناقصت سرعة دوران النجوم كلما ابتعدنا عن المركز، كما تتباطأ الكواكب البعيدة عن الشمس. لكن الأرصاد تُظهر منحنى شبه مسطح! غيّر كتلة الهالة المظلمة وشاهد متى يطابق النموذج الرصد.',
+halo:'كتلة هالة المادة المظلمة (×10¹² M☉)',disk:'كتلة القرص النجمي (×10¹⁰ M☉)',
+rcNote:'النقاط البيضاء: منحنى الدوران المرصود بقياسات جايا وAPOGEE لنحو ٢٣ ألف نجم عملاق أحمر (Eilers وآخرون ٢٠١٩): v ≈ 229 − 1.7 (R − 8.12) كم/ث بين 5 و 25 كيلوفرسك. المنحنيات الملونة: إسهام كل مكوّن، والأبيض المتصل مجموعها.',
+mathT:'📐 التفاصيل الرياضية',
+m2:`<p>للمدار الدائري: v<sub>c</sub>²(R) = R ∂Φ/∂R، ولكتلة مركزية فقط v ∝ R<sup>−1/2</sup> (هبوط كبلري). إسهامات المكونات تُجمع تربيعيًا:</p><div class="eq">v² = v<sub>bulge</sub>² + v<sub>disk</sub>² + v<sub>halo</sub>²</div>
+<p><b>الانتفاخ</b> (نموذج هيرنكويست): v² = G M R / (R + a)²، بكتلة 0.9×10¹⁰ M☉ و a = 0.6 kpc.</p>
+<p><b>القرص الأسي</b> Σ(R) = Σ₀ e<sup>−R/R<sub>d</sub></sup> (Freeman 1970)، و R<sub>d</sub> = 2.6 kpc:</p><div class="eq">v² = 4π G Σ₀ R<sub>d</sub> y² [ I₀(y)K₀(y) − I₁(y)K₁(y) ] ,   y = R / (2R<sub>d</sub>)</div>
+<p><b>هالة المادة المظلمة</b> (ملف NFW) بتركيز c = 12:</p><div class="eq">v² = G M₂₀₀ [ ln(1+x) − x/(1+x) ] / ( R [ ln(1+c) − c/(1+c) ] ) ,   x = R c / r₂₀₀</div>
+<p>من المنحنى المسطح عند R ≈ 20 kpc و v ≈ 210 كم/ث: الكتلة داخل هذا النصف قطر M(&lt;R) = v²R/G ≈ 2×10¹¹ M☉، أي أكثر من ثلاثة أضعاف الكتلة المرئية. أول من رصد هذه الظاهرة بوضوح في المجرات الحلزونية فيرا روبن وكنت فورد (١٩٧٠–١٩٨٠).</p>`,
+h3:'🍴 تصنيف هابل للمجرات («الشوكة الرنانة»)',l3:'اضغط على أي نوع لقراءة وصفه.',
+fork:[['E0–E7','الإهليلجية','مجرات بيضاوية ناعمة بلا أذرع، نجومها قديمة حمراء ونسبة غازها قليلة، فتكوّن النجوم فيها شبه متوقف. الرقم يدل على درجة التفلطح (E0 دائرية). أضخم المجرات في الكون إهليلجية عملاقة في مراكز العناقيد، مثل M87 التي صوّر «تلسكوب أفق الحدث» ظل ثقبها الأسود عام ٢٠١٩.'],['S0','العدسية','مرحلة وسط: لها قرص وانتفاخ مثل الحلزونية، لكن بلا أذرع واضحة وبقليل من الغاز. يُعتقد أن كثيرًا منها مجرات حلزونية فقدت غازها داخل العناقيد.'],['Sa–Sc','الحلزونية العادية','قرص مسطح وأذرع حلزونية غنية بالغاز والنجوم الشابة الزرقاء، وانتفاخ مركزي. من Sa (انتفاخ كبير وأذرع ملفوفة بإحكام) إلى Sc (انتفاخ صغير وأذرع مفتوحة). مثال: مجرة الدوامة M51، ومجرة المرأة المسلسلة M31.'],['SBa–SBc','الحلزونية ذات القضيب','تخرج أذرعها من طرفي قضيب نجمي يعبر المركز. نحو ثلثي المجرات الحلزونية القريبة لها قضبان، ومنها مجرتنا درب التبانة (من النوع SBbc تقريبًا).'],['Irr','غير المنتظمة','بلا شكل منتظم، وغالبًا صغيرة وغنية بالغاز وتكوّن النجوم، أو مشوّهة بالتفاعل مع جاراتها. مثال: سحابتا ماجلان الكبرى والصغرى المرئيتان من نصف الكرة الجنوبي.']],
+forkNote:'ملاحظة: رسم هابل الأنواع على شكل شوكة عام ١٩٢٦، لكنه لا يمثل تسلسلًا زمنيًا للتطور كما ظُن في البداية.',
+h4:'🔭 صور حقيقية للمجرات',
+imgs:[['https://esahubble.org/images/heic2501a/','🌀 مجرة المرأة المسلسلة M31','أكبر فسيفساء صُنعت من صور هابل: نحو ٢٠٠ مليون نجم في ٢٫٥ مليار بكسل، جُمعت من نحو ٦٠٠ صورة على مدى عشر سنوات. (هابل ٢٠٢٥)'],['https://esahubble.org/images/heic0506a/','🌪️ مجرة الدوامة M51','مجرة حلزونية «ذات تصميم كبير» مع رفيقتها الصغيرة NGC 5195 التي تمر خلفها منذ مئات ملايين السنين. (هابل ٢٠٠٥)'],['https://esahubble.org/images/heic0406a/','🔭 حقل هابل فائق العمق','نحو ١٠ آلاف مجرة في رقعة صغيرة من كوكبة الكور، احتاجت ١١٫٣ يومًا من التعريض الكلي، وفيها مجرات نراها كما كانت قبل أكثر من ١٣ مليار سنة. (هابل ٢٠٠٤)']],
+h5:'📏 سلّم المسافات: كم يستغرق الضوء؟',
+scH:['الجرم','المسافة','زمن رحلة الضوء'],
+sc:[['القمر','384 400 كم','1.3 ثانية'],['الشمس','1 وحدة فلكية = 150 مليون كم','8 دقائق و 20 ثانية'],['نبتون','30 وحدة فلكية','4.2 ساعات'],['بروكسيما قنطورس (أقرب نجم)','1.30 فرسك','4.24 سنة'],['سديم الجبار M42','≈ 410 فرسك','≈ 1 350 سنة'],['مركز المجرة Sgr A*','8.12 كيلوفرسك','≈ 26 500 سنة'],['سحابة ماجلان الكبرى','50 كيلوفرسك','≈ 160 000 سنة'],['مجرة المرأة المسلسلة M31','≈ 765 كيلوفرسك','≈ 2.5 مليون سنة'],['عنقود العذراء','≈ 16.5 ميغافرسك','≈ 54 مليون سنة'],['أبعد مجرات حقل ويب العميق','—','أكثر من 13.4 مليار سنة (زمن نظر للخلف)']],
+scaleNote:'الفرسك (parsec) = 3.26 سنة ضوئية = 3.086×10¹³ كم: المسافة التي يكون عندها اختلاف المنظر السنوي ثانية قوسية واحدة. للمجرات البعيدة جدًا نذكر «زمن النظر للخلف» لأن الكون تمدد أثناء رحلة الضوء.',
+hRef:'📚 المراجع'
+},en:{
+title:'The Milky Way & Galaxies',sub:'Our galaxy from outside, dark matter, and galaxy types',
+lead:'The Sun is one of about 100–400 billion stars in the Milky Way, a barred spiral galaxy whose disc is about 100,000 light-years across. Because we live inside it, we can never photograph it from outside; we mapped it instead from distance and velocity measurements — from the Gaia satellite and from radio observations of hydrogen gas and masers.',
+h1:'🌌 The Milky Way from outside',
+l1:'A 3D model built on the measured structure of the Galaxy: the central bar, four spiral arms, and the Sun 26,500 light-years from the centre. Drag to rotate; use the mouse wheel or the buttons to zoom.',
+top:'🔝 Top view',edge:'↔️ Edge-on',sun:'☀️ Zoom to the Sun',spin:'🔄 Auto-rotate',
+kv:[['Stellar disc diameter','≈ 100,000 ly (30 kpc)'],['Sun’s distance from the centre','8.12 kpc ≈ 26,500 ly (GRAVITY 2018)'],['Sun’s orbital speed','≈ 229 km/s (Eilers et al. 2019)'],['One orbit (galactic year)','≈ 220–230 Myr'],['Central black hole Sgr A*','4.3 million solar masses'],['Total mass (with dark matter)','≈ 1–1.5 × 10¹² M☉']],
+lbl:{sun:'☉ Sun',gc:'Sgr A* (centre)',bar:'Bar',per:'Perseus Arm',sag:'Sagittarius–Carina Arm',sct:'Scutum–Centaurus Arm',nor:'Norma Arm',ori:'Orion Spur (we are here)',ring:'10 kpc'},
+mwNote:'⚠️ This is a scientific model drawn from measurements, not a photograph — no image of our Galaxy from outside exists or ever will. The number and shape of the arms are still researched: the two major arms (Perseus and Scutum–Centaurus) are richer in old stars, the other two show up mainly in gas and star formation. Pink marks ionised-hydrogen regions (stellar nurseries).',
+h2:'🌀 The rotation curve and the discovery of dark matter',
+l2:'If the Galaxy’s mass were only what we see (stars and gas), stars far from the centre would orbit more slowly, as the outer planets do around the Sun. Observations instead show an almost flat curve! Change the dark-halo mass and see when the model matches the data.',
+halo:'Dark-matter halo mass (×10¹² M☉)',disk:'Stellar disc mass (×10¹⁰ M☉)',
+rcNote:'White points: the rotation curve measured with Gaia and APOGEE for about 23,000 red giants (Eilers et al. 2019): v ≈ 229 − 1.7 (R − 8.12) km/s for 5–25 kpc. Coloured curves: each component’s contribution; solid white: the total.',
+mathT:'📐 Mathematical details',
+m2:`<p>For a circular orbit v<sub>c</sub>²(R) = R ∂Φ/∂R; for a central point mass v ∝ R<sup>−1/2</sup> (Keplerian decline). Components add in quadrature:</p><div class="eq">v² = v<sub>bulge</sub>² + v<sub>disk</sub>² + v<sub>halo</sub>²</div><p><b>Bulge</b> (Hernquist): v² = G M R / (R + a)², with M = 0.9×10¹⁰ M☉, a = 0.6 kpc.</p><p><b>Exponential disc</b> Σ(R) = Σ₀ e<sup>−R/R<sub>d</sub></sup> (Freeman 1970), R<sub>d</sub> = 2.6 kpc:</p><div class="eq">v² = 4π G Σ₀ R<sub>d</sub> y² [ I₀(y)K₀(y) − I₁(y)K₁(y) ] ,   y = R / (2R<sub>d</sub>)</div><p><b>Dark-matter halo</b> (NFW profile), concentration c = 12:</p><div class="eq">v² = G M₂₀₀ [ ln(1+x) − x/(1+x) ] / ( R [ ln(1+c) − c/(1+c) ] ) ,   x = R c / r₂₀₀</div><p>From the flat curve at R ≈ 20 kpc with v ≈ 210 km/s: M(&lt;R) = v²R/G ≈ 2×10¹¹ M☉ — more than three times the visible mass. The effect was first shown clearly in spiral galaxies by Vera Rubin and Kent Ford (1970s–1980).</p>`,
+h3:'🍴 Hubble’s galaxy classification (the “tuning fork”)',l3:'Tap a type to read about it.',
+fork:[['E0–E7','Elliptical','Smooth oval galaxies without arms, with old red stars and little gas, so star formation has nearly stopped. The number gives the flattening (E0 is round). The most massive galaxies are giant ellipticals at the centres of clusters, like M87, whose black-hole shadow the Event Horizon Telescope imaged in 2019.'],['S0','Lenticular','In between: a disc and bulge like a spiral, but without clear arms and with little gas. Many are thought to be spirals that lost their gas inside clusters.'],['Sa–Sc','Spiral','A flat disc with gas-rich arms full of young blue stars and a central bulge, from Sa (big bulge, tightly wound arms) to Sc (small bulge, open arms). Examples: the Whirlpool M51 and Andromeda M31.'],['SBa–SBc','Barred spiral','The arms start from the ends of a stellar bar crossing the centre. About two-thirds of nearby spirals are barred — including our Milky Way (roughly SBbc).'],['Irr','Irregular','No regular shape; often small, gas-rich and star-forming, or distorted by interactions. Examples: the Large and Small Magellanic Clouds, visible from the southern hemisphere.']],
+forkNote:'Note: Hubble drew the types as a fork in 1926, but it is not an evolutionary sequence as was first thought.',
+h4:'🔭 Real images of galaxies',
+imgs:[['https://esahubble.org/images/heic2501a/','🌀 The Andromeda Galaxy M31','The largest Hubble photomosaic ever: about 200 million stars in 2.5 billion pixels, from ~600 fields taken over ten years. (Hubble 2025)'],['https://esahubble.org/images/heic0506a/','🌪️ The Whirlpool Galaxy M51','A grand-design spiral with its small companion NGC 5195, which has been gliding behind it for hundreds of millions of years. (Hubble 2005)'],['https://esahubble.org/images/heic0406a/','🔭 Hubble Ultra Deep Field','Nearly 10,000 galaxies in a tiny patch of Fornax, from 11.3 days of total exposure, including galaxies seen as they were more than 13 billion years ago. (Hubble 2004)']],
+h5:'📏 The distance ladder: how long does light take?',
+scH:['Object','Distance','Light travel time'],
+sc:[['Moon','384,400 km','1.3 s'],['Sun','1 AU = 150 million km','8 min 20 s'],['Neptune','30 AU','4.2 h'],['Proxima Centauri (nearest star)','1.30 pc','4.24 yr'],['Orion Nebula M42','≈ 410 pc','≈ 1,350 yr'],['Galactic centre Sgr A*','8.12 kpc','≈ 26,500 yr'],['Large Magellanic Cloud','50 kpc','≈ 160,000 yr'],['Andromeda M31','≈ 765 kpc','≈ 2.5 million yr'],['Virgo Cluster','≈ 16.5 Mpc','≈ 54 million yr'],['Most distant galaxies in Webb deep fields','—','> 13.4 billion yr (look-back time)']],
+scaleNote:'The parsec = 3.26 ly = 3.086×10¹³ km: the distance at which the annual parallax is one arcsecond. For very distant galaxies we quote the look-back time, because the Universe expanded while the light travelled.',
+hRef:'📚 References'
+}};
+const t=k=>L[lang][k];
+
+// ================= 3D Milky Way =================
+const cv=$('mw');let R3,scene,cam,yaw=0.6,pitch=1.0,dist=48,target=new THREE.Vector3(0,0,0),spin=true;
+const k=Math.tan(12*Math.PI/180),R0=3.4,SUN=[8.12,0,0];
+// arm phases so that arms cross the Sun's direction (θ=0) at 10.0, 7.16, 5.12, 3.67 kpc
+const armR=[10.0,7.16,5.12,3.67],armW=[1.0,0.55,1.0,0.5],armKey=['per','sag','sct','nor'];
+const phi0=armR.map(r=>-Math.log(r/R0)/k);
+function gauss(){let u=0,v=0;while(!u)u=Math.random();while(!v)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+function armPoint(i,th){const r=R0*Math.exp(k*(th-phi0[i]));return [r*Math.cos(th),r*Math.sin(th),r];}
+function build(){
+  try{R3=new THREE.WebGLRenderer({canvas:cv,antialias:true});}catch(e){cv.insertAdjacentHTML('afterend','<p class="note">WebGL?</p>');return;}
+  R3.setPixelRatio(Math.min(2,devicePixelRatio||1));scene=new THREE.Scene();cam=new THREE.PerspectiveCamera(45,1,0.05,2000);
+  const P=[],C=[];const add=(x,y,z,c,s)=>{P.push(x,z,-y);C.push(c[0]*s,c[1]*s,c[2]*s);};
+  const barA=27*Math.PI/180; // bar angle w.r.t. Sun–centre line
+  // bulge
+  for(let n=0;n<7000;n++){const r=Math.abs(gauss())*0.9;const u=Math.random()*2-1,a=Math.random()*6.283;add(r*Math.sqrt(1-u*u)*Math.cos(a),r*Math.sqrt(1-u*u)*Math.sin(a),r*u*0.65,[1,0.85,0.62],0.45+Math.random()*0.35);}
+  // bar
+  for(let n=0;n<7000;n++){const s=(Math.random()*2-1)*4.4,w=gauss()*0.55,z=gauss()*0.25;const x=s*Math.cos(barA)-w*Math.sin(barA),y=s*Math.sin(barA)+w*Math.cos(barA);add(x,y,z,[1,0.82,0.58],0.3+Math.random()*0.3);}
+  // smooth disc
+  for(let n=0;n<22000;n++){const r=-2.6*Math.log(1-Math.random()*0.995);const a=Math.random()*6.283;add(r*Math.cos(a),r*Math.sin(a),gauss()*0.18,[0.75,0.8,1],0.07+Math.random()*0.12);}
+  // arms
+  for(let i=0;i<4;i++){const nA=Math.round(14000*armW[i]);for(let n=0;n<nA;n++){const th=phi0[i]+Math.random()*(Math.log(17/R0)/k);const p=armPoint(i,th);if(p[2]>16.5)continue;const w=0.32+0.025*p[2];add(p[0]+gauss()*w,p[1]+gauss()*w,gauss()*0.12,[0.68,0.8,1],0.55+Math.random()*0.6);}
+    for(let n=0;n<220*armW[i]+80;n++){const th=phi0[i]+Math.random()*(Math.log(15/R0)/k);const p=armPoint(i,th);add(p[0]+gauss()*0.25,p[1]+gauss()*0.25,gauss()*0.05,[1,0.45,0.7],1.4);}}
+  // Orion spur near the Sun
+  for(let n=0;n<2500;n++){const s=Math.random()*5-2.5,x=8.35+s*0.25+gauss()*0.25,y=s+gauss()*0.25;add(x,y,gauss()*0.1,[0.7,0.82,1],0.4+Math.random()*0.4);}
+  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(P,3));g.setAttribute('color',new THREE.Float32BufferAttribute(C,3));
+  const tex=dotTex();window.__mwPts=new THREE.Points(g,new THREE.PointsMaterial({size:0.34,map:tex,vertexColors:true,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,sizeAttenuation:true}));scene.add(window.__mwPts);
+  // centre glow
+  const glow=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,color:0xffd29a,transparent:true,blending:THREE.AdditiveBlending,depthWrite:false,opacity:0.8}));glow.scale.set(7,7,1);scene.add(glow);
+  // Sun marker + ring of 10 kpc
+  const sunM=new THREE.Mesh(new THREE.SphereGeometry(0.12,16,12),new THREE.MeshBasicMaterial({color:0xf1d27a}));sunM.position.set(SUN[0],0,-SUN[1]);scene.add(sunM);window.__sunM=sunM;
+  const ring=new THREE.RingGeometry(9.97,10.03,160);ring.rotateX(-Math.PI/2);scene.add(new THREE.Mesh(ring,new THREE.MeshBasicMaterial({color:0x6fa8ff,transparent:true,opacity:.25,side:THREE.DoubleSide})));
+  const sr=new THREE.RingGeometry(8.1,8.14,160);sr.rotateX(-Math.PI/2);scene.add(new THREE.Mesh(sr,new THREE.MeshBasicMaterial({color:0xf1d27a,transparent:true,opacity:.35,side:THREE.DoubleSide})));
+  // background stars
+  const sp=[];for(let n=0;n<1500;n++){const u=Math.random()*2-1,a=Math.random()*6.283,r=600;sp.push(r*Math.sqrt(1-u*u)*Math.cos(a),r*u,r*Math.sqrt(1-u*u)*Math.sin(a));}
+  const sg=new THREE.BufferGeometry();sg.setAttribute('position',new THREE.Float32BufferAttribute(sp,3));scene.add(new THREE.Points(sg,new THREE.PointsMaterial({color:0xffffff,size:1,sizeAttenuation:false})));
+  let drag=null;cv.addEventListener('pointerdown',e=>{drag=[e.clientX,e.clientY,yaw,pitch];spin=false;cv.setPointerCapture(e.pointerId);});
+  cv.addEventListener('pointermove',e=>{if(!drag)return;yaw=drag[2]-(e.clientX-drag[0])*0.006;pitch=Math.max(0.02,Math.min(1.55,drag[3]+(e.clientY-drag[1])*0.005));});
+  cv.addEventListener('pointerup',()=>drag=null);
+  cv.addEventListener('wheel',e=>{e.preventDefault();dist=Math.max(1.2,Math.min(120,dist*(1+Math.sign(e.deltaY)*0.1)));},{passive:false});
+}
+function dotTex(){const c=document.createElement('canvas');c.width=c.height=64;const g=c.getContext('2d'),gr=g.createRadialGradient(32,32,0,32,32,32);gr.addColorStop(0,'rgba(255,255,255,1)');gr.addColorStop(0.3,'rgba(255,255,255,.55)');gr.addColorStop(1,'rgba(255,255,255,0)');g.fillStyle=gr;g.fillRect(0,0,64,64);return new THREE.CanvasTexture(c);}
+let anim=null;function flyTo(y,p,d,tg){anim={y0:yaw,p0:pitch,d0:dist,t0:target.clone(),y,p,d,tg:tg||new THREE.Vector3(),s:performance.now()};spin=false;}
+function labelsPos(){
+  const lb=t('lbl');const items=[[SUN[0],0,0.3,'sun','sun'],[0,0,0.4,'gc',''],[4.4*Math.cos(27*Math.PI/180)*0.6,4.4*Math.sin(27*Math.PI/180)*0.6,0.5,'bar',''],[8.6,1.6,0.1,'ori','arm'],[0,10.4,0,'ring','']];
+  armKey.forEach((key,i)=>{const th=phi0[i]+Math.log(12.5/R0)/k;const p=armPoint(i,th);items.push([p[0],p[1],0.2,key,'arm']);});
+  const W=cv.clientWidth,H=cv.clientHeight;let html='';
+  for(const it of items){if(pitch<0.3&&(it[4]==='arm'||it[3]==='ring'||it[3]==='bar'))continue;const v=new THREE.Vector3(it[0],it[2],-it[1]).project(cam);if(v.z>1||Math.abs(v.x)>1.1||Math.abs(v.y)>1.1)continue;html+=`<div class="lbl ${it[4]}" style="left:${(v.x+1)/2*W}px;top:${(1-v.y)/2*H}px">${lb[it[3]]}</div>`;}
+  $('labels').innerHTML=html;
+}
+function loop(now){
+  if(R3){const w=cv.clientWidth,h=cv.clientHeight;if(cv.width!==Math.floor(w*R3.getPixelRatio())){R3.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();}
+    if(anim){let s=Math.min(1,(now-anim.s)/1600);s=s*s*(3-2*s);yaw=anim.y0+(anim.y-anim.y0)*s;pitch=anim.p0+(anim.p-anim.p0)*s;dist=Math.exp(Math.log(anim.d0)+(Math.log(anim.d)-Math.log(anim.d0))*s);target.lerpVectors(anim.t0,anim.tg,s);if(s>=1)anim=null;}
+    if(spin)yaw+=0.0012;if(window.__sunM)window.__sunM.scale.setScalar(Math.min(1,dist/40));if(window.__mwPts)window.__mwPts.material.size=0.34*Math.pow(Math.min(1,dist/30),0.8); // here is the modification: smaller particles when zoomed in
+    cam.position.set(target.x+dist*Math.cos(pitch)*Math.sin(yaw),target.y+dist*Math.sin(pitch),target.z+dist*Math.cos(pitch)*Math.cos(yaw));cam.lookAt(target);
+    R3.render(scene,cam);labelsPos();}
+  requestAnimationFrame(loop);
+}
+
+// ================= rotation curve =================
+const G=4.30091e-6;
+function I0(x){const t_=x/3.75;if(x<3.75){const y=t_*t_;return 1+y*(3.5156229+y*(3.0899424+y*(1.2067492+y*(0.2659732+y*(0.0360768+y*0.0045813)))));}const y=3.75/x;return Math.exp(x)/Math.sqrt(x)*(0.39894228+y*(0.01328592+y*(0.00225319+y*(-0.00157565+y*(0.00916281+y*(-0.02057706+y*(0.02635537+y*(-0.01647633+y*0.00392377))))))));}
+function I1(x){const t_=x/3.75;if(x<3.75){const y=t_*t_;return x*(0.5+y*(0.87890594+y*(0.51498869+y*(0.15084934+y*(0.02658733+y*(0.00301532+y*0.00032411))))));}const y=3.75/x;return Math.exp(x)/Math.sqrt(x)*(0.39894228+y*(-0.03988024+y*(-0.00362018+y*(0.00163801+y*(-0.01031555+y*(0.02282967+y*(-0.02895312+y*(0.01787654-y*0.00420059))))))));}
+function K0(x){if(x<=2){const y=x*x/4;return -Math.log(x/2)*I0(x)+(-0.57721566+y*(0.42278420+y*(0.23069756+y*(0.03488590+y*(0.00262698+y*(0.00010750+y*0.0000074))))));}const y=2/x;return Math.exp(-x)/Math.sqrt(x)*(1.25331414+y*(-0.07832358+y*(0.02189568+y*(-0.01062446+y*(0.00587872+y*(-0.00251540+y*0.00053208))))));}
+function K1(x){if(x<=2){const y=x*x/4;return Math.log(x/2)*I1(x)+(1/x)*(1+y*(0.15443144+y*(-0.67278579+y*(-0.18156897+y*(-0.01919402+y*(-0.00110404-y*0.00004686))))));}const y=2/x;return Math.exp(-x)/Math.sqrt(x)*(1.25331414+y*(0.23498619+y*(-0.03655620+y*(0.01504268+y*(-0.00780353+y*(0.00325614-y*0.00068245))))));}
+const vdisk=(R,M,Rd)=>{const y=R/(2*Rd),S0=M/(2*Math.PI*Rd*Rd);return Math.sqrt(Math.max(0,4*Math.PI*G*S0*Rd*y*y*(I0(y)*K0(y)-I1(y)*K1(y))));};
+const vbulge=(R,M,a)=>Math.sqrt(G*M*R/((R+a)*(R+a)));
+const vhalo=(R,M200,c)=>{if(M200<=0)return 0;const r200=Math.cbrt(3*M200/(4*Math.PI*200*136));const x=R*c/r200,f=s=>Math.log(1+s)-s/(1+s);return Math.sqrt(G*M200*f(x)/(R*f(c)));};
+function drawRC(){
+  const c=$('rc'),dpr=Math.min(2,devicePixelRatio||1),w=c.clientWidth,h=c.clientHeight;c.width=w*dpr;c.height=h*dpr;const g=c.getContext('2d');g.scale(dpr,dpr);g.direction='ltr';
+  const Mh=+$('sH').value*1e12,Md=+$('sD').value*1e10;$('oH').textContent=N(+$('sH').value,2)+'×10¹²';$('oD').textContent=N(+$('sD').value,1)+'×10¹⁰';
+  const pl=44,pr=10,pt=14,pb=34,X=r=>pl+r/26*(w-pl-pr),Y=v=>h-pb-v/300*(h-pt-pb);
+  g.strokeStyle='rgba(255,255,255,.1)';g.fillStyle='#9fb0d6';g.font='11px sans-serif';
+  for(let v=0;v<=300;v+=50){g.beginPath();g.moveTo(pl,Y(v));g.lineTo(w-pr,Y(v));g.stroke();g.fillText(String(v),6,Y(v)+4);}
+  for(let r=0;r<=25;r+=5){g.fillText(String(r),X(r)-4,h-pb+14);}
+  g.fillStyle='#d9e0f2';g.fillText(lang==='ar'?'R (كيلوفرسك)':'R (kpc)',w/2-20,h-4);g.save();g.translate(12,pt+90);g.rotate(-Math.PI/2);g.fillText(lang==='ar'?'v (كم/ث)':'v (km/s)',0,0);g.restore();
+  const line=(fn,col,lw,dash)=>{g.strokeStyle=col;g.lineWidth=lw;g.setLineDash(dash||[]);g.beginPath();for(let r=0.2;r<=25.01;r+=0.2){const v=fn(r);r===0.2?g.moveTo(X(r),Y(v)):g.lineTo(X(r),Y(v));}g.stroke();g.setLineDash([]);};
+  line(r=>vbulge(r,0.9e10,0.6),'#f1d27a',1.4,[4,3]);line(r=>vdisk(r,Md,2.6),'#6fa8ff',1.4,[4,3]);line(r=>vhalo(r,Mh,12),'#c39bff',1.4,[4,3]);
+  line(r=>Math.hypot(vbulge(r,0.9e10,0.6),vdisk(r,Md,2.6)),'#ff9f5a',1.6,[2,3]);
+  line(r=>Math.hypot(vbulge(r,0.9e10,0.6),vdisk(r,Md,2.6),vhalo(r,Mh,12)),'#ffffff',2.4);
+  // observed (Eilers et al. 2019 linear fit) with ±10 km/s band as illustrative points
+  g.fillStyle='#fff';for(let r=5;r<=25;r+=1){const v=229-1.7*(r-8.122);g.beginPath();g.arc(X(r),Y(v),3.2,0,7);g.fill();}
+  // sun marker
+  g.strokeStyle='rgba(241,210,122,.5)';g.setLineDash([3,3]);g.beginPath();g.moveTo(X(8.122),pt);g.lineTo(X(8.122),h-pb);g.stroke();g.setLineDash([]);g.fillStyle='#f1d27a';g.fillText('☉',X(8.122)+3,pt+10);
+  // legend
+  const lg=lang==='ar'?[['#f1d27a','الانتفاخ'],['#6fa8ff','القرص'],['#ff9f5a','المادة المرئية'],['#c39bff','الهالة المظلمة'],['#fff','المجموع / ● الرصد']]:[['#f1d27a','bulge'],['#6fa8ff','disc'],['#ff9f5a','visible matter'],['#c39bff','dark halo'],['#fff','total / ● observed']];
+  let lx=pl+8;g.font='11px sans-serif';lg.forEach(l=>{g.fillStyle=l[0];g.fillRect(lx,pt+2,10,3);g.fillStyle='#d9e0f2';g.fillText(l[1],lx+13,pt+7);lx+=g.measureText(l[1]).width+26;});
+}
+
+// ================= Hubble fork =================
+const SHAPES=[`<svg viewBox="0 0 120 70"><defs><radialGradient id="ge"><stop offset="0" stop-color="#fff3d6"/><stop offset=".5" stop-color="#e7b874" stop-opacity=".7"/><stop offset="1" stop-color="#e7b874" stop-opacity="0"/></radialGradient></defs><ellipse cx="60" cy="35" rx="34" ry="22" fill="url(#ge)"/></svg>`,
+`<svg viewBox="0 0 120 70"><defs><radialGradient id="gs0"><stop offset="0" stop-color="#fff3d6"/><stop offset=".35" stop-color="#e7c08a"/><stop offset="1" stop-color="#9fb6e6" stop-opacity="0"/></radialGradient></defs><ellipse cx="60" cy="35" rx="48" ry="13" fill="url(#gs0)"/></svg>`,
+`<svg viewBox="0 0 120 70"><g transform="translate(60 35)"><circle r="8" fill="#ffe7b8"/><path d="M0,0 C20,-6 32,6 26,22 M0,0 C-20,6 -32,-6 -26,-22" stroke="#9fc2ff" stroke-width="4" fill="none" opacity=".85"/><path d="M0,0 C6,20 -6,30 -22,26 M0,0 C-6,-20 6,-30 22,-26" stroke="#9fc2ff" stroke-width="3" fill="none" opacity=".5"/></g></svg>`,
+`<svg viewBox="0 0 120 70"><g transform="translate(60 35)"><rect x="-18" y="-3.5" width="36" height="7" rx="3.5" fill="#ffe0a8"/><path d="M18,0 C30,2 30,22 10,26 M-18,0 C-30,-2 -30,-22 -10,-26" stroke="#9fc2ff" stroke-width="4" fill="none" opacity=".85"/></g></svg>`,
+`<svg viewBox="0 0 120 70"><g fill="#9fc2ff" opacity=".8"><circle cx="45" cy="30" r="9"/><circle cx="62" cy="40" r="11"/><circle cx="78" cy="28" r="6"/><circle cx="55" cy="22" r="5"/><circle cx="72" cy="48" r="5" fill="#ff8fb8"/><circle cx="50" cy="44" r="4" fill="#ff8fb8"/></g></svg>`];
+let forkSel=2;
+function renderFork(){const F=t('fork');$('fork').innerHTML=F.map((f,i)=>`<button class="${i===forkSel?'on':''}" data-i="${i}">${SHAPES[i]}<b>${f[1]}</b><span class="note">${f[0]}</span></button>`).join('');
+  $('fork').querySelectorAll('button').forEach(b=>b.onclick=()=>{forkSel=+b.dataset.i;renderFork();});
+  $('forkInfo').innerHTML=`<b style="color:var(--gold-l)">${F[forkSel][1]} (${F[forkSel][0]})</b><br>${F[forkSel][2]}<p class="note">${t('forkNote')}</p>`;}
+
+function page(){
+  document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr';
+  document.querySelectorAll('[data-i]').forEach(e=>{const v=t(e.dataset.i);if(typeof v==='string')e.textContent=v;});
+  document.querySelectorAll('[data-h]').forEach(e=>{e.innerHTML=t(e.dataset.h);});
+  $('btnLang').textContent=lang==='ar'?'EN':'ع';$('logo').innerHTML=KH.logoSVG(36);
+  $('vTop').textContent=t('top');$('vEdge').textContent=t('edge');$('vSun').textContent=t('sun');$('vSpin').textContent=t('spin');
+  $('mwKV').innerHTML=t('kv').map(r=>`<b>${r[0]}</b><span>${r[1]}</span>`).join('');
+  $('imgs').innerHTML=t('imgs').map(m=>`<a href="${m[0]}" target="_blank" rel="noopener"><b>${m[1]} ↗</b>${m[2]}</a>`).join('');
+  $('scale').innerHTML=`<tr>${t('scH').map(h=>`<th>${h}</th>`).join('')}</tr>`+t('sc').map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('');
+  $('refs').innerHTML=['GRAVITY Collaboration (2018) A&A 615, L15 — distance to the Galactic Centre','Eilers, A.-C., Hogg, D. W., Rix, H.-W. & Ness, M. K. (2019) ApJ 871, 120 — The circular velocity curve of the Milky Way from 5 to 25 kpc','Bland-Hawthorn, J. & Gerhard, O. (2016) ARA&A 54, 529 — The Galaxy in context','Reid, M. J. et al. (2019) ApJ 885, 131 — Trigonometric parallaxes of high-mass star-forming regions (spiral-arm structure)','Freeman, K. C. (1970) ApJ 160, 811; Navarro, Frenk & White (1997) ApJ 490, 493','Rubin, V. C., Ford, W. K. & Thonnard, N. (1980) ApJ 238, 471','<b>'+(lang==='ar'?'الصور':'Images')+':</b> NASA, ESA — ESA/Hubble (CC BY 4.0)'].map(x=>'• '+x).join('<br>');
+  $('foot').innerHTML=`${KH.logoSVG(30)}<br>${lang==='ar'?'إعداد: خالد محمد · قسم الفلك وعلوم الفضاء والأرصاد الجوية، كلية العلوم، جامعة القاهرة · عضو AfAS وAUASS':'By Khaled Mohamed · Astronomy, Space Science & Meteorology Dept., Faculty of Science, Cairo University · Member of AfAS and AUASS'}<br><a href="index.html">${lang==='ar'?'الرئيسية':'Home'}</a>`;
+  document.title=t('title')+' — '+(lang==='ar'?'خالد محمد':'Khaled Mohamed');
+  renderFork();drawRC();
+}
+$('vTop').onclick=()=>flyTo(yaw,1.5,46);$('vEdge').onclick=()=>flyTo(yaw,0.04,46);$('vSun').onclick=()=>flyTo(-1.2,0.35,4,new THREE.Vector3(SUN[0],0,-SUN[1]));$('vSpin').onclick=()=>{spin=!spin;};
+['sH','sD'].forEach(id=>$(id).oninput=drawRC);
+$('btnLang').onclick=()=>{lang=lang==='ar'?'en':'ar';KH.setLang(lang);page();};
+addEventListener('resize',drawRC);
+build();page();requestAnimationFrame(loop);
+window.__gal={flyTo,setSpin:v=>spin=v};
+})();
+</script>
+</body>
+</html>

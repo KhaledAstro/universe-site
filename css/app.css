@@ -1,0 +1,11 @@
+:root{--bg:#0a0f1e;--glass:#121b38cc;--glass2:#1b2750;--line:#ffffff1f;--gold:#d4a73c;--gold-l:#f1d27a;--muted:#9fb0d6;--txt:#e8edf9;--accent:#6fa8ff}
+*{-webkit-tap-highlight-color:transparent}
+body{font-family:"Noto Naskh Arabic","Noto Sans Arabic","Segoe UI",Tahoma,"Geeza Pro",Arial,sans-serif;color:var(--txt);background:var(--bg)}
+[lang=en] body,body[lang=en]{font-family:"Segoe UI",Inter,Roboto,Arial,sans-serif}
+.panel{background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:16px;padding:14px 16px;box-shadow:0 10px 40px #0008;position:relative}
+.chip{flex:0 0 auto;padding:8px 13px;border-radius:999px;border:1px solid var(--line);background:var(--glass);color:var(--txt);font:inherit;font-size:13px;cursor:pointer;white-space:nowrap;backdrop-filter:blur(10px)}
+.chip.on{background:var(--gold);color:#0a0f1e;border-color:var(--gold);font-weight:600}
+.btn{padding:10px 14px;border-radius:12px;border:1px solid var(--gold);background:var(--gold);color:#0a0f1e;font:inherit;font-weight:600;font-size:14px;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--gold-l)}
+.btn.sm{padding:6px 10px;font-size:12.5px;border-radius:9px}
+select.inp option{background:#0e1630}

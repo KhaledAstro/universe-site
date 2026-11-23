@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Types of space weather events &mdash; physics, signatures and data sources</title>
+<style>
+  :root{
+    --bg:#0e1420; --panel:#161f30; --card:#1b2740; --ink:#e8eef7;
+    --dim:#93a4bd; --line:#2a3852;
+    --sun:#ffb020; --flare:#ffd166; --sep:#c77dff; --shock:#ff6b4a;
+    --sheath:#e0a03c; --ejecta:#6fb3a0; --wind:#5b9bd5; --earth:#4ea3ff;
+    --rose:#c7686b; --good:#6fb3a0;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.55;padding:22px;}
+  .wrap{max-width:1240px;margin:0 auto;}
+  h1{font-size:26px;margin:0 0 6px;}
+  h2{font-size:20px;margin:34px 0 10px;color:var(--sun);
+     border-bottom:1px solid var(--line);padding-bottom:6px;}
+  h3{font-size:16px;margin:22px 0 6px;color:#cfe0f5;}
+  h4{font-size:13.5px;margin:18px 0 6px;color:var(--dim);
+     text-transform:uppercase;letter-spacing:.08em;}
+  p.sub{color:var(--dim);margin:0 0 20px;}
+  .panel{background:var(--panel);border:1px solid var(--line);
+         border-radius:10px;padding:16px;margin-bottom:16px;}
+  .evt{background:var(--panel);border:1px solid var(--line);
+       border-left:4px solid var(--sun);border-radius:10px;
+       padding:18px 18px 8px;margin-bottom:26px;}
+  .evt.c-cme{border-left-color:var(--shock);}
+  .evt.c-wind{border-left-color:var(--wind);}
+  .evt.c-storm{border-left-color:var(--rose);}
+  .evt.c-hole{border-left-color:var(--sheath);}
+  .evt.c-aur{border-left-color:var(--good);}
+  .evt.c-icme{border-left-color:var(--ejecta);}
+  .evt.c-belt{border-left-color:var(--sep);}
+  .evt.c-mag{border-left-color:var(--earth);}
+  .tag{display:inline-block;font-size:11.5px;font-weight:700;
+       letter-spacing:.06em;text-transform:uppercase;
+       background:#22314a;color:var(--dim);border:1px solid var(--line);
+       border-radius:5px;padding:2px 8px;margin-left:8px;vertical-align:3px;}
+  table{width:100%;border-collapse:collapse;margin:10px 0 6px;font-size:13.5px;}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;
+        vertical-align:top;}
+  th{background:#22314a;color:#cfe0f5;font-weight:600;font-size:12.5px;
+     letter-spacing:.03em;}
+  td{background:var(--card);color:var(--ink);}
+  tr:nth-child(even) td{background:#182238;}
+  td.src{font-weight:600;white-space:nowrap;}
+  td.lim{color:var(--dim);}
+  a{color:var(--sun);text-decoration:none;word-break:break-word;}
+  a:hover{text-decoration:underline;}
+  code{background:#22314a;border:1px solid var(--line);border-radius:4px;
+       padding:1px 5px;font-size:12.5px;color:#cfe0f5;}
+  .eq{background:var(--card);border:1px solid var(--line);border-radius:8px;
+      padding:12px 14px;margin:12px 0;font-size:14.5px;text-align:center;
+      color:#cfe0f5;overflow-x:auto;}
+  .note{background:#1a2438;border:1px solid var(--line);
+        border-left:3px solid var(--sun);border-radius:6px;
+        padding:10px 14px;margin:14px 0;font-size:13.5px;color:var(--dim);}
+  .warn{border-left-color:var(--rose);}
+  ul{margin:8px 0 14px;padding-left:20px;}
+  li{margin-bottom:6px;}
+  .scroll{overflow-x:auto;}
+  footer{margin-top:44px;padding-top:14px;border-top:1px solid var(--line);
+         color:var(--dim);font-size:13px;}
+  @media(max-width:640px){
+    body{padding:14px;} h1{font-size:21px;} h2{font-size:17px;}
+    table{font-size:12.5px;} th,td{padding:6px 7px;}
+    td.src{white-space:normal;}
+  }
+</style>
+</head>
+<body><div style="position:sticky;top:0;z-index:9;display:flex;gap:10px;align-items:center;padding:10px 14px;background:#0a0f1ef2;border-bottom:1px solid #2a3852;font-family:Segoe UI,Tahoma,sans-serif"><a href="sun.html" style="color:#f1d27a;text-decoration:none;font-weight:700">← الشمس ونشاطها / The Sun</a><span style="flex:1"></span><a href="index.html" style="color:#9fb0d6;text-decoration:none;font-size:13px">الرئيسية · Home</a></div>
+<div class="wrap">
+
+<h1>Types of space weather events</h1>
+<p class="sub">What each one physically is, how you recognise it in data, and exactly where the data lives.
+A companion table to the Sun&ndash;to&ndash;Earth guide.</p>
+
+<div class="note warn">
+<b>On the names.</b> Three labels in common infographics are not catalogue terms, so searching for them
+returns nothing useful. <b>&ldquo;Plasma cloud&rdquo;</b> is the ICME / magnetic cloud &mdash; the interplanetary
+part of a CME. <b>&ldquo;Radiation belt surge&rdquo;</b> is a relativistic electron enhancement of the outer
+Van Allen belt. <b>&ldquo;Magnetosphere compression&rdquo;</b> is a sudden impulse and magnetopause
+inward motion. Each section below is filed under the name the literature and the archives actually use.
+</div>
+
+<h2>Where each event sits in the chain</h2>
+<div class="scroll">
+<table>
+<tr><th>#</th><th>Poster name</th><th>Proper name</th><th>Where it happens</th><th>Time from eruption</th><th>What it does to us</th></tr>
+<tr><td>1</td><td>Solar flare</td><td>Solar flare</td><td>Corona, above an active region</td><td>t = 0; photons arrive 8.3 min later</td><td>HF radio blackout on the dayside (R scale)</td></tr>
+<tr><td>2</td><td>CME</td><td>Coronal mass ejection</td><td>Corona, 2&ndash;30 R<sub>&#8857;</sub> in coronagraphs</td><td>t = 0 to ~1 h in the field of view</td><td>Drives the shock, the SEPs and the storm</td></tr>
+<tr><td>3</td><td>Solar wind stream</td><td>High-speed stream / CIR</td><td>Coronal hole &rarr; interplanetary space</td><td>2&ndash;4 days, and recurs every 27 days</td><td>Moderate long storms, strong electron belt response</td></tr>
+<tr><td>4</td><td>Geomagnetic storm</td><td>Geomagnetic storm (ring current)</td><td>Inner magnetosphere, L ~ 2&ndash;7</td><td>Starts at impact, lasts 1&ndash;5 days</td><td>GIC in power grids, pipelines, satellite drag</td></tr>
+<tr><td>5</td><td>Coronal hole</td><td>Coronal hole</td><td>Solar surface / low corona</td><td>Source, not an event; lives weeks to months</td><td>Sets up the fast wind that arrives days later</td></tr>
+<tr><td>6</td><td>Aurora arc</td><td>Discrete auroral arc</td><td>Ionosphere, 90&ndash;400 km</td><td>Minutes; substorm cadence</td><td>Visible marker of energy deposition</td></tr>
+<tr><td>7</td><td>Plasma cloud</td><td>ICME / magnetic cloud</td><td>Interplanetary space, measured at L1</td><td>1&ndash;4 days after eruption</td><td>Carries the B<sub>z</sub> that makes the storm</td></tr>
+<tr><td>8</td><td>Radiation belt surge</td><td>Relativistic electron enhancement</td><td>Outer belt, L* ~ 3&ndash;6</td><td>1&ndash;3 days after storm onset</td><td>Deep dielectric charging, satellite failures</td></tr>
+<tr><td>9</td><td>Magnetosphere compression</td><td>Sudden impulse / magnetopause crossing</td><td>Magnetopause, nominally ~10 R<sub>E</sub></td><td>Seconds to minutes at shock arrival</td><td>GEO satellites exposed to the sheath</td></tr>
+</table>
+</div>
+
+<!-- ===================== 1 FLARE ===================== -->
+<div class="evt c-flare">
+<h2 style="margin-top:6px;border:none;">1 &middot; Solar flare<span class="tag">photons &middot; 8.3 min</span></h2>
+
+<h4>The physics</h4>
+<p>A flare is the sudden release of energy stored in the non-potential (sheared and twisted) coronal
+magnetic field of an active region, converted by magnetic reconnection. In the standard CSHKP picture
+a current sheet forms below the erupting structure, reconnection there accelerates electrons and ions,
+the electrons stream down the newly reconnected legs, and they slam into the dense chromosphere. The
+chromosphere cannot radiate that energy away fast enough, so it heats to ~10&ndash;30 MK and expands
+upward &mdash; chromospheric evaporation &mdash; filling the loops with hot plasma that then shines in
+soft X-rays. That is why the soft X-ray light curve is the time integral of the hard X-ray one, which
+is the Neupert effect:</p>
+
+<div class="eq">F<sub>SXR</sub>(t) &prop; &int;<sub>0</sub><sup>t</sup> F<sub>HXR</sub>(t&prime;) dt&prime;</div>
+
+<p>Total energy budget is 10<sup>29</sup>&ndash;10<sup>32</sup> erg, rising to ~10<sup>33</sup> erg for the
+most extreme events. Roughly 10&ndash;50&nbsp;% of that goes into non-thermal electrons above ~20 keV, which
+is the strongest constraint any flare model has to meet. The GOES class is defined purely by the
+1&ndash;8&nbsp;&#8491; peak flux: X1 = 10<sup>&minus;4</sup> W&nbsp;m<sup>&minus;2</sup>, M1 = 10<sup>&minus;5</sup>,
+C1 = 10<sup>&minus;6</sup>, and so on down through B and A.</p>
+
+<p>Two durations matter. Impulsive flares peak in minutes and are usually confined. Long duration events
+(LDEs) decay over hours and are almost always eruptive, meaning a CME went with them. Your confined
+homologous events are the interesting middle case: the reconnection happens, the flare is real, but the
+overlying field holds the rope down.</p>
+
+<h4>Observational signature</h4>
+<div class="scroll">
+<table>
+<tr><th>Observable</th><th>Instrument / band</th><th>What you actually look for</th></tr>
+<tr><td>Soft X-ray rise</td><td>GOES XRS 1&ndash;8 &#8491; and 0.5&ndash;4 &#8491;</td><td>Sharp rise then slow decay. Peak flux gives the class; ratio of the two channels gives temperature and emission measure.</td></tr>
+<tr><td>Hard X-ray footpoints</td><td>RHESSI, Fermi/GBM, Solar Orbiter/STIX, 25&ndash;100 keV</td><td>Two compact sources at the ribbon ends, plus a coronal source above the loop top. Power-law spectrum with index &delta; ~ 3&ndash;6.</td></tr>
+<tr><td>Flare ribbons</td><td>SDO/AIA 1600 &#8491;, H&alpha; 6563 &#8491;</td><td>Two ribbons on either side of the polarity inversion line, separating with time. The separation speed times the field strength gives the reconnection rate.</td></tr>
+<tr><td>Hot flare loops</td><td>AIA 131 &#8491; (Fe XXI, ~11 MK), 94 &#8491; (Fe XVIII, ~7 MK)</td><td>131 &#8491; brightens first and hottest. Post-flare arcade grows and cools down through 335, 211, 193, 171 &#8491; in sequence.</td></tr>
+<tr><td>Type III radio burst</td><td>e-Callisto, RSTN, Wind/WAVES, STEREO/SWAVES</td><td>Fast frequency drift, hundreds of MHz down to kHz in seconds. It is electron beams escaping on open field &mdash; the marker that particles got out.</td></tr>
+<tr><td>Microwaves</td><td>Nobeyama, RSTN 245 MHz&ndash;15.4 GHz</td><td>Gyrosynchrotron from trapped electrons. Tracks the HXR closely, so useful when HXR coverage has a gap.</td></tr>
+<tr><td>Ionospheric response</td><td>Ground GPS TEC, ionosondes, riometers</td><td>Sudden ionospheric disturbance: D-region absorption on the sunlit hemisphere, HF fadeout within a minute of the SXR peak.</td></tr>
+<tr><td>Doppler / line shifts</td><td>IRIS, Hinode/EIS</td><td>Blueshifted hot lines (evaporation, up to 200&ndash;400 km/s) with redshifted cool lines (condensation). Direct test of the evaporation model.</td></tr>
+</table>
+</div>
+
+<h4>Where to get the data</h4>
+<div class="scroll">
+<table>
+<tr><th>Source</th><th>Link</th><th>Gives you</th><th>Watch out</th></tr>
+<tr><td class="src">GOES XRS (SWPC)</td><td><a href="https://www.swpc.noaa.gov/products/goes-x-ray-flux">swpc.noaa.gov/products/goes-x-ray-flux</a></td><td>Live 1&ndash;8 &#8491; and 0.5&ndash;4 &#8491; flux, last 3 days</td><td class="lim">Live only. For archives go to NCEI.</td></tr>
+<tr><td class="src">GOES archive (NCEI)</td><td><a href="https://www.ncei.noaa.gov/products/space-weather">ncei.noaa.gov/products/space-weather</a></td><td>Full XRS record since the 1970s, plus proton and electron channels</td><td class="lim">Pre-2017 fluxes carry the old SWPC scaling factor. Check which version you have.</td></tr>
+<tr><td class="src">NOAA event lists</td><td><a href="https://www.swpc.noaa.gov/products/solar-and-geophysical-event-reports">swpc.noaa.gov/products/solar-and-geophysical-event-reports</a></td><td>Every flare with start, peak, end, class, AR number, optical class</td><td class="lim">Location is only given when an optical report exists.</td></tr>
+<tr><td class="src">Helioviewer</td><td><a href="https://helioviewer.org/">helioviewer.org</a></td><td>AIA, EUVI, LASCO, HMI browsing and movie export in the browser</td><td class="lim">Browse quality. For measurement, pull the FITS.</td></tr>
+<tr><td class="src">JSOC / SDO</td><td><a href="http://jsoc.stanford.edu/">jsoc.stanford.edu</a></td><td>AIA and HMI level-1 FITS, cutout service for a single AR</td><td class="lim">Export queue can be slow. Use the cutout service, not full disc.</td></tr>
+<tr><td class="src">Solar Monitor</td><td><a href="https://solarmonitor.org/">solarmonitor.org</a></td><td>Daily AR map, classifications, flare list, per-day context in one page</td><td class="lim">One day at a time; not built for bulk queries.</td></tr>
+<tr><td class="src">HEK</td><td><a href="https://www.lmsal.com/hek/">lmsal.com/hek</a></td><td>Machine-readable feature catalogue: flares, filaments, dimmings, waves</td><td class="lim">Automated detections. Always eyeball before you trust one.</td></tr>
+<tr><td class="src">STIX (Solar Orbiter)</td><td><a href="https://datacenter.stix.i4ds.net/">datacenter.stix.i4ds.net</a></td><td>Hard X-ray imaging spectroscopy from a different vantage point</td><td class="lim">Only since 2020, and only when SolO is observing.</td></tr>
+<tr><td class="src">e-Callisto</td><td><a href="https://www.e-callisto.org/">e-callisto.org</a></td><td>Global radio spectrograph network, ~45&ndash;870 MHz</td><td class="lim">Station quality varies. RFI is common.</td></tr>
+</table>
+</div>
+</div>
+
+<!-- ===================== 2 CME ===================== -->
+<div class="evt c-cme">
+<h2 style="margin-top:6px;border:none;">2 &middot; Coronal mass ejection<span class="tag">plasma &middot; 1&ndash;4 days</span></h2>
+
+<h4>The physics</h4>
+<p>A CME is the expulsion of a magnetic flux rope plus its frozen-in plasma from the corona into the
+heliosphere. Typical mass 10<sup>15</sup> g (range 10<sup>14</sup>&ndash;10<sup>16</sup>), speed
+200&ndash;3000 km/s, kinetic energy 10<sup>29</sup>&ndash;10<sup>32</sup> erg &mdash; the same order as the
+flare it comes with, which is the clue that both are drawing on the same stored magnetic energy.</p>
+
+<p>The launch is a loss of equilibrium. A flux rope sits in balance between the upward hoop force of its
+own current and the downward tension of the overlying arcade. When the rope is pushed past the critical
+height, or the overlying field is eroded, the balance breaks. The two standard instabilities are the
+torus instability, governed by the decay index</p>
+
+<div class="eq">n = &minus; d(ln B<sub>ext</sub>) / d(ln h) &nbsp;&nbsp;&mdash;&nbsp;&nbsp; eruption when n &gt; n<sub>crit</sub> &asymp; 1.5</div>
+
+<p>and the kink instability, which triggers when the twist exceeds roughly 2&ndash;3 turns. When the
+overlying field falls off too slowly with height &mdash; a strong, low-lying arcade &mdash; the rope rises,
+reconnects, and is caught again. That is the confined eruption, and if the source region rebuilds its
+rope and does it again from the same place, you have the homologous sequence.</p>
+
+<p>In white light you see the CME by Thomson scattering of photospheric light off the free electrons,
+so what a coronagraph measures is the electron column density along the line of sight, not the magnetic
+field. The classic three-part structure is a bright leading front (compressed ambient plasma), a dark
+cavity (the rope itself, low density and high field), and a bright core (erupted filament material).</p>
+
+<h4>Observational signature</h4>
+<div class="scroll">
+<table>
+<tr><th>Observable</th><th>Instrument / band</th><th>What you actually look for</th></tr>
+<tr><td>White-light ejection</td><td>SOHO/LASCO C2 (2&ndash;6 R<sub>&#8857;</sub>), C3 (3.7&ndash;30 R<sub>&#8857;</sub>)</td><td>Outward-moving brightening in running-difference images. Halo (360&deg;) or partial halo (&gt;120&deg;) means it is coming at you or straight away from you.</td></tr>
+<tr><td>Stereoscopic view</td><td>STEREO COR1, COR2, HI1/HI2</td><td>Two vantage points let you fit a 3D geometry (GCS) and remove projection from the speed.</td></tr>
+<tr><td>Coronal dimming</td><td>AIA 193, 211 &#8491;</td><td>Darkening at the footpoints where mass was evacuated. The dimming area and depth scale with CME mass.</td></tr>
+<tr><td>EUV wave</td><td>AIA 193, 211 &#8491;</td><td>Large-scale bright front propagating at 200&ndash;1000 km/s. Best evidence that a real disturbance left the region.</td></tr>
+<tr><td>Post-eruption arcade</td><td>AIA 171, 193 &#8491;</td><td>A growing loop system over the PIL after the event. If there is no arcade, be suspicious of the association.</td></tr>
+<tr><td>Filament eruption</td><td>H&alpha;, AIA 304 &#8491;</td><td>The dark filament lifts, twists, and either escapes or falls back. Falling back = confined.</td></tr>
+<tr><td>Type II radio burst</td><td>Metric: e-Callisto, RSTN. Decametric&ndash;hectometric: Wind/WAVES, STEREO/SWAVES</td><td>Slow-drifting band, often with a fundamental and harmonic. It is the shock signature, and the drift rate gives the shock speed.</td></tr>
+<tr><td>Deprojected speed</td><td>GCS forward model (<code>gcs_gui</code>) on COR2-A/B + LASCO</td><td>Fit the croissant to all three views at once. Returns true 3D speed, latitude, longitude, tilt, half-angle, aspect ratio.</td></tr>
+</table>
+</div>
+
+<h4>Where to get the data</h4>
+<div class="scroll">
+<table>
+<tr><th>Source</th><th>Link</th><th>Gives you</th><th>Watch out</th></tr>
+<tr><td class="src">CDAW LASCO catalogue</td><td><a href="https://cdaw.gsfc.nasa.gov/CME_list/">cdaw.gsfc.nasa.gov/CME_list</a></td><td>The reference catalogue, 1996&ndash;present: time, central PA, width, linear and quadratic speed, mass, energy</td><td class="lim">Manual identification, so it carries human bias. Speeds are sky-plane, i.e. lower limits.</td></tr>
+<tr><td class="src">CACTus</td><td><a href="https://www.sidc.be/cactus/">sidc.be/cactus</a></td><td>Automatic detection of the same data</td><td class="lim">Automated: splits one CME into several, and picks up noise. Good for statistics, poor for single events.</td></tr>
+<tr><td class="src">SEEDS</td><td><a href="http://spaceweather.gmu.edu/seeds/">spaceweather.gmu.edu/seeds</a></td><td>A second independent automatic catalogue, useful as a cross-check</td><td class="lim">Same automation caveats.</td></tr>
+<tr><td class="src">DONKI (NASA CCMC)</td><td><a href="https://kauai.ccmc.gsfc.nasa.gov/DONKI/">kauai.ccmc.gsfc.nasa.gov/DONKI</a></td><td>Analyst-linked event chains: flare &rarr; CME &rarr; SEP &rarr; shock &rarr; storm, with a JSON API</td><td class="lim">Associations are analyst judgement and get revised. Mainly 2010 onward.</td></tr>
+<tr><td class="src">HELCATS</td><td><a href="https://www.helcats-fp7.eu/">helcats-fp7.eu</a></td><td>HICAT (HI-imaged CMEs), ARRCAT (arrival predictions), ICMECAT (in-situ matches)</td><td class="lim">Project ended, so the record stops. Still the best CME&ndash;ICME linkage set for its era.</td></tr>
+<tr><td class="src">CDAW DH type II list</td><td><a href="https://cdaw.gsfc.nasa.gov/CME_list/radio/waves_type2.html">cdaw.gsfc.nasa.gov/CME_list/radio/waves_type2.html</a></td><td>Decametric&ndash;hectometric type II bursts already matched to their CMEs</td><td class="lim">Onsets are to the nearest minute at best.</td></tr>
+<tr><td class="src">LASCO Level-0.5</td><td><a href="https://lasco-www.nrl.navy.mil/">lasco-www.nrl.navy.mil</a></td><td>Raw frames for your own photometry and mass measurement</td><td class="lim">You do the calibration yourself, with SolarSoft.</td></tr>
+</table>
+</div>
+</div>
+
+<!-- ===================== 3 HSS / CIR ===================== -->
+<div class="evt c-wind">
+<h2 style="margin-top:6px;border:none;">3 &middot; Solar wind stream (high-speed stream &amp; CIR)<span class="tag">recurs every 27 d</span></h2>
+
+<h4>The physics</h4>
+<p>The slow wind is 300&ndash;450 km/s, dense and variable, from the streamer belt. The fast wind is
+600&ndash;800 km/s, tenuous, hot in protons and remarkably steady, and it comes out of coronal holes along
+open field lines. The Sun rotates, so a coronal hole sprays fast wind into a spiral that runs into slow
+wind emitted earlier from further west. Where they meet you get a corotating interaction region.</p>
+
+<p>Inside a CIR the plasma is compressed: density and field magnitude both go up, temperature rises, and
+a forward&ndash;reverse wave pair forms at the edges, steepening into shocks beyond ~2 AU (so at Earth you
+usually see the compression but not yet a clean shock pair). The stream interface separates the dense
+slow plasma from the hot fast plasma, and shows up as a sharp density drop with a simultaneous
+temperature jump.</p>
+
+<p>Because the coronal hole survives many rotations, the whole thing comes back at the 27-day synodic
+period. This is the single most predictable thing in space weather and it is why recurrent moderate
+storms dominate the declining phase of the solar cycle.</p>
+
+<h4>Observational signature</h4>
+<div class="scroll">
+<table>
+<tr><th>Observable</th><th>Where</th><th>What you actually look for</th></tr>
+<tr><td>Speed profile</td><td>L1 in-situ (ACE, DSCOVR, Wind)</td><td>Sharp rise from ~350 to ~650 km/s over several hours, then a slow decline lasting days. Sawtooth, not a spike.</td></tr>
+<tr><td>Density and field</td><td>L1 in-situ</td><td>Density peaks <em>before</em> the speed peak and then collapses. |B| peaks with the density. This lead&ndash;lag is the fingerprint.</td></tr>
+<tr><td>Stream interface</td><td>L1 in-situ</td><td>Simultaneous density drop, temperature rise, and a small east&ndash;west flow deflection reversing sign.</td></tr>
+<tr><td>Temperature</td><td>L1 in-situ</td><td>Proton temperature <em>high</em> and correlated with speed &mdash; the opposite of an ICME, where T is anomalously low.</td></tr>
+<tr><td>Alfv&eacute;nic fluctuations</td><td>L1 in-situ</td><td>Large-amplitude, well correlated &delta;V&ndash;&delta;B inside the fast stream. B<sub>z</sub> swings both ways, so the storm is choppy rather than deep.</td></tr>
+<tr><td>Geomagnetic response</td><td>Kp, Dst, AE</td><td>Kp 4&ndash;6 sustained for days, Dst only &minus;30 to &minus;80 nT, but AE strongly elevated and substorms one after another.</td></tr>
+<tr><td>Recurrence</td><td>27-day stack plot</td><td>Same signature at the same Carrington longitude on the next rotation. Confirms the source is a hole, not a CME.</td></tr>
+</table>
+</div>
+
+<h4>Where to get the data</h4>
+<div class="scroll">
+<table>
+<tr><th>Source</th><th>Link</th><th>Gives you</th><th>Watch out</th></tr>
+<tr><td class="src">OMNIWeb</td><td><a href="https://omniweb.gsfc.nasa.gov/">omniweb.gsfc.nasa.gov</a></td><td>Merged, bow-shock-shifted solar wind plus geomagnetic indices, 1-min and 1-hour</td><td class="lim">Merged from several spacecraft, with interpolation over gaps.</td></tr>
+<tr><td class="src">CDAWeb</td><td><a href="https://cdaweb.gsfc.nasa.gov/">cdaweb.gsfc.nasa.gov</a></td><td>Per-mission full-resolution data: ACE, Wind, DSCOVR, STEREO</td><td class="lim">You must know which instrument and product you want.</td></tr>
+<tr><td class="src">SWPC real-time solar wind</td><td><a href="https://www.swpc.noaa.gov/products/real-time-solar-wind">swpc.noaa.gov/products/real-time-solar-wind</a></td><td>Live DSCOVR / ACE plasma and field</td><td class="lim">Real-time quality, not science quality. Reprocess later.</td></tr>
+<tr><td class="src">ACE Science Center</td><td><a href="https://izw1.caltech.edu/ACE/ASC/">izw1.caltech.edu/ACE/ASC</a></td><td>Level-2 verified ACE data, plus composition (O<sup>7+</sup>/O<sup>6+</sup>, Fe/O)</td><td class="lim">Level-2 lags real time by weeks to months.</td></tr>
+<tr><td class="src">Jian SIR/CIR lists</td><td><a href="https://ccmc.gsfc.nasa.gov/lists/">ccmc.gsfc.nasa.gov/lists</a></td><td>Identified stream interaction regions with interface times</td><td class="lim">Identification is by hand and the criteria differ between authors.</td></tr>
+<tr><td class="src">Solar wind composition</td><td><a href="https://cdaweb.gsfc.nasa.gov/">ACE/SWICS via CDAWeb</a></td><td>Charge state ratios that separate fast, slow and ICME plasma independently of speed</td><td class="lim">Low cadence (hours). Useless for sharp boundaries.</td></tr>
+</table>
+</div>
+</div>
+
+<!-- ===================== 4 GEOMAGNETIC STORM ===================== -->
+<div class="evt c-storm">
+<h2 style="margin-top:6px;border:none;">4 &middot; Geomagnetic storm<span class="tag">ring current &middot; 1&ndash;5 days</span></h2>
+
+<h4>The physics</h4>
+<p>A storm is the energisation of the ring current. The chain is: southward interplanetary B<sub>z</sub>
+reconnects with the Earth's northward dayside field at the magnetopause, open flux is dragged over the
+poles into the tail, it reconnects again in the tail, and plasma sheet ions are injected earthward. Once
+inside, those 10&ndash;200 keV ions gradient-curvature drift westward around the Earth at L ~ 2&ndash;7,
+forming a westward current ring whose magnetic field opposes the Earth's at the surface. So the horizontal
+field at low-latitude stations drops. That drop, averaged over four stations, is Dst.</p>
+
+<p>The energy content of the ring current and the field depression are tied by the Dessler&ndash;Parker&ndash;Sckopke relation:</p>
+
+<div class="eq">&Delta;B / B<sub>0</sub> = &minus; 2E<sub>ring</sub> / (3 B<sub>0</sub><sup>2</sup> R<sub>E</sub><sup>3</sup> / &mu;<sub>0</sub>)</div>
+
+<p>The driving and decay are usually modelled with the Burton equation:</p>
+
+<div class="eq">dDst*/dt = Q(E<sub>y</sub>) &minus; Dst*/&tau;</div>
+
+<p>where <b>Dst*</b> is Dst corrected for solar wind pressure on the magnetopause currents,
+Dst* = Dst &minus; b&radic;P<sub>dyn</sub> + c; <b>Q</b> is the injection term, roughly proportional to the
+rectified electric field V&middot;B<sub>s</sub> (B<sub>s</sub> = |B<sub>z</sub>| when southward, else 0);
+and <b>&tau;</b> is the decay time, 5&ndash;20 h, set by charge exchange with the geocorona, Coulomb
+collisions and wave scattering. This single equation is why <b>VB<sub>z</sub> is the best single predictor
+of storm strength</b> &mdash; far better than flare class or CME speed.</p>
+
+<p>Phases: sudden commencement (pressure jump, positive spike), initial phase (Dst slightly positive,
+minutes to hours), main phase (Dst falls, 2&ndash;12 h), recovery (exponential, 1&ndash;5 days, often with a
+fast then a slow component). Intensity classes by minimum Dst: moderate &minus;50 to &minus;100 nT,
+intense &lt; &minus;100 nT, superstorm &lt; &minus;250 nT.</p>
+
+<h4>Observational signature</h4>
+<div class="scroll">
+<table>
+<tr><th>Index</th><th>Cadence / range</th><th>What it measures and when to use it</th></tr>
+<tr><td>Dst</td><td>1 h, 4 low-latitude stations</td><td>Ring current strength. The standard for storm intensity and for any statistical study.</td></tr>
+<tr><td>SYM-H</td><td>1 min, same idea, more stations</td><td>Essentially high-cadence Dst. Use it when you need the sudden commencement or the exact main-phase onset.</td></tr>
+<tr><td>Kp / ap</td><td>3 h, 13 mid-latitude stations, 0&ndash;9</td><td>Global disturbance level. Quasi-logarithmic, so never average Kp &mdash; convert to ap first.</td></tr>
+<tr><td>Hp30 / Hp60</td><td>30 min / 60 min</td><td>Modern high-cadence Kp-like index. Much better for resolving fast events.</td></tr>
+<tr><td>AE / AL / AU</td><td>1 min, auroral electrojets</td><td>Substorm activity. AL tracks the westward electrojet, so it is your substorm onset marker.</td></tr>
+<tr><td>PC index</td><td>1 min, polar cap</td><td>Proxy for the polar cap potential, i.e. how hard the solar wind is driving the convection.</td></tr>
+<tr><td>dB/dt</td><td>1 s&ndash;1 min, any magnetometer</td><td>What actually drives geomagnetically induced currents. Peak dB/dt matters more than peak |Dst| for grid risk.</td></tr>
+</table>
+</div>
+
+<h4>Where to get the data</h4>
+<div class="scroll">
+<table>
+<tr><th>Source</th><th>Link</th><th>Gives you</th><th>Watch out</th></tr>
+<tr><td class="src">WDC Kyoto</td><td><a href="https://wdc.kugi.kyoto-u.ac.jp/">wdc.kugi.kyoto-u.ac.jp</a></td><td>Dst, AE, SYM-H, ASY-H. The definitive source.</td><td class="lim">Three tiers: real-time, provisional, final. Final can lag by years &mdash; state which you used.</td></tr>
+<tr><td class="src">GFZ Potsdam</td><td><a href="https://www.gfz-potsdam.de/en/kp-index/">gfz-potsdam.de/en/kp-index</a></td><td>Kp, ap, Hp30, Hp60, Ap, international quiet/disturbed days</td><td class="lim">Kp is quasi-logarithmic. Convert to ap before any arithmetic.</td></tr>
+<tr><td class="src">OMNIWeb</td><td><a href="https://omniweb.gsfc.nasa.gov/">omniweb.gsfc.nasa.gov</a></td><td>Solar wind and indices on one time base &mdash; ideal for correlation work</td><td class="lim">Already time-shifted to the bow shock; do not shift again.</td></tr>
+<tr><td class="src">SuperMAG</td><td><a href="https://supermag.jhuapl.edu/">supermag.jhuapl.edu</a></td><td>&gt;500 stations, uniform baseline removal, SML/SMU/SME indices</td><td class="lim">Free registration. Their baseline differs from the official AE.</td></tr>
+<tr><td class="src">INTERMAGNET</td><td><a href="https://intermagnet.org/">intermagnet.org</a></td><td>Raw 1-second and 1-minute data from individual observatories</td><td class="lim">You do the baseline and quiet-day removal yourself.</td></tr>
+<tr><td class="src">ISGI</td><td><a href="https://isgi.unistra.fr/">isgi.unistra.fr</a></td><td>aa index back to 1868, storm sudden commencement catalogue, event lists</td><td class="lim">aa uses only two antipodal stations, so it is coarser than Kp.</td></tr>
+<tr><td class="src">Richardson &amp; Cane list</td><td><a href="https://izw1.caltech.edu/ACE/ASC/DATA/level3/icmetable2.htm">izw1.caltech.edu/ACE/ASC/DATA/level3/icmetable2.htm</a></td><td>Each near-Earth ICME with its minimum Dst already attached</td><td class="lim">Associations are judgement calls; check the quality flag.</td></tr>
+</table>
+</div>
+</div>
+
+<!-- ===================== 5 CORONAL HOLE ===================== -->
+<div class="evt c-hole">
+<h2 style="margin-top:6px;border:none;">5 &middot; Coronal hole<span class="tag">source, not an event</span></h2>
+
+<h4>The physics</h4>
+<p>A coronal hole is a region where the magnetic field is open &mdash; one polarity, field lines that do not
+close back to the Sun within the corona but connect to the heliosphere. Plasma escapes freely along them,
+so the density drops by a factor of 2&ndash;5 relative to quiet corona and the temperature is lower
+(~1 MK against 1.5&ndash;2 MK). Less plasma and lower temperature means less emission measure in the hot
+EUV lines, which is why the region looks dark. It is not a hole in anything &mdash; it is a drain.</p>
+
+<p>Holes come in three flavours: polar holes, large and long-lived, dominating at solar minimum; equatorial
+or low-latitude holes, which are the geoeffective ones because their wind can hit Earth; and transient
+holes (coronal dimmings), which are the evacuated footpoints left behind by a CME and last only hours.</p>
+
+<p>The observable that matters for forecasting is the hole's area and its position relative to the central
+meridian. Empirically, the arriving wind speed scales with area, and the transit is 2&ndash;4 days. The
+standard physical framework relating open flux to speed is the Wang&ndash;Sheeley&ndash;Arge model, built on
+the inverse relation between the flux tube expansion factor and the terminal speed:</p>
+
+<div class="eq">f<sub>s</sub> = (R<sub>&#8857;</sub>/R<sub>ss</sub>)<sup>2</sup> &middot; B(R<sub>&#8857;</sub>)/B(R<sub>ss</sub>) &nbsp;&nbsp;&mdash;&nbsp;&nbsp; larger f<sub>s</sub> &rArr; slower wind</div>
+
+<h4>Observational signature</h4>
+<div class="scroll">
+<table>
+<tr><th>Observable</th><th>Instrument / band</th><th>What you actually look for</th></tr>
+<tr><td>Dark EUV region</td><td>SDO/AIA 193 &#8491; (Fe XII), 211 &#8491; (Fe XIV)</td><td>Extended dark area with a sharp, irregular boundary. 193 &#8491; is the standard channel for hole detection.</td></tr>
+<tr><td>Dark in soft X-ray</td><td>Hinode/XRT, historically Yohkoh/SXT</td><td>The original way holes were found. Highest contrast of all.</td></tr>
+<tr><td>Unipolar field</td><td>HMI / GONG magnetograms</td><td>One dominant polarity across the whole area. This is what separates a hole from a filament channel, which also looks dark.</td></tr>
+<tr><td>He I 10830 &#8491;</td><td>NSO / GONG, SOLIS historically</td><td>Holes appear <em>bright</em> (reduced absorption). A completely independent check on the EUV boundary.</td></tr>
+<tr><td>Blueshifted outflow</td><td>Hinode/EIS</td><td>Persistent 10&ndash;30 km/s outflow in Fe XII. Direct evidence that plasma is leaving.</td></tr>
+<tr><td>Downstream wind</td><td>L1 in-situ, 2&ndash;4 days later</td><td>The high-speed stream itself. Closing this loop is what proves your hole was the source.</td></tr>
+</table>
+</div>
+
+<h4>Where to get the data</h4>
+<div class="scroll">
+<table>
+<tr><th>Source</th><th>Link</th><th>Gives you</th><th>Watch out</th></tr>
+<tr><td class="src">Helioviewer</td><td><a href="https://helioviewer.org/">helioviewer.org</a></td><td>AIA 193/211 browsing, ideal for eyeballing hole position and area</td><td class="lim">No quantitative area measurement in the browser.</td></tr>
+<tr><td class="src">SWPC synoptic map</td><td><a href="https://www.swpc.noaa.gov/products/solar-synoptic-map">swpc.noaa.gov/products/solar-synoptic-map</a></td><td>Daily hand-drawn map with holes, filaments and ARs marked</td><td class="lim">Drawn by an analyst; boundaries are approximate.</td></tr>
+<tr><td class="src">CHIMERA</td><td><a href="https://solarmonitor.org/chimera.php">solarmonitor.org/chimera.php</a></td><td>Automated multi-thermal hole detection with areas and boundaries</td><td class="lim">Automated segmentation struggles near the limb and with filament channels.</td></tr>
+<tr><td class="src">SPoCA / SDO events</td><td><a href="https://www.lmsal.com/hek/">lmsal.com/hek</a></td><td>Coronal hole feature entries in HEK with area and centroid</td><td class="lim">Same automation caveats; verify before use.</td></tr>
+<tr><td class="src">GONG / NSO</td><td><a href="https://gong.nso.edu/">gong.nso.edu</a></td><td>Continuous ground-based magnetograms and H&alpha;, used to drive PFSS and WSA</td><td class="lim">Ground-based, so seeing and weather leave gaps.</td></tr>
+<tr><td class="src">PFSS / WSA at CCMC</td><td><a href="https://ccmc.gsfc.nasa.gov/models/">ccmc.gsfc.nasa.gov/models</a></td><td>Run the coronal field extrapolation yourself; get open field maps and predicted wind speed</td><td class="lim">Source surface height R<sub>ss</sub> is a free parameter (usually 2.5 R<sub>&#8857;</sub>) and the answer depends on it.</td></tr>
+<tr><td class="src">SDO/AIA FITS</td><td><a href="http://jsoc.stanford.edu/">jsoc.stanford.edu</a></td><td>Calibrated 193 &#8491; frames for your own thresholding and area computation</td><td class="lim">Remember to correct area for projection on the sphere.</td></tr>
+</table>
+</div>
+</div>
+
+<!-- ===================== 6 AURORA ===================== -->
+<div class="evt c-aur">
+<h2 style="margin-top:6px;border:none;">6 &middot; Aurora (discrete arc)<span class="tag">90&ndash;400 km altitude</span></h2>
+
+<h4>The physics</h4>
+<p>Aurora is what you see when magnetospheric electrons precipitate into the upper atmosphere, collide
+with neutrals, and the excited atoms and molecules radiate as they come back down. A <b>discrete arc</b>
+is the bright, structured, curtain-like form, and it comes from electrons accelerated to 1&ndash;10 keV by
+a field-aligned potential drop at 5000&ndash;15000 km altitude, above the upward field-aligned current
+region &mdash; the inverted-V structure. <b>Diffuse aurora</b> is the broad glow from electrons scattered
+into the loss cone by chorus and ECH waves, with no field-aligned acceleration needed.</p>
+
+<p>The colours are pure atomic physics and they tell you the altitude directly:</p>
+<ul>
+<li><b>557.7 nm green</b> &mdash; O(<sup>1</sup>S &rarr; <sup>1</sup>D), lifetime 0.7 s, emitted at 100&ndash;150 km. The dominant colour because that lifetime is short enough to beat collisional quenching at that density.</li>
+<li><b>630.0 / 636.4 nm red</b> &mdash; O(<sup>1</sup>D &rarr; <sup>3</sup>P), lifetime ~110 s, so it only survives above ~200 km where collisions are rare. Red tops mean soft (low-energy) electrons stopping high.</li>
+<li><b>427.8 nm blue-violet</b> &mdash; N<sub>2</sub><sup>+</sup> first negative band. Prompt, so it marks the instantaneous precipitation, and needs energetic electrons reaching below 100 km.</li>
+<li><b>Lower red fringe</b> &mdash; N<sub>2</sub> first positive, below 100 km, only in very hard precipitation.</li>
+</ul>
+
+<p>Higher electron energy means deeper penetration, so the colour profile is an energy diagnostic. The oval
+itself expands equatorward as the storm deepens; at Dst &asymp; &minus;100 nT it can reach ~55&deg; magnetic
+latitude, and in superstorms below 45&deg;.</p>
+
+<h4>Observational signature</h4>
+<div class="scroll">
+<table>
+<tr><th>Observable</th><th>Instrument</th><th>What you actually look for</th></tr>
+<tr><td>All-sky imagery</td><td>THEMIS ASI, TREx, MIRACLE</td><td>Arc brightening then poleward expansion and breakup &mdash; the classic substorm onset sequence, over 1&ndash;3 min.</td></tr>
+<tr><td>Spectral ratio</td><td>Meridian scanning photometer</td><td>I(630.0)/I(427.8) gives the characteristic electron energy without needing a spacecraft.</td></tr>
+<tr><td>Global UV oval</td><td>DMSP/SSUSI, historically IMAGE/FUV, Polar/UVI</td><td>The whole oval at once: total hemispheric power in GW, and the oval boundaries.</td></tr>
+<tr><td>Precipitating particles</td><td>DMSP SSJ/4, POES/MetOp</td><td>In-situ energy flux and spectra along the satellite track. Inverted-V = discrete arc.</td></tr>
+<tr><td>Ground magnetic bay</td><td>Any auroral-zone magnetometer, AL index</td><td>Negative bay of hundreds of nT at substorm onset &mdash; the westward electrojet under the arc.</td></tr>
+<tr><td>Radar</td><td>SuperDARN, EISCAT</td><td>Convection pattern and ionospheric electron density &mdash; the electrodynamics behind the light.</td></tr>
+</table>
+</div>
+
+<h4>Where to get the data</h4>
+<div class="scroll">
+<table>
+<tr><th>Source</th><th>Link</th><th>Gives you</th><th>Watch out</th></tr>
+<tr><td class="src">OVATION Prime (SWPC)</td><td><a href="https://www.swpc.noaa.gov/products/aurora-30-minute-forecast">swpc.noaa.gov/products/aurora-30-minute-forecast</a></td><td>30-minute forecast of auroral power and visibility probability</td><td class="lim">Empirical model driven by L1 wind; only as good as the 30-min lead time allows.</td></tr>
+<tr><td class="src">THEMIS all-sky</td><td><a href="https://cdaweb.gsfc.nasa.gov/">via CDAWeb</a></td><td>North American all-sky image chain at 3 s cadence since 2007</td><td class="lim">Clouds, moonlight and summer daylight kill entire seasons.</td></tr>
+<tr><td class="src">SuperMAG</td><td><a href="https://supermag.jhuapl.edu/">supermag.jhuapl.edu</a></td><td>SML/SME substorm indices and an onset list</td><td class="lim">Onset identification is algorithmic; definitions differ between lists.</td></tr>
+<tr><td class="src">DMSP SSUSI</td><td><a href="https://ssusi.jhuapl.edu/">ssusi.jhuapl.edu</a></td><td>Far-UV auroral images and derived energy flux maps</td><td class="lim">One orbit strip at a time, ~100 min revisit.</td></tr>
+<tr><td class="src">SuperDARN</td><td><a href="https://superdarn.ca/">superdarn.ca</a></td><td>Ionospheric convection maps across both hemispheres</td><td class="lim">Coverage depends on backscatter; empty patches are common.</td></tr>
+<tr><td class="src">EISCAT</td><td><a href="https://eiscat.se/">eiscat.se</a></td><td>Incoherent scatter: electron density, temperatures, ion velocity profiles</td><td class="lim">Campaign-based, so data exist only when the radar was scheduled.</td></tr>
+<tr><td class="src">Aurorasaurus</td><td><a href="https://aurorasaurus.org/">aurorasaurus.org</a></td><td>Citizen-science sightings, good for ground-truthing visibility latitude</td><td class="lim">Reports are unverified and biased to populated areas.</td></tr>
+</table>
+</div>
+</div>
+
+<!-- ===================== 7 ICME / MAGNETIC CLOUD ===================== -->
+<div class="evt c-icme">
+<h2 style="margin-top:6px;border:none;">7 &middot; Plasma cloud = ICME / magnetic cloud<span class="tag">measured at L1</span></h2>
+
+<h4>The physics</h4>
+<p>The ICME is the CME after it has left the coronagraph field and become an interplanetary structure. It
+is the same flux rope, now expanded to 0.2&ndash;0.4 AU across by the time it reaches Earth, and still
+carrying the magnetic topology it was born with. This is the object that actually causes the storm,
+because it is the only thing that can hold a strong, <em>steady</em> southward B<sub>z</sub> for ten hours
+at a stretch. Turbulent fields cannot; a rotating rope can.</p>
+
+<p>A fast ICME drives a forward shock ahead of it, and between the shock and the rope sits the
+<b>sheath</b> &mdash; compressed, heated, turbulent ambient plasma. The sheath and the rope are two separate
+storm drivers with different characters: sheath storms are irregular and driven by compressed fluctuating
+fields, rope storms are smooth and deep.</p>
+
+<p>A <b>magnetic cloud</b> is the subset of ICMEs meeting the three Burlaga criteria: field magnitude
+above ambient, smooth rotation of the field direction through a large angle over ~a day, and proton
+temperature and plasma beta both low. Only about a third of ICMEs at 1 AU qualify &mdash; the rest are
+ejecta where the crossing missed the rope axis or the structure is too disturbed.</p>
+
+<p>Deceleration between Sun and Earth is aerodynamic drag on the ambient wind:</p>
+
+<div class="eq">dv/dt = &minus; &gamma; (v &minus; w) |v &minus; w|</div>
+
+<p>with <b>w</b> the ambient wind speed and <b>&gamma;</b> ~ 10<sup>&minus;8</sup>&ndash;10<sup>&minus;7</sup> km<sup>&minus;1</sup>.
+Fast CMEs are dragged down toward the ambient speed, slow ones are pushed up. That is why a 2000 km/s
+launch arrives at 800 km/s, and why V<sub>sky</sub> and V<sub>ICME</sub> are never the same number.</p>
+
+<h4>Observational signature at L1</h4>
+<div class="scroll">
+<table>
+<tr><th>Signature</th><th>Threshold / look</th><th>Why it works</th></tr>
+<tr><td>Forward shock</td><td>Simultaneous jump in V, n, T and |B| within minutes</td><td>All four together is the test. One alone is a discontinuity, not a shock.</td></tr>
+<tr><td>Enhanced |B|</td><td>Typically 2&ndash;5&times; ambient, 10&ndash;40 nT</td><td>The rope's own field, compressed by expansion resistance.</td></tr>
+<tr><td>Smooth field rotation</td><td>Coherent turning over 10&ndash;30 h, small variance</td><td>You are flying through a helical rope; the direction turns as you cross it.</td></tr>
+<tr><td>Low proton temperature</td><td>T<sub>p</sub> &lt; 0.5 T<sub>exp</sub>(V)</td><td>Adiabatic cooling from rapid expansion. The most reliable single discriminator.</td></tr>
+<tr><td>Low plasma beta</td><td>&beta; &lt; 0.1 typically</td><td>Field dominates pressure &mdash; the definition of a magnetically structured object.</td></tr>
+<tr><td>Bidirectional electrons</td><td>Suprathermal strahl at 0&deg; and 180&deg; pitch angle</td><td>Both legs still connected to the Sun &rArr; you are inside a closed loop.</td></tr>
+<tr><td>He<sup>2+</sup>/H<sup>+</sup> enhancement</td><td>&gt; 8&nbsp;% (ambient ~4&nbsp;%)</td><td>Filament and chromospheric material carried out with the rope.</td></tr>
+<tr><td>High charge states</td><td>O<sup>7+</sup>/O<sup>6+</sup> &gt; 1, Fe charge &gt; 12</td><td>Frozen-in record of flare heating at the launch site.</td></tr>
+<tr><td>Linear speed decline</td><td>Monotonic fall across the rope</td><td>The front is moving faster than the back &mdash; direct evidence of expansion.</td></tr>
+</table>
+</div>
+
+<h4>Reconstruction methods</h4>
+<ul>
+<li><b>MVA</b> (minimum variance analysis) &mdash; eigen-decompose the field covariance matrix over the cloud interval; the minimum-variance eigenvector is the rope axis normal. Trust it only when the intermediate-to-minimum eigenvalue ratio is &gt; 2&ndash;3.</li>
+<li><b>Lundquist fit</b> &mdash; force-free constant-&alpha; solution, B<sub>A</sub> = B<sub>0</sub>J<sub>0</sub>(&alpha;r), B<sub>T</sub> = B<sub>0</sub>HJ<sub>1</sub>(&alpha;r). Gives axis orientation, impact parameter, handedness and flux.</li>
+<li><b>Grad&ndash;Shafranov reconstruction</b> &mdash; recovers the 2D cross-section without assuming force-free. Needs a good de Hoffmann&ndash;Teller frame.</li>
+<li><b>FRED</b> &mdash; combines the GCS 3D geometry with the in-situ field to predict B<sub>0</sub>. Comparing the predicted and observed axial field is a genuine end-to-end consistency check on your whole analysis.</li>
+</ul>
+
+<h4>Where to get the data</h4>
+<div class="scroll">
+<table>
+<tr><th>Source</th><th>Link</th><th>Gives you</th><th>Watch out</th></tr>
+<tr><td class="src">Richardson &amp; Cane list</td><td><a href="https://izw1.caltech.edu/ACE/ASC/DATA/level3/icmetable2.htm">izw1.caltech.edu/ACE/ASC/DATA/level3/icmetable2.htm</a></td><td>Every near-Earth ICME since 1996: shock time, ejecta start/end, MC flag, mean and max V, mean B, min Dst, transit speed, associated LASCO CME</td><td class="lim">The single most useful table in this whole page. Still, associations are judgement calls &mdash; read the flags.</td></tr>
+<tr><td class="src">Wind ICME catalogue</td><td><a href="https://wind.nasa.gov/ICME_catalog/ICME_catalog_viewer.php">wind.nasa.gov/ICME_catalog</a></td><td>Nieves-Chinchilla catalogue with flux rope fits and a classification by rope quality</td><td class="lim">Different boundary definitions from R&amp;C &mdash; do not mix the two in one study.</td></tr>
+<tr><td class="src">HELCATS ICMECAT</td><td><a href="https://www.helcats-fp7.eu/">helcats-fp7.eu</a></td><td>Multi-spacecraft in-situ ICMEs (Wind, STEREO, MESSENGER, VEX) matched to imaging</td><td class="lim">Project ended; record stops around 2017.</td></tr>
+<tr><td class="src">OMNIWeb</td><td><a href="https://omniweb.gsfc.nasa.gov/">omniweb.gsfc.nasa.gov</a></td><td>1-min merged plasma and field for plotting the crossing</td><td class="lim">Interpolated across gaps &mdash; check the source flags before fitting.</td></tr>
+<tr><td class="src">Wind / MFI &amp; SWE</td><td><a href="https://cdaweb.gsfc.nasa.gov/">cdaweb.gsfc.nasa.gov</a></td><td>High-resolution field and plasma &mdash; what you actually want for MVA and GS</td><td class="lim">Pick a consistent resolution; mixing cadences biases the covariance matrix.</td></tr>
+<tr><td class="src">ACE SWICS / SWEPAM</td><td><a href="https://izw1.caltech.edu/ACE/ASC/">izw1.caltech.edu/ACE/ASC</a></td><td>Charge states and suprathermal electrons for the composition signatures</td><td class="lim">SWICS degraded after 2011. Check the instrument status for your date.</td></tr>
+<tr><td class="src">Heliospheric shock list</td><td><a href="http://www.ipshocks.helsinki.fi/">ipshocks.helsinki.fi</a></td><td>Identified interplanetary shocks with normals, Mach numbers and compression ratios</td><td class="lim">Automatic plus manual; the two versions can disagree.</td></tr>
+</table>
+</div>
+</div>
+
+<!-- ===================== 8 RADIATION BELT ===================== -->
+<div class="evt c-belt">
+<h2 style="margin-top:6px;border:none;">8 &middot; Radiation belt surge (relativistic electron enhancement)<span class="tag">L* ~ 3&ndash;6</span></h2>
+
+<h4>The physics</h4>
+<p>The outer Van Allen belt holds electrons from hundreds of keV to several MeV, trapped on drift shells.
+Each particle obeys three adiabatic invariants &mdash; gyration, bounce, and drift around the Earth &mdash;
+and every acceleration or loss mechanism works by breaking one of them.</p>
+
+<p>A storm does something counter-intuitive to the belt. First it <b>empties</b> it: within hours of the
+shock the flux at all energies drops by one to three orders of magnitude. This dropout is part real loss
+(magnetopause shadowing as the boundary is pushed inside the drift shells, plus outward radial diffusion,
+plus scattering into the atmosphere by EMIC waves) and part reversible adiabatic response to the inflated
+field &mdash; the Dst effect. Then, over the next one to three days, it <b>refills, often above the
+pre-storm level</b>. Two mechanisms compete:</p>
+<ul>
+<li><b>Local acceleration</b> by whistler-mode chorus waves, which break the first invariant through Doppler-shifted cyclotron resonance and pump seed electrons up to MeV energies in place. Its fingerprint is a growing peak in phase space density at fixed &mu; and K located at L* ~ 4&ndash;5.</li>
+<li><b>Radial diffusion</b> by ULF Pc5 waves, which break the third invariant and transport electrons inward from an external source. Its fingerprint is a PSD profile that increases monotonically outward with no interior peak.</li>
+</ul>
+
+<p>Plotting radial PSD profiles at fixed &mu; and K is how you tell those two apart, and it is the cleanest
+piece of analysis in the whole belt field. Practical consequence: &gt;2 MeV electrons penetrate spacecraft
+shielding and build up charge in dielectrics until it discharges &mdash; deep dielectric charging, the cause
+of a long list of satellite anomalies. Separately, in very rare huge SEP events, protons can be trapped to
+form a brand-new inner belt (March 1991 is the textbook case).</p>
+
+<h4>Observational signature</h4>
+<div class="scroll">
+<table>
+<tr><th>Observable</th><th>Instrument</th><th>What you actually look for</th></tr>
+<tr><td>&gt;2 MeV electron flux</td><td>GOES EPS / SEISS at GEO</td><td>Drop of 1&ndash;3 orders at shock arrival, then a rise over 1&ndash;3 days. &gt;1000 pfu per day is the operational alert level.</td></tr>
+<tr><td>Energy-dependent onset</td><td>GOES, POES</td><td>Lower energies recover first, higher energies later. That delay is the signature of gradual acceleration, not injection.</td></tr>
+<tr><td>Phase space density</td><td>Van Allen Probes ECT (2012&ndash;2019)</td><td>Radial PSD profile at fixed &mu;, K. An interior peak means local acceleration.</td></tr>
+<tr><td>Chorus waves</td><td>Van Allen Probes EMFISIS, THEMIS</td><td>Rising-tone whistler emissions below the electron gyrofrequency, on the dawn side outside the plasmapause.</td></tr>
+<tr><td>ULF Pc5</td><td>Ground magnetometers, 1&ndash;10 mHz</td><td>Enhanced ULF power correlates with fast solar wind and with radial diffusion rates.</td></tr>
+<tr><td>Plasmapause position</td><td>IMAGE EUV historically, models today</td><td>Chorus lives outside it, hiss inside. The plasmapause sets where acceleration happens.</td></tr>
+<tr><td>Precipitation</td><td>POES/MetOp, riometers, balloons (BARREL)</td><td>Microbursts and the atmospheric loss side of the budget.</td></tr>
+</table>
+</div>
+
+<h4>Where to get the data</h4>
+<div class="scroll">
+<table>
+<tr><th>Source</th><th>Link</th><th>Gives you</th><th>Watch out</th></tr>
+<tr><td class="src">GOES electron flux (SWPC)</td><td><a href="https://www.swpc.noaa.gov/products/goes-electron-flux">swpc.noaa.gov/products/goes-electron-flux</a></td><td>Live &gt;0.8 and &gt;2 MeV integral electron flux at GEO</td><td class="lim">Proton contamination during SEP events can fake an electron rise.</td></tr>
+<tr><td class="src">NCEI GOES archive</td><td><a href="https://www.ncei.noaa.gov/products/space-weather">ncei.noaa.gov/products/space-weather</a></td><td>The long record &mdash; decades of electron flux, ideal for statistics</td><td class="lim">Instrument changed across the GOES generations; check calibration continuity.</td></tr>
+<tr><td class="src">Van Allen Probes (LASP)</td><td><a href="https://rbspgway.jhuapl.edu/">rbspgway.jhuapl.edu</a></td><td>ECT (MagEIS, REPT, HOPE) and EMFISIS: the definitive belt dataset, 2012&ndash;2019</td><td class="lim">Mission over. Nothing since matches its coverage.</td></tr>
+<tr><td class="src">CDAWeb</td><td><a href="https://cdaweb.gsfc.nasa.gov/">cdaweb.gsfc.nasa.gov</a></td><td>RBSP, THEMIS, POES, SAMPEX in one interface with plotting</td><td class="lim">You need to know the exact dataset name.</td></tr>
+<tr><td class="src">SAMPEX</td><td><a href="https://izw1.caltech.edu/sampex/DataCenter/">izw1.caltech.edu/sampex/DataCenter</a></td><td>Low-altitude belt monitoring 1992&ndash;2012 &mdash; fills the pre-RBSP gap</td><td class="lim">Low altitude samples the loss cone, not the trapped core.</td></tr>
+<tr><td class="src">SPENVIS (ESA)</td><td><a href="https://www.spenvis.oma.be/">spenvis.oma.be</a></td><td>AE9/AP9 belt models, dose and single-event-upset estimates for a given orbit</td><td class="lim">Climatology, not weather. It gives you averages, never a specific storm.</td></tr>
+<tr><td class="src">ESA Space Weather portal</td><td><a href="https://swe.ssa.esa.int/">swe.ssa.esa.int</a></td><td>Radiation environment products and alerts, European mirror of much of the above</td><td class="lim">Some products need a free login.</td></tr>
+</table>
+</div>
+</div>
+
+<!-- ===================== 9 MAGNETOSPHERE COMPRESSION ===================== -->
+<div class="evt c-mag">
+<h2 style="margin-top:6px;border:none;">9 &middot; Magnetosphere compression (sudden impulse)<span class="tag">seconds to minutes</span></h2>
+
+<h4>The physics</h4>
+<p>The magnetopause sits where the solar wind dynamic pressure balances the Earth's magnetic pressure.
+The Chapman&ndash;Ferraro balance, including the factor ~2 from the image current that doubles the field
+just inside the boundary, gives the standoff distance:</p>
+
+<div class="eq">&rho;v<sup>2</sup> &asymp; (2B<sub>E</sub>)<sup>2</sup>/2&mu;<sub>0</sub> &nbsp;&rArr;&nbsp;
+r<sub>mp</sub> &prop; (&rho;v<sup>2</sup>)<sup>&minus;1/6</sup></div>
+
+<p>That &minus;1/6 exponent is the whole story. The boundary is stiff: to halve the standoff distance you
+need 64 times the pressure. Nominal standoff is 10&ndash;11 R<sub>E</sub>. Under a strong shock it moves to
+6&ndash;8 R<sub>E</sub>, and in the most extreme events it crosses geosynchronous orbit at 6.6 R<sub>E</sub>,
+which leaves GEO satellites sitting in shocked magnetosheath plasma with the field pointing the wrong way.
+Southward B<sub>z</sub> makes it worse, because dayside reconnection erodes flux from the subsolar region
+&mdash; this is why the Shue model has both pressure and B<sub>z</sub> terms.</p>
+
+<p>On the ground, the compression appears as a <b>sudden impulse</b> (SI): the compressed magnetopause
+current increases, and the horizontal field at low latitudes jumps upward by a few nT to over 100 nT within
+minutes. If a storm follows, the same jump is called a <b>storm sudden commencement</b> (SSC) &mdash; same
+physics, different name depending on what happens next. The compression also energises trapped particles
+adiabatically (conserving the first invariant) and can launch a global poloidal ULF ringing of the whole
+magnetosphere.</p>
+
+<h4>Observational signature</h4>
+<div class="scroll">
+<table>
+<tr><th>Observable</th><th>Where</th><th>What you actually look for</th></tr>
+<tr><td>SI / SSC in SYM-H</td><td>WDC Kyoto, 1-min</td><td>Step increase of tens of nT in a few minutes. Needs SYM-H &mdash; hourly Dst smears it out.</td></tr>
+<tr><td>Upstream pressure jump</td><td>OMNI / L1</td><td>P<sub>dyn</sub> = 1.67&times;10<sup>&minus;6</sup> n V<sup>2</sup> nPa. The jump precedes the ground SI by the propagation delay from L1.</td></tr>
+<tr><td>Magnetopause crossing at GEO</td><td>GOES magnetometer</td><td>The field flips from dipolar (northward H<sub>p</sub>) to sheath-like: turbulent, often southward. Unmistakable once you see it.</td></tr>
+<tr><td>Crossing itself</td><td>THEMIS, MMS, Cluster</td><td>Rotational or tangential discontinuity with the density jump into the sheath. Gives you the boundary position directly.</td></tr>
+<tr><td>Preliminary reverse impulse</td><td>High-latitude magnetometers</td><td>A brief opposite-sign deflection before the main SI &mdash; the ionospheric twin-vortex current response.</td></tr>
+<tr><td>Global ULF ringing</td><td>Ground and GEO magnetometers</td><td>Damped oscillation over minutes after the impact &mdash; cavity and field line resonances.</td></tr>
+<tr><td>Modelled standoff</td><td>Shue et al. (1997, 1998)</td><td>r<sub>0</sub> and flaring &alpha; from P<sub>dyn</sub> and B<sub>z</sub>. Compare against the observed crossing time as a check.</td></tr>
+</table>
+</div>
+
+<h4>Where to get the data</h4>
+<div class="scroll">
+<table>
+<tr><th>Source</th><th>Link</th><th>Gives you</th><th>Watch out</th></tr>
+<tr><td class="src">WDC Kyoto SYM-H</td><td><a href="https://wdc.kugi.kyoto-u.ac.jp/aeasy/index.html">wdc.kugi.kyoto-u.ac.jp/aeasy</a></td><td>1-min SYM-H and ASY-H &mdash; the right resolution for an SI</td><td class="lim">Provisional versions get revised.</td></tr>
+<tr><td class="src">ISGI SSC catalogue</td><td><a href="https://isgi.unistra.fr/events_ssc.php">isgi.unistra.fr/events_ssc.php</a></td><td>The official SC list, times assigned by Ebro Observatory from five stations</td><td class="lim">SC vs SI classification is partly conventional.</td></tr>
+<tr><td class="src">GOES magnetometer</td><td><a href="https://www.swpc.noaa.gov/products/goes-magnetometer">swpc.noaa.gov/products/goes-magnetometer</a></td><td>H<sub>p</sub>, H<sub>e</sub>, H<sub>n</sub> at GEO &mdash; where you see the magnetopause arrive</td><td class="lim">Two spacecraft at two longitudes; local time matters a lot.</td></tr>
+<tr><td class="src">OMNI 1-min</td><td><a href="https://omniweb.gsfc.nasa.gov/">omniweb.gsfc.nasa.gov</a></td><td>Pressure already shifted to the bow shock, so it lines up with ground data</td><td class="lim">The shift assumes a planar front; for an oblique shock it is off by minutes.</td></tr>
+<tr><td class="src">THEMIS / MMS</td><td><a href="https://cdaweb.gsfc.nasa.gov/">cdaweb.gsfc.nasa.gov</a></td><td>Direct magnetopause crossings with full particle distributions</td><td class="lim">Only when the orbit happens to be at the boundary.</td></tr>
+<tr><td class="src">CCMC runs-on-request</td><td><a href="https://ccmc.gsfc.nasa.gov/">ccmc.gsfc.nasa.gov</a></td><td>Global MHD (BATS-R-US, LFM, OpenGGCM) for your event, driven by real OMNI input</td><td class="lim">Free but queued. Resolution near the boundary limits how sharp the crossing looks.</td></tr>
+<tr><td class="src">SuperMAG</td><td><a href="https://supermag.jhuapl.edu/">supermag.jhuapl.edu</a></td><td>Many stations at once &mdash; lets you map the SI propagating across local times</td><td class="lim">Baselines are their own; document the version you used.</td></tr>
+</table>
+</div>
+</div>
+
+<!-- ===================== SCALES ===================== -->
+<h2>NOAA scales: how these get reported operationally</h2>
+<div class="scroll">
+<table>
+<tr><th>Scale</th><th>Driver</th><th>Measured by</th><th>Level 1 (minor)</th><th>Level 5 (extreme)</th></tr>
+<tr><td><b>R</b> &mdash; radio blackout</td><td>Flare X-rays</td><td>GOES 1&ndash;8 &#8491; peak flux</td><td>R1 = M1 (10<sup>&minus;5</sup>)</td><td>R5 = X20 (2&times;10<sup>&minus;3</sup>)</td></tr>
+<tr><td><b>S</b> &mdash; solar radiation</td><td>SEP protons</td><td>GOES &gt;10 MeV integral flux</td><td>S1 = 10 pfu</td><td>S5 = 10<sup>5</sup> pfu</td></tr>
+<tr><td><b>G</b> &mdash; geomagnetic storm</td><td>Ring current</td><td>Kp</td><td>G1 = Kp 5</td><td>G5 = Kp 9</td></tr>
+</table>
+</div>
+<div class="note">
+Note what is missing: there is no operational scale for the radiation belt electron environment, even though
+it causes more satellite anomalies than anything else on this list. And R is a peak-flux scale while S is a
+threshold-crossing scale, so the two are not directly comparable in severity.
+</div>
+
+<h2>How to use this in one sitting</h2>
+<p>For any event, walk the chain forward and make each step confirm the previous one:</p>
+<ul>
+<li><b>Source</b> &mdash; which AR or filament channel? HMI magnetogram, AIA 171/193. Was there a coronal hole nearby that could deflect things?</li>
+<li><b>Trigger</b> &mdash; flare class and timing from GOES; ribbons in 1600 &#8491;; filament behaviour in 304 &#8491;. Confined or eruptive?</li>
+<li><b>Eruption</b> &mdash; CDAW entry, dimming, EUV wave, post-eruption arcade. If you have STEREO, run GCS for the true speed.</li>
+<li><b>Shock</b> &mdash; type II burst, metric and DH. Absence in a well-observed band is a real physical result, not a gap.</li>
+<li><b>Particles</b> &mdash; GOES protons crossing 10 pfu; CDAW SEP catalogue for the association.</li>
+<li><b>Arrival</b> &mdash; Richardson &amp; Cane for shock and ejecta times; OMNI for the crossing; MVA and Lundquist for the rope.</li>
+<li><b>Response</b> &mdash; SYM-H for the SI, Dst for the storm, AE for substorms, GOES electrons for the belt, all-sky or SSUSI for the aurora.</li>
+</ul>
+<p>If any link in that chain fails to line up in time, the association is wrong. That is the most common
+mistake in event papers, and the easiest one to avoid.</p>
+
+<footer>
+Compiled as a working reference. Links were current at the time of writing &mdash; archives move, so check
+anything that looks stale. Numbers are typical values from the literature, not hard bounds; extreme events
+sit outside all of them.
+</footer>
+
+</div>
+</body>
+</html>

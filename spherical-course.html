@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0f1e">
+<title>الفلك الكروي: شرح ومسائل محلولة | Spherical Astronomy: theory & solved problems</title>
+<link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/page.css">
+<link rel="stylesheet" href="katex/katex.min.css">
+<style>
+.katex{direction:ltr;unicode-bidi:isolate;font-size:1.05em}.katex .base{white-space:nowrap}ol.steps li,.stmt,.thbody{overflow-x:auto}
+.dmath{direction:ltr;text-align:center;margin:.7em 0;overflow-x:auto;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:6px}.armath{direction:rtl;unicode-bidi:isolate;font-size:.95em;color:#cfe0ff}.imath{unicode-bidi:isolate}.katex-display{direction:ltr;overflow-x:auto;overflow-y:hidden;padding:4px 0;margin:.6em 0}
+.nav{position:sticky;top:56px;z-index:4;background:#0a0f1ef2;backdrop-filter:blur(8px);padding:8px 0 6px;margin:0 -12px;padding-inline:12px;border-bottom:1px solid var(--line)}
+.nav .row{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}.nav .row::-webkit-scrollbar{display:none}
+.lvl{display:flex;gap:6px;margin-top:6px}
+.chap{margin-top:26px}
+.chap>h2{color:var(--gold-l);font-size:21px;margin:0 2px 8px;display:flex;gap:8px;align-items:center}
+details.th{border:1px solid var(--line);border-radius:14px;background:#0b1430;padding:10px 14px}
+details.th>summary{cursor:pointer;color:var(--gold-l);font-weight:700;font-size:15px}
+.thbody{font-size:14.2px;line-height:1.95;color:#dfe6f6}.thbody h4{color:#9fc2ff;margin:16px 0 4px;font-size:15px}.thbody ul{padding-inline-start:20px}
+.fig{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0}.fig figure{margin:0;text-align:center;font-size:12px;color:var(--muted)}.fig svg{width:250px;height:250px;display:block}
+.prob{margin-top:14px;border:1px solid var(--line);border-radius:16px;background:var(--glass);padding:14px 16px}
+.prob h3{margin:0 0 6px;font-size:16px;color:#fff;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.badge{font-size:11px;padding:2px 9px;border-radius:999px;font-weight:700}.b1{background:#1f6f4a;color:#c9ffe3}.b2{background:#2a4a8a;color:#d6e4ff}.b4{background:#7a2a4a;color:#ffd6e6}
+.stmt{font-size:14.2px;line-height:1.95;color:#e8edf9;background:#ffffff08;border-radius:12px;padding:8px 12px}
+.pfig{display:flex;justify-content:center;margin:10px 0 2px}.pfig svg{width:100%;max-width:330px;height:auto;background:#050915;border-radius:14px;border:1px solid var(--line)}
+.inps{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:10px}
+.inps label{font-size:11.5px;color:var(--muted);display:flex;flex-direction:column;gap:3px}
+.inps input{box-sizing:border-box;padding:7px 8px;border-radius:9px;border:1px solid var(--line);background:#0e1630;color:#fff;font:inherit;font-size:14px;direction:ltr;width:100%}
+.btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+ol.steps{list-style:none;counter-reset:s;margin:12px 0 0;padding:0}
+ol.steps li{counter-increment:s;position:relative;margin-bottom:8px;padding:10px 12px;padding-inline-start:46px;border-radius:12px;background:#0b1430;border:1px solid var(--line);font-size:14px;line-height:1.9;animation:fin .35s ease}
+ol.steps li::before{content:counter(s);position:absolute;inset-inline-start:10px;top:10px;width:26px;height:26px;border-radius:50%;background:var(--gold);color:#0a0f1e;font-weight:800;display:grid;place-items:center;font-size:13px}
+@keyframes fin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.ans{margin-top:8px;padding:9px 12px;border-radius:12px;background:#d4a73c22;border:1px solid var(--gold);font-weight:700;color:var(--gold-l);text-align:start;unicode-bidi:plaintext}
+@media(max-width:560px){.katex-display{font-size:.8em}.stmt .katex,ol.steps li .katex{font-size:.98em}}
+.ex{margin-top:12px}.ex li{margin-bottom:8px;font-size:14px;line-height:1.8}.ex details{display:inline}.ex summary{cursor:pointer;color:#9fc2ff;font-size:12.5px;display:inline}
+.ex .a{direction:ltr;unicode-bidi:isolate;color:var(--gold-l);font-weight:700;margin-inline-start:6px}
+.intro{font-size:14.5px;line-height:1.9;color:#d9e0f2}
+.hide{display:none!important}
+@media print{.pfig svg{background:#fff!important}.pg-top,.nav,.btns,.inps,footer{display:none!important}body{background:#fff!important;color:#000}.prob,details.th,ol.steps li{background:#fff!important;color:#000!important;border-color:#999!important;break-inside:avoid}.stmt,.thbody{color:#000!important}.chap>h2,.ans{color:#000!important}}
+</style>
+</head>
+<body>
+<header class="pg-top">
+  <a class="brand" href="index.html"><span id="logo"></span><div><h1 id="ttl"></h1><div class="sub" id="sub"></div></div></a>
+  <button class="ibtn" id="btnPrint" title="Print">🖨️</button>
+  <button class="ibtn" id="btnLang">EN</button>
+</header>
+<main class="wrap">
+  <p class="intro" id="intro"></p>
+  <div class="nav"><div class="row" id="chips"></div><div class="lvl" id="lvls"></div></div>
+  <div id="course"></div>
+  <footer id="foot" style="text-align:center;color:var(--muted);font-size:12.5px;margin-top:30px;line-height:1.8"></footer>
+</main>
+<script src="js/common.js"></script>
+<script src="katex/katex.min.js"></script>
+<script src="katex/auto-render.min.js"></script>
+<script src="js/sphcourse.js"></script>
+<script src="js/sphfigs.js"></script>
+<script>
+(function(){
+const $=id=>document.getElementById(id);let lang=KH.getLang();const SC=window.SphCourse;let lvlF=0;
+const T={ar:{ttl:'الفلك الكروي: شرح ومسائل محلولة',sub:'من السنة الأولى حتى السنة الرابعة',
+intro:'شرح نظري كامل مع اشتقاق القوانين، ومسائل محلولة خطوة بخطوة على نمط المراجع الجامعية الكلاسيكية في الفلك الكروي (مثل كتاب Smart وكتاب Green). كل مسألة «حية»: غيّر المعطيات وسيُعاد الحل كله بأرقامك أنت. المستويات: <span class="badge b1">سنة أولى</span> <span class="badge b2">متوسط</span> <span class="badge b4">متقدم (سنة رابعة)</span>. ولرؤية المثلث الفلكي متحركًا افتح <a href="spherical.html" style="color:var(--gold-l)">الكرة السماوية التفاعلية</a>.',
+theory:'📖 الشرح النظري والاشتقاقات',solve:'✍️ الحل خطوة بخطوة',next:'⏭ الخطوة التالية',all:'📜 كل الخطوات',reset:'↺ القيم الأصلية',ans:'الجواب',ex:'🏋️ تمارين (الإجابة مخفية)',show:'أظهر الإجابة',lv:['الكل','سنة أولى','متوسط','متقدم'],lvn:{1:'سنة أولى',2:'متوسط',4:'متقدم'},
+figs:{tri:'المثلث الكروي ABC',pzx:'المثلث الفلكي PZX',pkx:'المثلث PKX (استوائي ↔ بروجي)'}},
+en:{ttl:'Spherical Astronomy: theory & solved problems',sub:'From first year to fourth year',
+intro:'Full theory with derivations, and problems solved step by step in the style of the classic university texts on spherical astronomy (Smart, Green). Every problem is “live”: change the data and the whole solution is redone with your numbers. Levels: <span class="badge b1">1st year</span> <span class="badge b2">intermediate</span> <span class="badge b4">advanced (4th year)</span>. To see the astronomical triangle move, open the <a href="spherical.html" style="color:var(--gold-l)">interactive celestial sphere</a>.',
+theory:'📖 Theory and derivations',solve:'✍️ Solve step by step',next:'⏭ Next step',all:'📜 All steps',reset:'↺ Default data',ans:'Answer',ex:'🏋️ Exercises (answers hidden)',show:'Show answer',lv:['All','1st year','Intermediate','Advanced'],lvn:{1:'1st year',2:'Intermediate',4:'Advanced'},
+figs:{tri:'Spherical triangle ABC',pzx:'Astronomical triangle PZX',pkx:'Triangle PKX (equatorial ↔ ecliptic)'}}};
+const t=k=>T[lang][k];
+const KX={delimiters:[{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false};
+// here is the modification: Arabic words inside formulas are moved out of KaTeX (it cannot shape Arabic) and set as real RTL text
+const AR=/[؀-ۿ]/;
+function splitMath(src){const parts=[];let cur='',d=0,i=0;const push=()=>{if(cur.trim())parts.push({m:cur});cur='';};
+  while(i<src.length){const ch=src[i];
+    if(d===0&&src.startsWith('\\text{',i)){let j=i+6,dd=1;while(j<src.length&&dd){if(src[j]==='{')dd++;else if(src[j]==='}')dd--;j++;}const inner=src.slice(i+6,j-1);if(AR.test(inner)){push();parts.push({t:inner});i=j;continue;}cur+=src.slice(i,j);i=j;continue;}
+    if(d===0&&AR.test(ch)){let j=i;while(j<src.length&&(AR.test(src[j])||/[\s،()]/.test(src[j])&&j+1<src.length&&AR.test(src.slice(j,j+3))))j++;push();parts.push({t:src.slice(i,j)});i=j;continue;}
+    if(ch==='{')d++;else if(ch==='}')d--;cur+=ch;i++;}
+  push();return parts;}
+function arMath(html){return html.replace(/\\\[([\s\S]*?)\\\]|\\\(([\s\S]*?)\\\)/g,(all,dm,im)=>{const src=dm!==undefined?dm:im;if(!AR.test(src))return all;
+  const parts=splitMath(src);const inner=parts.map(p=>p.m!==undefined?`\\(${dm!==undefined?'\\displaystyle ':''}${p.m}\\)`:`<span class="armath">${p.t}</span>`).join(' ');
+  return dm!==undefined?`<div class="dmath">${inner}</div>`:`<span class="imath">${inner}</span>`;});}
+const tex=el=>{try{el.innerHTML=arMath(el.innerHTML);renderMathInElement(el,KX);}catch(e){}};
+
+// ---------- orthographic sphere diagrams ----------
+function sphereSVG(cfg){
+  const W=250,Rr=105,cx=125,cy=125,vl=cfg.view||[20,-35];const D=Math.PI/180;
+  const vec=(lat,lon)=>[Math.cos(lat*D)*Math.cos(lon*D),Math.cos(lat*D)*Math.sin(lon*D),Math.sin(lat*D)];
+  const rot=v=>{const a=-vl[1]*D,b=vl[0]*D;let x=v[0]*Math.cos(a)-v[1]*Math.sin(a),y=v[0]*Math.sin(a)+v[1]*Math.cos(a),z=v[2];const x2=x*Math.cos(b)+z*Math.sin(b),z2=-x*Math.sin(b)+z*Math.cos(b);return [y,z2,x2];};// screen x=y, y=z2, depth=x2
+  const P=v=>{const r=rot(v);return [cx+r[0]*Rr,cy-r[1]*Rr,r[2]];};
+  const slerp=(a,b,n)=>{const d=Math.acos(Math.max(-1,Math.min(1,a[0]*b[0]+a[1]*b[1]+a[2]*b[2])));const o=[];for(let i=0;i<=n;i++){const s=i/n,k1=Math.sin((1-s)*d)/Math.sin(d),k2=Math.sin(s*d)/Math.sin(d);o.push([a[0]*k1+b[0]*k2,a[1]*k1+b[1]*k2,a[2]*k1+b[2]*k2]);}return o;};
+  const path=(pts,col,w,fill)=>{let segs='';let prevBack=null,cur='';pts.forEach((v,i)=>{const p=P(v),back=p[2]<0;if(i===0||back!==prevBack){if(cur)segs+=`<path d="${cur}" stroke="${col}" stroke-width="${w}" fill="none" ${prevBack?'stroke-dasharray="3 3" opacity=".5"':''}/>`;cur=`M${p[0].toFixed(1)},${p[1].toFixed(1)}`;}else cur+=`L${p[0].toFixed(1)},${p[1].toFixed(1)}`;prevBack=back;});if(cur)segs+=`<path d="${cur}" stroke="${col}" stroke-width="${w}" fill="none" ${prevBack?'stroke-dasharray="3 3" opacity=".5"':''}/>`;return segs;};
+  const circle=(pole,col,w)=>{const p=vec(pole[0],pole[1]);let u=Math.abs(p[2])<0.9?[0,0,1]:[1,0,0];let a=[p[1]*u[2]-p[2]*u[1],p[2]*u[0]-p[0]*u[2],p[0]*u[1]-p[1]*u[0]];const n=Math.hypot(...a);a=a.map(x=>x/n);const b=[p[1]*a[2]-p[2]*a[1],p[2]*a[0]-p[0]*a[2],p[0]*a[1]-p[1]*a[0]];const pts=[];for(let i=0;i<=120;i++){const t_=i/120*2*Math.PI;pts.push([a[0]*Math.cos(t_)+b[0]*Math.sin(t_),a[1]*Math.cos(t_)+b[1]*Math.sin(t_),a[2]*Math.cos(t_)+b[2]*Math.sin(t_)]);}return path(pts,col,w);};
+  let s=`<svg viewBox="0 0 ${W} ${W}" xmlns="http://www.w3.org/2000/svg"><circle cx="${cx}" cy="${cy}" r="${Rr}" fill="rgba(40,60,130,.18)" stroke="rgba(255,255,255,.35)"/>`;
+  (cfg.circles||[]).forEach(c=>s+=circle(c[0],c[1],c[2]||1.2));
+  const pts={};for(const k in cfg.pts)pts[k]=vec(cfg.pts[k][0],cfg.pts[k][1]);
+  if(cfg.fill){const ring=[];for(let i=0;i<cfg.fill.length;i++){ring.push(...slerp(pts[cfg.fill[i]],pts[cfg.fill[(i+1)%cfg.fill.length]],24));}s+=`<path d="${ring.map((v,i)=>{const p=P(v);return (i?'L':'M')+p[0].toFixed(1)+','+p[1].toFixed(1);}).join('')}Z" fill="rgba(241,210,122,.18)"/>`;}
+  (cfg.arcs||[]).forEach(a=>s+=path(slerp(pts[a[0]],pts[a[1]],40),a[2]||'#f1d27a',a[3]||2.2));
+  (cfg.lbl||[]).forEach(l=>{const a=pts[l[0]],b=pts[l[1]];const m=slerp(a,b,2)[1];const p=P(m);s+=`<text x="${(p[0]+(l[3]||0)).toFixed(1)}" y="${(p[1]+(l[4]||0)).toFixed(1)}" fill="#cfe0ff" font-size="12" font-style="italic" font-family="serif">${l[2]}</text>`;});
+  for(const k in pts){const p=P(pts[k]);s+=`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="3.5" fill="#fff" ${p[2]<0?'opacity=".5"':''}/><text x="${(p[0]+6).toFixed(1)}" y="${(p[1]-6).toFixed(1)}" fill="#fff" font-size="14" font-weight="700" font-family="serif">${k}</text>`;}
+  (cfg.text||[]).forEach(x=>s+=`<text x="${x[0]}" y="${x[1]}" fill="${x[3]||'#9fb0d6'}" font-size="11">${x[2]}</text>`);
+  return s+'</svg>';
+}
+function figsFor(id){
+  if(id==='trig')return `<div class="fig"><figure>${sphereSVG({view:[18,-30],pts:{A:[62,-20],B:[18,-58],C:[12,22]},fill:['A','B','C'],arcs:[['A','B'],['B','C'],['C','A']],lbl:[['B','C','a',2,14],['C','A','b',6,0],['A','B','c',-14,0]],circles:[]})}<figcaption>${t('figs').tri}</figcaption></figure>
+   <figure>${sphereSVG({view:[15,-25],pts:{P:[60,0],Z:[90,0],X:[25,-50]},fill:['P','Z','X'],arcs:[['P','Z'],['Z','X'],['X','P']],lbl:[['P','Z','90°−φ',6,0],['Z','X','z=90°−h',4,-2],['X','P','90°−δ',-50,10]],circles:[[[90,0],'#7ee2a8',1.2],[[30,180],'#f1d27a',1.2]],text:[[8,240,lang==='ar'?'الأخضر: الأفق — الذهبي: الاستواء':'green: horizon — gold: equator']]})}<figcaption>${t('figs').pzx}</figcaption></figure></div>`;
+  if(id==='coord')return `<div class="fig"><figure>${sphereSVG({view:[20,-40],pts:{P:[90,0],K:[66.56,-90],X:[30,-30]},fill:['P','K','X'],arcs:[['P','K'],['K','X'],['X','P']],lbl:[['P','K','ε',4,-2],['K','X','90°−β',6,6],['X','P','90°−δ',-48,4]],circles:[[[90,0],'#f1d27a',1.2],[[66.56,-90],'#ff9f5a',1.2]],text:[[8,240,lang==='ar'?'الذهبي: الاستواء — البرتقالي: البروج':'gold: equator — orange: ecliptic']]})}<figcaption>${t('figs').pkx}</figcaption></figure></div>`;
+  return '';
+}
+
+// ---------- render ----------
+function render(){
+  SC.setLang(lang);if(window.SphFigs)SphFigs.setLang(lang);document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr';
+  $('btnLang').textContent=lang==='ar'?'EN':'ع';$('logo').innerHTML=KH.logoSVG(36);$('ttl').textContent=t('ttl');$('sub').textContent=t('sub');$('intro').innerHTML=t('intro');
+  $('chips').innerHTML=SC.CH.map(c=>`<button class="chip" data-c="${c.id}">${c.icon} ${lang==='ar'?c.t[0]:c.t[1]}</button>`).join('');
+  $('chips').querySelectorAll('.chip').forEach(b=>b.onclick=()=>{const el=$('ch-'+b.dataset.c);window.scrollTo({top:el.offsetTop-120,behavior:'smooth'});});
+  $('lvls').innerHTML=[0,1,2,4].map((l,i)=>`<button class="chip${lvlF===l?' on':''}" data-l="${l}">${t('lv')[i]}</button>`).join('');
+  $('lvls').querySelectorAll('.chip').forEach(b=>b.onclick=()=>{lvlF=+b.dataset.l;render();});
+  let html='';
+  SC.CH.forEach((c,ci)=>{
+    html+=`<section class="chap" id="ch-${c.id}"><h2>${c.icon} ${ci+1}. ${lang==='ar'?c.t[0]:c.t[1]}</h2>
+      <details class="th"${ci===0?' open':''}><summary>${t('theory')}</summary>${figsFor(c.id)}<div class="thbody">${c.th()}</div></details>`;
+    SC.P.filter(p=>p.ch===c.id&&(!lvlF||p.lvl===lvlF)).forEach(p=>{
+      html+=`<div class="prob" id="p-${p.id}"><h3><span class="badge b${p.lvl}">${t('lvn')[p.lvl]}</span>${lang==='ar'?p.t[0]:p.t[1]}</h3>
+        <div class="stmt" data-stmt></div>
+        <div class="pfig" data-fig></div>
+        <div class="inps">${p.inp.map(i=>`<label>${lang==='ar'?i[1][0]:i[1][1]}${i[3]?' ('+i[3]+')':''}<input type="number" step="any" data-k="${i[0]}" value="${i[2]}"></label>`).join('')}</div>
+        <div class="btns"><button class="btn sm" data-a="step">${t('solve')}</button><button class="btn sm ghost" data-a="all">${t('all')}</button><button class="btn sm ghost" data-a="reset">${t('reset')}</button></div>
+        <ol class="steps"></ol><div class="ans hide"></div></div>`;});
+    const ex=SC.EX[c.id]||[];if(ex.length&&!lvlF)html+=`<div class="prob ex"><h3>${t('ex')}</h3><ol>${ex.map(e=>`<li>${e[0]()} <details><summary>${t('show')}</summary><span class="a">${e[1]()}</span></details></li>`).join('')}</ol></div>`;
+    html+='</section>';});
+  $('course').innerHTML=html;
+  SC.P.forEach(p=>{const box=$('p-'+p.id);if(!box)return;let shown=0,res=null;
+    const vals=()=>{const v={};box.querySelectorAll('input[data-k]').forEach(i=>v[i.dataset.k]=parseFloat(i.value));return v;};
+    const stmt=()=>{box.querySelector('[data-stmt]').innerHTML=p.q(vals());tex(box.querySelector('[data-stmt]'));const fg=window.SphFigs&&SphFigs.FIG[p.id];if(fg){try{box.querySelector('[data-fig]').innerHTML=fg(vals());}catch(e){box.querySelector('[data-fig]').innerHTML='';console.warn(p.id,e);}}};
+    const show=n=>{const ol=box.querySelector('ol.steps');res=p.solve(vals());shown=Math.min(n,res.steps.length);ol.innerHTML=res.steps.slice(0,shown).map(s=>`<li>${s}</li>`).join('');tex(ol);
+      const a=box.querySelector('.ans');if(shown>=res.steps.length){a.classList.remove('hide');a.textContent=t('ans')+': '+res.ans;}else a.classList.add('hide');
+      box.querySelector('[data-a="step"]').textContent=shown?(shown>=res.steps.length?t('solve'):t('next')):t('solve');};
+    box.querySelector('[data-a="step"]').onclick=()=>{if(res&&shown>=res.steps.length){show(1);}else show(shown+1);};
+    box.querySelector('[data-a="all"]').onclick=()=>show(99);
+    box.querySelector('[data-a="reset"]').onclick=()=>{box.querySelectorAll('input[data-k]').forEach(i=>{const d=p.inp.find(x=>x[0]===i.dataset.k);i.value=d[2];});stmt();if(shown)show(shown);};
+    box.querySelectorAll('input[data-k]').forEach(i=>i.oninput=()=>{stmt();if(shown)show(shown);});
+    stmt();});
+  document.querySelectorAll('.thbody,.ex').forEach(tex);
+  $('foot').innerHTML=`${KH.logoSVG(30)}<br>${lang==='ar'?'إعداد: خالد محمد · قسم الفلك وعلوم الفضاء والأرصاد الجوية، كلية العلوم، جامعة القاهرة · عضو AfAS وAUASS':'By Khaled Mohamed · Astronomy, Space Science & Meteorology Dept., Faculty of Science, Cairo University · Member of AfAS and AUASS'}<br>${lang==='ar'?'المراجع':'References'}: Smart & Green, <i>Textbook on Spherical Astronomy</i> (6th ed., CUP 1977); Green, <i>Spherical Astronomy</i> (CUP 1985); Meeus, <i>Astronomical Algorithms</i> (1998); Urban & Seidelmann, <i>Explanatory Supplement</i> (2013).<br><a href="spherical.html">${lang==='ar'?'الكرة السماوية التفاعلية':'Interactive celestial sphere'}</a> · <a href="index.html">${lang==='ar'?'الرئيسية':'Home'}</a>`;
+  document.title=t('ttl')+' — '+(lang==='ar'?'خالد محمد':'Khaled Mohamed');
+}
+$('btnLang').onclick=()=>{lang=lang==='ar'?'en':'ar';KH.setLang(lang);render();};
+$('btnPrint').onclick=()=>{document.querySelectorAll('details.th').forEach(d=>d.open=true);document.querySelectorAll('.prob').forEach(b=>{const a=b.querySelector('[data-a="all"]');if(a)a.click();});setTimeout(()=>print(),400);};
+render();
+window.__course={render};
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0f1e">
+<title>نشأة القمر | Origin of the Moon</title>
+<link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/page.css">
+<style>
+.thr{display:flex;gap:7px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none}.thr::-webkit-scrollbar{display:none}
+.thr .chip{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:9px 13px;border-radius:14px;min-width:150px}
+.thr .chip small{font-size:11px;opacity:.85}
+.simwrap{position:relative}
+#sim{width:100%;aspect-ratio:1/1;max-height:70vh;display:block;background:#02040a;border-radius:16px;touch-action:none}
+.hud{position:absolute;top:10px;inset-inline-start:10px;font-size:12px;line-height:1.6;background:#000a;border-radius:10px;padding:6px 10px;font-variant-numeric:tabular-nums;max-width:62%}
+.leg{position:absolute;bottom:10px;inset-inline-start:10px;font-size:11.5px;background:#000a;border-radius:10px;padding:5px 9px}
+.leg i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-inline-end:5px;vertical-align:middle}
+.ctl{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;align-items:center}
+.acc{height:12px;border-radius:6px;background:#ffffff14;overflow:hidden;margin:6px 0 2px}.acc span{display:block;height:100%;background:linear-gradient(90deg,#d4a73c,#f1d27a)}
+.pc{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.pc{grid-template-columns:1fr}}
+.pc ul{margin:4px 0 0;padding-inline-start:18px;line-height:1.8;font-size:13.5px}
+.good h4{color:#7ee2a8;margin:0}.bad h4{color:#ff9fb3;margin:0}
+table.evm{border-collapse:collapse;width:100%;font-size:13px;min-width:620px}table.evm th,table.evm td{padding:7px 6px;border-bottom:1px solid #ffffff12;text-align:center}table.evm th:first-child,table.evm td:first-child{text-align:start;position:sticky;inset-inline-start:0;background:#0d1530;z-index:1;min-width:120px}
+table.evm tr.on{background:#d4a73c22}
+.y{color:#7ee2a8;font-weight:700}.n{color:#ff8a9e;font-weight:700}.p{color:#f1d27a;font-weight:700}
+.facts{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}.facts .panel{font-size:13.3px;line-height:1.75}.facts b{color:var(--gold-l);display:block;font-size:15px;margin-bottom:3px}
+.vidcard{display:grid;grid-template-columns:1fr;gap:8px}
+.ref{font-size:12px;color:var(--muted);line-height:1.7}
+</style>
+</head>
+<body>
+<header class="pg-top">
+  <a class="brand" href="index.html"><span id="logo"></span><div><h1 data-i="title"></h1><div class="sub" data-i="sub"></div></div></a>
+  <button class="ibtn" id="btnLang">EN</button>
+</header>
+<main class="wrap">
+  <p class="lead" data-i="lead" style="font-size:14.5px;color:#d9e0f2"></p>
+  <h2 class="sec" data-i="hPick"></h2>
+  <div class="thr" id="thr"></div>
+
+  <section class="panel" style="margin-top:10px">
+    <h3 id="thTitle" style="margin:0 0 4px;color:var(--gold-l);font-size:19px"></h3>
+    <div class="ref" id="thWho"></div>
+    <div class="acc"><span id="accBar"></span></div><div class="small" id="accTxt" style="font-size:12.5px;color:var(--muted)"></div>
+    <p id="thStory" style="line-height:1.9;font-size:14.3px;margin:10px 0"></p>
+    <div class="simwrap" id="simBox"><div id="sim3" style="width:100%;aspect-ratio:1/1;max-height:72vh;border-radius:16px;overflow:hidden;background:#02040a"></div><canvas id="sim" style="display:none"></canvas><div id="moonLbl" style="position:absolute;z-index:3;display:none;transform:translate(-50%,-160%);color:#f1d27a;font-weight:700;font-size:13px;text-shadow:0 1px 4px #000;pointer-events:none"></div><div class="hud" id="hud"></div><div class="leg" id="leg"></div></div>
+    <div class="ctl" id="ctl"></div>
+    <div class="note2" id="simNote"></div>
+    <div class="pc" style="margin-top:12px"><div class="panel good"><h4 data-i="pros"></h4><ul id="pros"></ul></div><div class="panel bad"><h4 data-i="cons"></h4><ul id="cons"></ul></div></div>
+  </section>
+
+  <h2 class="sec" data-i="hEv"></h2>
+  <p class="lead" data-i="evLead"></p>
+  <div class="panel tbl-wrap"><table class="evm" id="ev"></table><div class="note2" data-i="evKey"></div></div>
+
+  <h2 class="sec" data-i="hFacts"></h2>
+  <div class="facts" id="facts"></div>
+
+  <h2 class="sec" data-i="hVid"></h2>
+  <div class="panel" id="vid"></div>
+
+  <h2 class="sec" data-i="hRef"></h2>
+  <div class="panel ref" id="refs"></div>
+</main>
+<footer class="pg-foot" id="foot"></footer>
+<script src="js/common.js"></script>
+<script src="js/moonsim.js"></script>
+<script src="js/three.min.js"></script>
+<script src="js/moon3d.js"></script>
+<script src="js/astronomy.min.js"></script>
+<script src="js/body3d.js"></script>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);let lang=KH.getLang();
+const TU=805; // seconds per time unit = sqrt(R_E^3/GM_E)
+const L={ar:{title:'نشأة القمر',sub:'كل النظريات بالمحاكاة والأدلة',lead:'القمر أكبر قمر بالنسبة لكوكبه في المجموعة الشمسية الداخلية، وقد غيّرت عينات «أبولو» فهمنا له: فصخوره تشبه صخور وشاح الأرض في تركيبها النظائري تقريبًا، لكنه فقير جدًا في الحديد والمواد المتطايرة. وعلى أي نظرية أن تفسّر هذه الحقائق مجتمعة. اختر نظرية، وشغّل المحاكاة، وقارن.',
+ hPick:'🧭 اختر النظرية',pros:'✅ ما تفسّره جيدًا',cons:'❌ مشاكلها',hEv:'⚖️ النظريات في مواجهة الأدلة',evLead:'كل صف نظرية، وكل عمود حقيقة رصدية ينبغي تفسيرها. وأقوى النظريات أنجحها في أكبر عدد من الأعمدة.',
+ evKey:'✓ تفسّرها بنجاح · ~ جزئيًا أو بشروط · ✗ تتعارض معها. نسب القبول تقدير تقريبي لاتجاه آراء علماء الكواكب في الأبحاث الحديثة، وليست نتيجة قياس أو استفتاء رسمي.',
+ hFacts:'🔬 الحقائق التي يجب أن تفسّرها أي نظرية',hVid:'🎬 محاكاة بحثية حقيقية (NASA وجامعة دورهام)',hRef:'📚 المراجع الأساسية',
+ acc:'مستوى القبول العلمي (تقدير)',run:'▶ تشغيل',pause:'⏸ إيقاف',reset:'↺ من الأول',speed:'السرعة',color:'التلوين',cOrigin:'حسب المصدر',cMat:'حسب المادة',cHeat:'حسب الحرارة',
+ t:'الزمن',h:'ساعة',d:'يوم',disk:'المادة في المدار',moon:'أكبر قمر متكوّن',theiaM:'من ثيا في القمر',theiaE:'من ثيا في الأرض',iron:'نسبة الحديد في القمر',ml:'كتلة قمر',
+ legE:'مادة الأرض الأولى',legT:'مادة الجسم المصطدم',legMix:'مخلوط',legFe:'حديد (نواة)',legRock:'صخر (وشاح)',roche:'حد روش',
+ simNote:'تظهر الأرض والقمر بعد الاصطدام عالمَين تغطيهما محيطات من الصهارة، بلا قارات ولا بحار ولا فوهات، لأن هذه كلها تكوّنت بعد ذلك بمئات الملايين من السنين. وهذا الشكل إعادة بناء فنية مستندة إلى النماذج العلمية، لا صورة حقيقية. أما المحاكاة فنموذج جسيمي ثنائي الأبعاد: جاذبية نيوتن بين جميع الجسيمات، وتصادمات تلامسية، وتراكم للمادة خارج حد روش (٢٫٩ نصف قطر أرضي). وهي للفهم والمقارنة، أما النتائج البحثية فتأتي من محاكيات ثلاثية الأبعاد بملايين الجسيمات (SPH) كالتي في فيديو NASA أدناه. ومع ذلك تعطي الحالة الكلاسيكية هنا النتيجة المعروفة نفسها: قمر كتلته قريبة من كتلة القمر الحقيقي، لكن معظمه من مادة «ثيا»، وهذا تحديدًا سبب «أزمة النظائر».',
+ noSim:'لهذا السيناريو محاكاة بحثية ثلاثية الأبعاد، وفيديوها في قسم الفيديو أدناه. ولا يستطيع النموذج الثنائي الأبعاد هنا إعادة إنتاج هذه النتيجة بأمانة، لذا لن نعرض محاكاة مضللة.',
+ dragOn:'🧲 مع فقد طاقة افتراضي',dragOff:'بدون فقد طاقة',spinTxt:'سرعة دوران الأرض',period:'طول اليوم'},
+ en:{title:'Origin of the Moon',sub:'Every theory, with simulations and evidence',lead:'The Moon is the largest satellite relative to its planet in the inner Solar System, and the Apollo samples changed everything: its rocks are almost identical to Earth\'s mantle in isotopes, yet very poor in iron and volatiles. A theory must explain all of this at once. Pick a theory, run the simulation, compare.',
+ hPick:'🧭 Pick a theory',pros:'✅ What it explains',cons:'❌ Its problems',hEv:'⚖️ Theories versus evidence',evLead:'Each row is a theory, each column an observed fact it must explain; the strongest theory succeeds in the most columns.',
+ evKey:'✓ explains it · ~ partly or with conditions · ✗ conflicts. Acceptance values are a rough estimate of the direction of planetary scientists\' opinion in recent literature, not a measured poll.',
+ hFacts:'🔬 The facts any theory must explain',hVid:'🎬 Real research simulation (NASA & Durham University)',hRef:'📚 Key references',
+ acc:'Scientific acceptance (estimate)',run:'▶ Run',pause:'⏸ Pause',reset:'↺ Restart',speed:'Speed',color:'Colour by',cOrigin:'origin',cMat:'material',cHeat:'temperature',
+ t:'Time',h:'h',d:'d',disk:'Mass in orbit',moon:'Largest moon formed',theiaM:'impactor share in Moon',theiaE:'impactor share in Earth',iron:'iron fraction in the Moon',ml:'lunar masses',
+ legE:'proto-Earth material',legT:'impactor material',legMix:'mixed',legFe:'iron (core)',legRock:'rock (mantle)',roche:'Roche limit',
+ simNote:'After the impact the Earth and Moon appear as magma-ocean worlds with no continents, seas or craters, which all formed hundreds of millions of years later; this look is a model-based artistic reconstruction, not a photograph. The simulation is a 2D particle model: Newtonian gravity between all particles, contact collisions, and accretion outside the Roche limit (2.9 Earth radii). It is for understanding and comparison; research results come from 3D SPH codes with millions of particles, like the NASA video below. Even so, the canonical case here reproduces the famous result: a Moon close to the real lunar mass but made mostly of Theia, which is exactly the "isotope crisis".',
+ noSim:'This scenario has a real 3D research simulation, shown in the video section below. Our 2D model cannot reproduce it faithfully, so we do not show a misleading one.',
+ dragOn:'🧲 With hypothetical energy loss',dragOff:'No energy loss',spinTxt:'Earth spin',period:'day length'}};
+const t=k=>L[lang][k];
+// ---------- theories ----------
+const TH=[
+ {id:'giant',acc:35,ar:['💥 الاصطدام العملاق الكلاسيكي','Hartmann & Davis (1975)، Cameron & Ward (1976)، Canup & Asphaug (2001)','قبل نحو ٤٫٥١ مليار سنة اصطدم كوكب بحجم المريخ تقريبًا يُسمّى «ثيا» (≈١٠–١٥٪ من كتلة الأرض) بالأرض الأولى بزاوية مائلة نحو ٤٥°. غاصت نواة ثيا الحديدية واندمجت في نواة الأرض، وقُذفت الصخور المنصهرة والمتبخرة من الوشاحين إلى قرص حول الأرض، ثم تجمّعت خلال أشهر إلى سنين فكوّنت القمر.',
+  ['تفسّر الزخم الزاوي لنظام الأرض والقمر بدقة تقريبًا','تفسّر صِغر نواة القمر (١–٢٪ من كتلته)، لأن الحديد غاص في الأرض','تفسّر نقص المواد المتطايرة بسبب الحرارة الهائلة','تفسّر «محيط الصهارة» القمري وصخور الأنورثوسيت في المرتفعات','متوافقة مع عمر القمر من بلورات الزركون (≈٤٫٥١ مليار سنة)'],
+  ['«أزمة النظائر»: تشير المحاكاة إلى أن ٦٠–٨٠٪ من القمر من ثيا، بينما نظائر الأكسجين والتيتانيوم والكروم في القمر شبه متطابقة مع الأرض','تحتاج إلى أن تكون ثيا مشابهة للأرض في التركيب، وهذه مصادفة غير مريحة','لا تفسّر تمامًا ميل مدار القمر (٥°)']],
+  en:['💥 Canonical giant impact','Hartmann & Davis (1975), Cameron & Ward (1976), Canup & Asphaug (2001)','About 4.51 billion years ago a Mars-sized body, "Theia" (≈10–15% of Earth\'s mass), struck the proto-Earth at about 45°. Theia\'s iron core sank into Earth\'s core; molten and vaporised mantle rock was flung into a disc that gathered into the Moon within months to years.',
+  ['Matches the Earth–Moon angular momentum','Explains the tiny lunar core (1–2% of its mass): the iron sank into Earth','Explains volatile depletion through extreme heating','Explains the lunar magma ocean and anorthosite highlands','Consistent with zircon ages (≈4.51 Gyr)'],
+  ['The "isotope crisis": simulations make the Moon 60–80% Theia, yet its O, Ti and Cr isotopes nearly match Earth\'s','Requires Theia to resemble Earth: an awkward coincidence','Does not fully explain the 5° inclination of the lunar orbit']]},
+ {id:'synestia',acc:25,ar:['🌀 الاصطدام عالي الطاقة والسينستيا','Ćuk & Stewart (2012)، Canup (2012)، Lock & Stewart (2017، 2018)','اصطدام أعنف بكثير بأرضٍ سريعة الدوران (يومها ساعتان أو ثلاث) يبخّر جزءًا كبيرًا من الأرض وثيا ويكوّن «سينستيا»: كتلة ضخمة دوّارة من الصخر المتبخر على هيئة كعكة، أكبر من الأرض بأضعاف. تختلط المادة جيدًا في الطور البخاري، فيتكثّف القمر داخل هذه السحابة ويخرج بنظائر الأرض نفسها. ثم يزيل الرنين المداري مع الشمس (رنين الإيفيكشن) الزخم الزائد.',
+  ['تحل أزمة النظائر، لأن المادة اختلطت في الطور البخاري','تفسّر نقص البوتاسيوم والزنك وثِقل نظائرهما (فقد المتطايرات من البخار)','تحتفظ بكل مزايا الاصطدام العملاق (النواة الصغيرة ومحيط الصهارة)'],
+  ['تحتاج إلى زخم زاوي ابتدائي أكبر من الحالي، ثم إلى آلية تزيل الفائض، وهذه الآلية لا تزال محل جدل','فيزياء السينستيا (الديناميكا الحرارية للبخار) معقدة وما زالت قيد التطوير','الطاقة المطلوبة عالية جدًا، فاحتمال الحدث أقل']],
+  en:['🌀 High-energy impact & synestia','Ćuk & Stewart (2012), Canup (2012), Lock & Stewart (2017, 2018)','A far more violent impact onto a fast-spinning Earth (2–3 h day) vaporises much of both bodies into a "synestia", a huge spinning doughnut of rock vapour. Material mixes thoroughly in the vapour, so the Moon condenses inside it with Earth-like isotopes; an orbital resonance with the Sun (evection) later removes the excess angular momentum.',
+  ['Solves the isotope crisis by mixing in the vapour phase','Explains depleted and isotopically heavy K and Zn (volatile loss from vapour)','Keeps the giant-impact successes (small core, magma ocean)'],
+  ['Needs more angular momentum than today, then a way to lose it; that mechanism is debated','Synestia physics (vapour thermodynamics) is complex and still developing','Requires very high energies, so it is a rarer event']]},
+ {id:'immediate',acc:10,sim:false,ar:['⚡ القمر الفوري (في ساعات)','Kegerreis وآخرون (٢٠٢٢)، NASA Ames وجامعة دورهام','بيّنت محاكاة عالية الدقة جدًا (حتى ١٠٨ ملايين جسيم) أن الاصطدام قد يقذف كتلة كبيرة إلى المدار مباشرة، فيتكوّن القمر في ساعات بدلًا من أشهر، ويحوي القمر الناتج مادة أرضية أكثر في طبقاته الخارجية.',
+  ['تخفّف مشكلة النظائر جزئيًا (طبقات خارجية فيها مادة أرضية أكثر)','تعطي مدارًا واسعًا وقمرًا غير منصهر كليًا من الداخل، وقد يفسّر ذلك القشرة الرقيقة وميل المدار','نتيجة أدق محاكاة أُجريت في هذا الموضوع'],
+  ['نتيجة حديثة تحتاج إلى تأكيد من فرق بحثية أخرى ومن عينات قمرية أعمق (مهمات أرتميس)','تعتمد على تفاصيل دقيقة للاصطدام (الزاوية والسرعة والدوران)']],
+  en:['⚡ Immediate Moon (in hours)','Kegerreis et al. (2022), NASA Ames & Durham University','Very-high-resolution simulations (up to 10⁸ particles) showed the impact can throw a large clump straight into orbit, forming the Moon within hours instead of months. Its outer layers carry more Earth material.',
+  ['Partly eases the isotope problem (Earth-rich outer layers)','Gives a wide orbit and a not-fully-molten interior, possibly explaining the thin crust and tilted orbit','Comes from the highest-resolution simulations on the topic'],
+  ['Recent; needs confirmation by other groups and deeper lunar samples (Artemis)','Sensitive to impact details (angle, speed, spin)']]},
+ {id:'multi',acc:15,ar:['☄️ الاصطدامات المتعددة','Rufu، Aharonson & Perets (٢٠١٧)','بدلًا من اصطدام واحد ضخم، نحو ٢٠ اصطدامًا أصغر على مدى ملايين السنين. يقذف كل اصطدام مادة معظمها من الأرض نفسها فيتكوّن «قُمير» صغير، وتهاجر القُميرات إلى الخارج بقوى المد وتندمج معًا حتى يتكوّن القمر.',
+  ['تفسّر تشابه النظائر، لأن معظم المادة المقذوفة من الأرض','كانت الاصطدامات الأصغر شائعة جدًا في تلك المرحلة من عمر المجموعة الشمسية'],
+  ['اندماج القُميرات غير مضمون، وقد يتفكك كثير منها أو يرتطم بالأرض','تحتاج إلى عدد كبير من الاصطدامات بتفاصيل مضبوطة']],
+  en:['☄️ Multiple impacts','Rufu, Aharonson & Perets (2017)','Instead of one giant collision, ~20 smaller impacts over millions of years. Each ejects mostly Earth material into a small moonlet; moonlets migrate outward by tides and merge into the Moon.',
+  ['Explains isotopic similarity: the ejected material is mostly Earth','Smaller impacts were very common at that epoch'],
+  ['Moonlet mergers are not guaranteed; many may disrupt or fall back','Needs many impacts with suitable parameters']]},
+ {id:'fission',acc:2,ar:['🌪️ الانشطار (نظرية داروين)','George Darwin (١٨٧٩)','كانت الأرض في بدايتها منصهرة تدور بسرعة هائلة، فشدّت القوة الطاردة المركزية مع مدّ الشمس جزءًا من وشاحها وفصلته فصار القمر. وقد شاعت قديمًا فكرة أن المحيط الهادي هو «موضع الانفصال».',
+  ['تفسّر تشابه التركيب مع وشاح الأرض','تفسّر فقر القمر في الحديد، لأن المادة جاءت من الوشاح لا من النواة'],
+  ['يلزم أن يكون يوم الأرض نحو ساعتين ونصف، وهذا يعطي زخمًا زاويًا أكبر بكثير من زخم نظام الأرض والقمر الحالي، ولا توجد آلية معروفة للتخلص منه','مدار القمر ليس في مستوى استواء الأرض كما تتوقع النظرية','عمر قاع المحيط الهادي أقل من ٢٠٠ مليون سنة، فلا يمكن أن يكون «الندبة»']],
+  en:['🌪️ Fission (Darwin)','George Darwin (1879)','The young, molten Earth spun so fast that centrifugal force plus solar tides pulled part of its mantle away to form the Moon. The Pacific Ocean was once proposed as the scar.',
+  ['Explains the mantle-like composition','Explains iron depletion: material came from the mantle, not the core'],
+  ['Requires a ~2.5 h day: far more angular momentum than the Earth–Moon system has, with no way to lose it','The lunar orbit is not in Earth\'s equatorial plane as predicted','The Pacific floor is younger than 200 Myr, so it cannot be the scar']]},
+ {id:'capture',acc:1,ar:['🧲 الأسر','T.J.J. See (١٩٠٩) وغيره','تكوّن القمر في موضع آخر من المجموعة الشمسية، ثم مرّ يومًا قرب الأرض فأسرته جاذبيتها.',
+  ['تفسّر ببساطة وجود قمر كبير','قد تفسّر ميل مدار القمر'],
+  ['الجسم القادم من بعيد يملك طاقة تكفي للهروب ثانية، والأسر يحتاج إلى آلية تُفقده طاقة (غلاف غازي كثيف أو جسم ثالث)، وهذا نادر جدًا','لو تكوّن في مكان آخر لاختلف تركيبه النظائري، لكنه في الواقع شبه مطابق للأرض','لا تفسّر فقر الحديد ولا نقص المتطايرات']],
+  en:['🧲 Capture','T.J.J. See (1909) and others','The Moon formed elsewhere in the Solar System and was captured by Earth\'s gravity during a close pass.',
+  ['Simply explains a large moon','Could explain the orbital tilt'],
+  ['An incoming body has enough energy to leave again; capture needs energy loss (a dense gas envelope or a third body), which is very unlikely','Formed elsewhere, its isotopes would differ, yet they are nearly identical to Earth\'s','Does not explain iron or volatile depletion']]},
+ {id:'coacc',acc:3,ar:['🪨 التكوّن المشترك (الكوكب المزدوج)','Édouard Roche (١٨٧٣)، Schmidt وآخرون','تكوّنت الأرض والقمر متجاورَين في الوقت نفسه ومن سحابة الكويكبات الصغيرة نفسها، كالتوأم.',
+  ['تفسّر تشابه النظائر، لأنهما من المادة نفسها'],
+  ['لو كانا من المادة نفسها لاحتوى القمر على حديد بنسبة قريبة من الأرض (نحو ٣٠٪)، لكنه لا يحوي إلا ١–٢٪','لا تفسّر الزخم الزاوي الكبير لنظام الأرض والقمر','لا تفسّر نقص المواد المتطايرة']],
+  en:['🪨 Co-accretion (double planet)','Édouard Roche (1873), Schmidt and others','Earth and Moon grew side by side from the same swarm of planetesimals, like twins.',
+  ['Explains isotopic similarity: same material'],
+  ['Same material means Earth-like iron (~30%), yet the Moon has only 1–2%','Does not explain the high angular momentum','Does not explain volatile depletion']]}];
+const EVC=[['am','الزخم الزاوي','Angular momentum'],['fe','نواة صغيرة (حديد قليل)','Small iron core'],['iso','تطابق النظائر مع الأرض','Earth-like isotopes'],['vol','نقص المواد المتطايرة','Volatile depletion'],['mo','محيط الصهارة','Magma ocean'],['dyn','معقولية فيزيائية','Dynamical plausibility']];
+const EVR={giant:'yyny y',synestia:'yyyyyp',immediate:'yypppy',multi:'yyyppp',fission:'nyypyn',capture:'pnnnnn',coacc:'nnynpp'};
+const EVM={giant:['y','y','n','p','y','y'],synestia:['y','y','y','y','y','p'],immediate:['y','y','p','p','p','y'],multi:['y','y','y','p','p','p'],fission:['n','y','y','p','y','n'],capture:['p','n','n','n','n','n'],coacc:['n','n','y','n','p','p']};
+let cur='giant';
+// ---------- simulation ----------
+const cv=$('sim'),g=cv.getContext('2d');let sim=null,running=false,spd=4,colorMode='origin',drag=0,ev=[],trail=[];
+function earthBody(s){s.body(0,0,0,0,1,1,0.55,0,0.085);const dt=0.004;for(let k=0;k<1200;k++){s.step(dt);if(k%10==0)for(let i=0;i<s.N;i++){s.vx[i]*=0.85;s.vy[i]*=0.85;}}for(let i=0;i<s.N;i++){s.vx[i]=s.vy[i]=0;s.heat[i]=0;}s.t=0;}
+function impactor(s,mT,deg,vfac,ang,src){const RT=Math.sqrt(mT),b=Math.sin(deg*Math.PI/180)*(1+RT),d0=3.4,c=s.centre();const vc=vfac*Math.sqrt(2*(1+mT)/(1+RT));const v0=Math.sqrt(Math.max(.05,vc*vc-2*(1+mT)*(1/(1+RT)-1/d0)));const ca=Math.cos(ang),sa=Math.sin(ang),x=-Math.sqrt(d0*d0-b*b),y=b;s.body(c[0]+x*ca-y*sa,c[1]+x*sa+y*ca,v0*ca+(s.cvx||0),v0*sa+(s.cvy||0),RT,mT,0.45,src==null?1:src,0.085);}
+const SETUP={
+ giant(s){earthBody(s);s.damp=0;s.K=15;impactor(s,0.15,60,1.15,0);ev=[[14,()=>{s.consolidate(1.15);s.accrete=true;s.roche=2.6;s.mergeTol=3;}]];},
+ synestia(s){earthBody(s);for(let i=0;i<s.N;i++){s.vx[i]=-s.y[i]*0.55;s.vy[i]=s.x[i]*0.55;}s.damp=0;s.K=15;s.mix=0.04;impactor(s,0.15,40,1.7,0);ev=[[16,()=>{s.consolidate(1.15);s.accrete=true;s.roche=2.6;s.mergeTol=3;}]];},
+ multi(s){earthBody(s);s.damp=0;s.K=15;ev=[];const ang=[0,2.1,4.2,1.0,3.1,5.2];ang.forEach((a,k)=>ev.push([1+k*7,()=>impactor(s,0.03,50,2.1,a)]));ev.push([44,()=>{s.consolidate(1.15);s.accrete=true;s.roche=2.6;s.mergeTol=3;}]);},
+ fission(s){earthBody(s);s.damp=0.3;s.K=15;s.cx=0;s.cy=0;s.spinUp=0.2;ev=[[0,()=>{}]];s.onstep=()=>{s.spinUp=Math.min(1.35,0.2+s.t*0.035);if(Math.floor(s.t*50)%20===0)s.centre();if(s.t>32&&!s.accrete){s.accrete=true;s.roche=2.2;s.mergeTol=3;s.spinUp=0;}};},
+ capture(s){s.add(0,0,0,0,1,1,0,0);s.central=0;s.centralT=0;s.eps=0.03;const mm=0.0123;for(let k=0;k<7;k++){const a=k/7*6.283,rr=k?0.12:0;s.add(-7+rr*Math.cos(a),2.6+rr*Math.sin(a),0.62,-0.02,mm/7,0.07,1,1);}s.damp=0.8;s.K=15;s.drag=drag?0.35:0;s.cx=0;s.cy=0;trail=[];ev=[];},
+ coacc(s){s.add(0,0,0,0,1,1,0,0);s.central=0;s.eps=0.03;for(let k=0;k<320;k++){const r=2.9+Math.random()*2.6,a=Math.random()*6.283,v=Math.sqrt(1/r)*(1+(Math.random()-0.5)*0.06);s.add(r*Math.cos(a),r*Math.sin(a),-v*Math.sin(a),v*Math.cos(a),0.0123*1.6/320,0.04,Math.random()<0.3?0:1,0);}s.accrete=true;s.roche=2.9;s.mergeTol=6;s.K=10;s.damp=0.5;ev=[];}
+};
+function reset(){const th=TH.find(x=>x.id===cur);if(th.sim===false){sim=null;running=false;$('simBox').style.display='none';$('ctl').innerHTML='';$('simNote').textContent=t('noSim');return;}
+ $('simBox').style.display='block';if(R3){R3.dist=cur==='capture'?22:cur==='coacc'?17:12;R3.tc=null;}sim=new MoonSim(1700);SETUP[cur](sim);running=false;draw();ctl();$('simNote').textContent=t('simNote')+(cur==='synestia'?' '+(lang==='ar'?'⚠️ في هذا السيناريو تحديدًا: يوضح النموذج الثنائي الأبعاد عنف الاصطدام والحرارة والمادة المنتشرة (اختر التلوين «حسب الحرارة»)، لكنه لا يمثّل فيزياء البخار نفسها، فنسبة مادة ثيا في القمر هنا غير دقيقة. أما في المحاكاة الثلاثية الأبعاد (Lock & Stewart 2018) فتختلط المادة في البخار، ويخرج القمر بتركيب الأرض تقريبًا.':'⚠️ For this scenario specifically: the 2D model shows the violence, heating and spread of material (colour by temperature) but not vapour physics, so the impactor share in the Moon is not reliable here. In the 3D models (Lock & Stewart 2018) material mixes in the vapour and the Moon ends up Earth-like.'):'')+(cur==='multi'?' '+(lang==='ar'?'لاحظ: تقذف الاصطدامات الصغيرة السريعة مادة معظمها من الأرض نفسها، فيخرج القمر بتركيب الأرض.':'Note: small, fast impacts eject mostly Earth material, so the Moon ends up Earth-like.'):'')+(cur==='coacc'?' '+(lang==='ar'?'لاحظ نسبة الحديد في القمر المتكوّن (نحو ٣٠٪) مقارنة بالقمر الحقيقي (١–٢٪): هذه هي المشكلة الأساسية للنظرية.':'Note the iron fraction (~30%) versus the real 1–2%: the theory\'s main problem.'):'')+(cur==='capture'?' '+(lang==='ar'?'جرّب الزرّين: دون فقد للطاقة يمرّ القمر ويهرب، ومع فقد افتراضي للطاقة (كغلاف غازي كثيف) يُؤسَر. وهذه بالضبط نقطة ضعف النظرية: إنها تحتاج إلى ظرف نادر جدًا.':'Try both buttons: without energy loss the Moon flies past and escapes; with hypothetical loss (e.g. a dense gas envelope) it is captured. That is the theory\'s weakness: it needs a very rare circumstance.'):'')+(cur==='fission'?' '+(lang==='ar'?'تسرّع المحاكاة دوران الأرض تدريجيًا، ويبدأ الانفصال حين يقترب طول اليوم من ساعتين، وهذا زخم زاوي أكبر بكثير مما في نظام الأرض والقمر اليوم.':'The simulation spins the Earth up gradually; shedding starts near a ~2 h day: far more angular momentum than today\'s Earth–Moon system.'):'');}
+function ctl(){const extra=cur==='capture'?`<button class="chip${drag?' on':''}" id="dragB">${drag?t('dragOn'):t('dragOff')}</button>`:'';
+ $('ctl').innerHTML=`<button class="btn sm" id="runB">${running?t('pause'):t('run')}</button><button class="btn sm ghost" id="rstB">${t('reset')}</button><span class="small" style="margin-inline-start:6px">${t('speed')}</span><select class="inp" id="spdS" style="width:auto;padding:6px">${[1,2,4,8].map(v=>`<option ${v===spd?'selected':''}>${v}</option>`).join('')}</select>
+  <span class="small">${t('color')}</span><select class="inp" id="colS" style="width:auto;padding:6px"><option value="origin">${t('cOrigin')}</option><option value="mat">${t('cMat')}</option><option value="heat">${t('cHeat')}</option></select>${extra}`;
+ $('colS').value=colorMode;$('runB').onclick=()=>{running=!running;ctl();};$('rstB').onclick=reset;$('spdS').onchange=e=>spd=+e.target.value;$('colS').onchange=e=>{colorMode=e.target.value;legend();draw();};
+ if($('dragB'))$('dragB').onclick=()=>{drag=!drag;reset();};legend();}
+function legend(){$('leg').innerHTML=colorMode==='origin'?`<i style="background:#4ea3ff"></i>${t('legE')} &nbsp; <i style="background:#ff8a3d"></i>${t('legT')} &nbsp; <i style="background:#c9a6ff"></i>${t('legMix')}`:colorMode==='mat'?`<i style="background:#c0503a"></i>${t('legFe')} &nbsp; <i style="background:#c8ccd6"></i>${t('legRock')}`:`<i style="background:linear-gradient(90deg,#555,#ff3b00,#ffd27a,#fff)"></i>T`;}
+function col(i){if(colorMode==='mat')return sim.mat[i]===0?'#c0503a':'#c8ccd6';if(colorMode==='heat'){const h=Math.min(1,sim.heat[i]*1.2);return `rgb(${90+165*Math.min(1,h*2)},${60+190*Math.max(0,h*2-1)},${60+150*Math.max(0,h*2-1.2)})`;}
+ const f=sim.f[i];return `rgb(${78+(255-78)*f},${163+(138-163)*f},${255+(61-255)*f})`;}
+let R3=null;try{R3=new Moon3D($('sim3'));}catch(e){R3=null;$('sim3').style.display='none';cv.style.display='block';}
+function draw(){if(R3&&sim){const view=cur==='capture'?9:cur==='coacc'?7.5:5.2;R3.render(sim,colorMode,view,cur==='capture'?trail:null,p=>{const L=$('moonLbl');if(p){L.style.display='block';L.style.left=(p[0]*100)+'%';L.style.top=(p[1]*$('sim3').clientHeight)+'px';L.textContent=lang==='ar'?'القمر الوليد':'newborn Moon';}else L.style.display='none';});hud();return;}
+ const r=cv.getBoundingClientRect(),d=Math.min(2,devicePixelRatio||1);if(cv.width!==Math.round(r.width*d)){cv.width=r.width*d;cv.height=r.height*d;}
+ const W=cv.width,H=cv.height;g.setTransform(1,0,0,1,0,0);g.fillStyle='#02040a';g.fillRect(0,0,W,H);if(!sim)return;
+ const [cx,cy]=sim.centre(),st0=sim.stats(),view=cur==='capture'?9:cur==='coacc'?7.5:5.2,S0=0,S=Math.min(W,H)/2/view,X=x=>W/2+(x-cx)*S,Y=y=>H/2-(y-cy)*S;
+ // roche circle
+ g.strokeStyle='#ffffff30';g.setLineDash([5*d,6*d]);g.beginPath();g.arc(W/2,H/2,2.9*S,0,7);g.stroke();g.setLineDash([]);g.fillStyle='#ffffff55';g.font=`${11*d}px sans-serif`;g.fillText(t('roche'),W/2+2.9*S*0.72,H/2+2.9*S*0.76);
+ if(cur==='capture'&&trail.length>1){g.strokeStyle='#f1d27a88';g.lineWidth=1.5*d;g.beginPath();trail.forEach((p,k)=>{k?g.lineTo(X(p[0]),Y(p[1])):g.moveTo(X(p[0]),Y(p[1]));});g.stroke();}
+ for(let i=0;i<sim.N;i++){if(!sim.alive[i])continue;let rr=sim.r[i]*S;
+  if(i===sim.central){const gr=g.createRadialGradient(X(sim.x[i])-rr*0.3,Y(sim.y[i])-rr*0.3,rr*0.1,X(sim.x[i]),Y(sim.y[i]),rr);const f=sim.f[i];gr.addColorStop(0,colorMode==='origin'?`rgb(${120+120*f},${180-30*f},255)`:'#9aa3b5');gr.addColorStop(1,colorMode==='origin'?'#1f4f9a':'#3a3f4a');g.fillStyle=gr;g.beginPath();g.arc(X(sim.x[i]),Y(sim.y[i]),rr,0,7);g.fill();continue;}
+  g.fillStyle=col(i);g.beginPath();g.arc(X(sim.x[i]),Y(sim.y[i]),Math.max(1.2*d,sim.m[i]>0.003?Math.max(4*d,rr*1.6):rr),0,7);g.fill();
+  if(i===st0.bigIdx&&sim.m[i]>0.003&&(sim.central!=null)){g.strokeStyle='#f1d27a';g.lineWidth=1.5*d;g.beginPath();g.arc(X(sim.x[i]),Y(sim.y[i]),Math.max(9*d,rr*2.4),0,7);g.stroke();g.fillStyle='#f1d27a';g.font=`bold ${12*d}px sans-serif`;g.textAlign='center';g.fillText(lang==='ar'?'القمر':'Moon',X(sim.x[i]),Y(sim.y[i])-Math.max(13*d,rr*2.8));g.textAlign='start';}}
+ hud();}
+function hud(){const s=sim,st=s.stats(),hrs=s.t*TU/3600,tt=hrs<48?hrs.toFixed(1)+' '+t('h'):(hrs/24).toFixed(1)+' '+t('d');const ML=0.0123;
+ const pre=s.central==null&&cur!=='fission';let h=`${t('t')}: <b>${tt}</b><br>${t('disk')}: <b>${pre?'—':(st.disk/ML).toFixed(2)}</b> ${t('ml')}<br>${t('moon')}: <b>${pre?'—':(st.big/ML).toFixed(2)}</b> ${t('ml')}`;
+ if(cur==='giant'||cur==='synestia'||cur==='multi')h+=`<br>${t('theiaM')}: <b style="color:#ff8a3d">${Math.round(st.bigT*100)}%</b> · ${t('theiaE')}: <b style="color:#4ea3ff">${Math.round((s.centralT||0)*100)}%</b>`;
+ if(cur==='coacc')h+=`<br>${t('iron')}: <b>${Math.round(st.bigIron*100)}%</b> (${lang==='ar'?'الحقيقي ١–٢٪':'real 1–2%'})`;
+ if(cur==='fission'){const w=s.spinUp||0;h+=`<br>${t('spinTxt')}: ω=${w.toFixed(2)} · ${t('period')}: <b>${w>0.01?(2*Math.PI/w*TU/3600).toFixed(1)+' '+t('h'):'—'}</b>`;}
+ if(cur==='capture'){const m=1,dx=s.x[1]-s.x[0],dy=s.y[1]-s.y[0],r=Math.hypot(dx,dy),v2=(s.vx[1]-s.vx[0])**2+(s.vy[1]-s.vy[0])**2,E=0.5*v2-1/r;h+=`<br>${lang==='ar'?'الطاقة المدارية':'Orbital energy'}: <b style="color:${E<0?'#7ee2a8':'#ff9fb3'}">${E.toFixed(3)}</b> ${E<0?(lang==='ar'?'(مأسور)':'(captured)'):(lang==='ar'?'(سيهرب)':'(will escape)')}`;}
+ $('hud').innerHTML=h;}
+let last=performance.now();
+function loop(now){const fr=Math.min(0.05,(now-last)/1000);last=now;
+ if(running&&sim){const steps=spd*3;for(let k=0;k<steps;k++){sim.step(0.004);if(sim.onstep)sim.onstep();while(ev.length&&sim.t>=ev[0][0]){ev.shift()[1]();}}
+  if(cur==='capture'){trail.push([sim.x[1],sim.y[1]]);if(trail.length>1500)trail.shift();}
+  if(sim.t>(cur==='multi'?160:cur==='capture'?140:120))running=false,ctl();draw();}
+ else if(R3&&sim)draw();
+ requestAnimationFrame(loop);}
+// ---------- render page ----------
+function pick(id){cur=id;colorMode=id==='synestia'?'heat':(colorMode==='heat'?'origin':colorMode);const th=TH.find(x=>x.id===id),d=th[lang];
+ $('thr').querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c.dataset.id===id));
+ $('thTitle').textContent=d[0];$('thWho').textContent=d[1];$('thStory').textContent=d[2];$('accBar').style.width=Math.max(2,th.acc*2.2)+'%';$('accTxt').textContent=`${t('acc')}: ≈ ${th.acc}%`;
+ $('pros').innerHTML=d[3].map(x=>`<li>${x}</li>`).join('');$('cons').innerHTML=d[4].map(x=>`<li>${x}</li>`).join('');
+ $('ev').querySelectorAll('tr[data-id]').forEach(r=>r.classList.toggle('on',r.dataset.id===id));reset();}
+function page(){document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr';document.body.lang=lang;document.querySelectorAll('[data-i]').forEach(e=>{const v=t(e.dataset.i);if(typeof v==='string')e.textContent=v;});
+ $('btnLang').textContent=lang==='ar'?'EN':'ع';$('logo').innerHTML=KH.logoSVG(36);
+ $('thr').innerHTML=TH.map(th=>`<button class="chip" data-id="${th.id}"><span>${th[lang][0]}</span><small>${t('acc').split(' (')[0]}: ≈${th.acc}%</small></button>`).join('');$('thr').querySelectorAll('.chip').forEach(c=>c.onclick=()=>pick(c.dataset.id));
+ const sym={y:'<span class="y">✓</span>',n:'<span class="n">✗</span>',p:'<span class="p">~</span>'};
+ $('ev').innerHTML=`<thead><tr><th></th>${EVC.map(c=>`<th>${lang==='ar'?c[1]:c[2]}</th>`).join('')}<th>${lang==='ar'?'القبول':'Acceptance'}</th></tr></thead><tbody>${TH.map(th=>`<tr data-id="${th.id}" style="cursor:pointer"><td>${th[lang][0]}</td>${EVM[th.id].map(v=>`<td>${sym[v]}</td>`).join('')}<td>≈${th.acc}%</td></tr>`).join('')}</tbody>`;
+ $('ev').querySelectorAll('tr[data-id]').forEach(r=>r.onclick=()=>{pick(r.dataset.id);window.scrollTo({top:$('thTitle').offsetTop-80,behavior:'smooth'});});
+ const F=lang==='ar'?[['كثافة القمر ٣٫٣٤ جم/سم³','أقل بكثير من كثافة الأرض (٥٫٥١)، أي أن حديده قليل جدًا. نصف قطر نواته نحو ٣٣٠ كم فقط، أي ١–٢٪ من كتلته (من زلازل أبولو، Weber ٢٠١١).'],['نظائر شبه متطابقة','تطابق نسب نظائر الأكسجين (Δ¹⁷O) والتيتانيوم والكروم والتنجستن في صخور القمر نظيرتها في الأرض حتى أجزاء من المليون، بينما يختلف المريخ والنيازك.'],['فقير في المتطايرات','البوتاسيوم والزنك والصوديوم قليلة، ونظائرها أثقل، وهذا دليل على أن المادة تبخرت وفقدت الخفيف منها.'],['محيط صهارة','مرتفعات القمر الفاتحة من صخر الأنورثوسيت الذي طفا على محيط صهارة عميق، أي أن القمر كان منصهرًا في بدايته.'],['العمر ≈ ٤٫٥١ مليار سنة','من بلورات الزركون في عينات أبولو (Barboni ٢٠١٧)، أي بعد تكوّن المجموعة الشمسية بنحو ٥٠–٦٠ مليون سنة.'],['يبتعد ٣٫٨ سم سنويًا','مقيس بالليزر على عاكسات أبولو. يبطّئ المدُّ دوران الأرض ويدفع القمر إلى الخارج، فلو عدنا بالزمن لوجدناه أقرب بكثير والأرض أسرع دورانًا.'],['ميل المدار ٥°','مدار القمر مائل على مستوى مدار الأرض لا على استوائها، وهذا قيد مهم على النظريات.'],['زخم زاوي كبير','الزخم الزاوي لنظام الأرض والقمر كبير على نحو غير معتاد، ويجب أن يكون الحدث الذي كوّن القمر مصدره.']]
+ :[['Density 3.34 g/cm³','Much lower than Earth (5.51): very little iron. The core is only ~330 km in radius, 1–2% of the mass (Apollo seismology, Weber 2011).'],['Near-identical isotopes','O (Δ¹⁷O), Ti, Cr and W isotopes match Earth to parts per million, while Mars and meteorites differ.'],['Volatile-poor','K, Zn and Na are depleted and isotopically heavy: a sign of vaporisation and loss of the light fraction.'],['Magma ocean','The bright highlands are anorthosite that floated on a deep magma ocean: the young Moon was molten.'],['Age ≈ 4.51 Gyr','From zircons in Apollo samples (Barboni 2017): about 50–60 Myr after the Solar System formed.'],['Receding 3.8 cm/yr','Measured by laser ranging to Apollo reflectors. Tides slow Earth\'s spin and push the Moon out; in the past it was much closer and Earth spun faster.'],['5° orbital tilt','The orbit is tilted to the ecliptic, not to Earth\'s equator: a key constraint.'],['Large angular momentum','The Earth–Moon system has unusually high angular momentum; the Moon-forming event must supply it.']];
+ $('facts').innerHTML=F.map(f=>`<div class="panel"><b>${f[0]}</b>${f[1]}</div>`).join('');
+ $('vid').innerHTML=`<div class="vidcard"><a href="https://images.nasa.gov/details-ARC-20221004-AAV3443-MoonOrigin-Social-NASAWeb-1080p" target="_blank" rel="noopener" style="display:block;position:relative;border-radius:12px;overflow:hidden;aspect-ratio:16/9;background:radial-gradient(circle at 40% 50%,#ff9a2a 0,#a33c12 18%,#1a0d08 40%,#02040a 70%)"><span style="position:absolute;inset:0;display:grid;place-items:center;font-size:56px;color:#fff;text-shadow:0 2px 12px #000">▶</span><span style="position:absolute;bottom:0;left:0;right:0;padding:8px 10px;background:#000a;font-size:13px">${lang==='ar'?'Collision May Have Formed the Moon in Mere Hours: محاكاة NASA Ames وجامعة دورهام (Kegerreis وآخرون ٢٠٢٢)':'Collision May Have Formed the Moon in Mere Hours: NASA Ames & Durham (Kegerreis et al. 2022)'}</span></a>
+  <div class="small" style="font-size:12.5px">${lang==='ar'?'سيُعرض الفيديو هنا دون اتصال بعد تنزيله وإضافته إلى البرنامج.':'Once you download and send the video, it will play here offline.'}</div></div>
+  <button class="btn sm" id="moon3d" style="margin-top:10px">${lang==='ar'?'🌐 القمر 3D بخريطته الحقيقية (المرتفعات والبحار)':'🌐 The Moon in 3D (see highlands and maria)'}</button>`;
+ $('moon3d').onclick=()=>Body3D.open('moon',null,{lang});
+ $('refs').innerHTML=['Hartmann & Davis (1975) Icarus 24, 504','Cameron & Ward (1976) LPSC 7, 120','Canup & Asphaug (2001) Nature 412, 708','Canup (2012) Science 338, 1052','Ćuk & Stewart (2012) Science 338, 1047','Lock et al. (2018) JGR Planets 123, 910','Rufu, Aharonson & Perets (2017) Nature Geoscience 10, 89','Kegerreis et al. (2022) ApJL 937, L40','Young et al. (2016) Science 351, 493','Wang & Jacobsen (2016) Nature 538, 487','Barboni et al. (2017) Science Advances 3, e1602365','Darwin (1879) Phil. Trans. R. Soc. 170, 447'].map(r=>'• '+r).join('<br>');
+ $('foot').innerHTML=`${KH.logoSVG(30)}<br>${lang==='ar'?'إعداد: خالد محمد · عضو AfAS وAUASS':'By Khaled Mohamed · Member of AfAS and AUASS'}<br><a href="index.html">${lang==='ar'?'الرئيسية':'Home'}</a>`;
+ document.title=t('title')+' — '+(lang==='ar'?'خالد محمد':'Khaled Mohamed');pick(cur);}
+$('btnLang').onclick=()=>{lang=lang==='ar'?'en':'ar';KH.setLang(lang);page();};
+addEventListener('resize',()=>draw());
+page();requestAnimationFrame(loop);
+window.__moon={get sim(){return sim},pick,setRun:v=>{running=v;},ff(u){const end=sim.t+u;while(sim.t<end){sim.step(0.004);if(sim.onstep)sim.onstep();while(ev.length&&sim.t>=ev[0][0]){ev.shift()[1]();}if(cur==='capture'){trail.push([sim.x[1],sim.y[1]]);}}draw();}};
+})();
+</script>
+</body>
+</html>

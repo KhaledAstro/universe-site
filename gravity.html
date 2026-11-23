@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0f1e">
+<title>الجاذبية وانحناء الزمكان | Gravity & Spacetime</title>
+<link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/page.css">
+<style>
+.stage{position:relative}
+#well{width:100%;height:min(68vh,560px);display:block;background:#02040a;border-radius:16px;touch-action:none}
+.hud{position:absolute;top:10px;inset-inline-start:10px;font-size:12px;line-height:1.65;background:#000b;border-radius:10px;padding:6px 10px;font-variant-numeric:tabular-nums;max-width:70%;pointer-events:none}
+.ctl{display:grid;grid-template-columns:auto 1fr auto;gap:6px 10px;align-items:center;margin-top:10px;font-size:13px}
+.ctl input[type=range]{width:100%;accent-color:var(--gold)}
+.ctl output{font-variant-numeric:tabular-nums;color:var(--gold-l);min-width:70px;text-align:end}
+.row{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;align-items:center}
+details.math{margin-top:10px;border:1px solid var(--line);border-radius:12px;padding:8px 12px;background:#0b1430}
+details.math summary{cursor:pointer;color:var(--gold-l);font-weight:600}
+details.math p,details.math li{font-size:13.3px;line-height:1.85}
+.eq{direction:ltr;text-align:center;font-family:"Cambria Math","STIX Two Math","Times New Roman",serif;font-size:16px;margin:8px 0;color:#fff;background:#ffffff08;border-radius:8px;padding:6px}
+#lens{width:100%;max-width:520px;aspect-ratio:1/1;display:block;margin:0 auto;border-radius:16px;background:#000;touch-action:none;cursor:crosshair}
+.clocks{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:10px}
+.clk{text-align:center;font-size:12.5px}.clk canvas{width:110px;height:110px;display:block;margin:0 auto 4px}
+.clk b{display:block;color:var(--gold-l);font-size:13.5px}
+#gw{width:100%;height:280px;display:block;background:#050915;border-radius:14px}
+.big{font-size:22px;color:var(--gold-l);font-weight:700;font-variant-numeric:tabular-nums}
+.note{font-size:12.5px;color:var(--muted);line-height:1.75}
+table.t2{border-collapse:collapse;width:100%;font-size:13px}table.t2 td,table.t2 th{padding:6px;border-bottom:1px solid #ffffff12;text-align:start}table.t2 td:last-child{font-variant-numeric:tabular-nums;direction:ltr;text-align:end}
+</style>
+</head>
+<body>
+<header class="pg-top">
+  <a class="brand" href="index.html"><span id="logo"></span><div><h1 data-i="title"></h1><div class="sub" data-i="sub"></div></div></a>
+  <button class="ibtn" id="btnLang">EN</button>
+</header>
+<main class="wrap">
+  <p class="lead" data-h="lead" style="font-size:14.5px;color:#d9e0f2"></p>
+
+  <!-- 1. spacetime well + orbit sandbox -->
+  <h2 class="sec" data-i="h1"></h2>
+  <p class="lead" data-h="l1"></p>
+  <div class="panel">
+    <div class="stage"><canvas id="well"></canvas><div class="hud" id="hud"></div></div>
+    <div class="row" id="presets"></div>
+    <div class="ctl">
+      <span data-i="mass"></span><input type="range" id="sM" min="0.3" max="3" step="0.05" value="1"><output id="oM"></output>
+      <span data-i="speed"></span><input type="range" id="sV" min="0.3" max="1.6" step="0.01" value="1"><output id="oV"></output>
+      <span data-i="radius"></span><input type="range" id="sR" min="6" max="26" step="0.5" value="14"><output id="oR"></output>
+      <span data-i="gr"></span><input type="range" id="sG" min="0" max="1" step="0.01" value="0"><output id="oG"></output>
+    </div>
+    <div class="row">
+      <button class="btn sm" id="bLaunch"></button><button class="btn sm ghost" id="bClear"></button><button class="btn sm ghost" id="bPause"></button>
+      <label class="small" style="display:flex;gap:5px;align-items:center"><input type="checkbox" id="cTrail" checked><span data-i="trails"></span></label>
+    </div>
+    <p class="note" data-h="wellNote" style="margin-top:10px"></p>
+    <details class="math"><summary data-i="mathT"></summary><div data-h="m1"></div></details>
+  </div>
+
+  <!-- 2. light bending -->
+  <h2 class="sec" data-i="h2"></h2>
+  <p class="lead" data-h="l2"></p>
+  <div class="panel">
+    <canvas id="lens" width="420" height="420"></canvas>
+    <div class="ctl">
+      <span data-i="thetaE"></span><input type="range" id="sE" min="0" max="0.3" step="0.005" value="0.14"><output id="oE"></output>
+      <span data-i="src"></span><select class="inp" id="selSrc"></select><span></span>
+    </div>
+    <p class="note" data-h="lensNote" style="margin-top:8px"></p>
+    <div class="grid2" style="margin-top:10px">
+      <div class="panel" style="background:#0b1430"><h3 data-i="sunBend"></h3><div class="kv" id="sunKV"></div></div>
+      <div class="panel" style="background:#0b1430"><h3 data-i="realImgs"></h3><div id="realLinks" class="note"></div></div>
+    </div>
+    <details class="math"><summary data-i="mathT"></summary><div data-h="m2"></div></details>
+  </div>
+
+  <!-- 3. time -->
+  <h2 class="sec" data-i="h3"></h2>
+  <p class="lead" data-h="l3"></p>
+  <div class="panel">
+    <div class="grid2">
+      <div><h3 data-i="gpsT" style="margin:0 0 8px"></h3><table class="t2" id="gpsT"></table><p class="note" data-h="gpsNote"></p></div>
+      <div><h3 data-i="bhT" style="margin:0 0 8px"></h3>
+        <div class="ctl" style="grid-template-columns:auto 1fr auto"><span>r / r<sub>s</sub></span><input type="range" id="sBH" min="0" max="1" step="0.001" value="0.35"><output id="oBH"></output></div>
+        <div class="kv" id="bhKV" style="margin-top:8px"></div>
+      </div>
+    </div>
+    <div class="clocks" id="clocks"></div>
+    <p class="note" data-h="clockNote"></p>
+    <details class="math"><summary data-i="mathT"></summary><div data-h="m3"></div></details>
+  </div>
+
+  <!-- 4. gravitational waves -->
+  <h2 class="sec" data-i="h4"></h2>
+  <p class="lead" data-h="l4"></p>
+  <div class="panel">
+    <canvas id="gw"></canvas>
+    <div class="row"><button class="chip on" data-g="H1">Hanford H1</button><button class="chip on" data-g="L1">Livingston L1</button><button class="chip on" data-g="NR" id="cNR"></button><button class="btn sm" id="bPlay"></button></div>
+    <div class="grid2" style="margin-top:10px">
+      <div class="kv" id="gwKV"></div>
+      <p class="note" data-h="gwNote" style="margin:0"></p>
+    </div>
+    <details class="math"><summary data-i="mathT"></summary><div data-h="m4"></div></details>
+  </div>
+
+  <h2 class="sec" data-i="hRef"></h2>
+  <div class="panel note" id="refs"></div>
+  <footer id="foot" style="text-align:center;color:var(--muted);font-size:12.5px;margin-top:26px;line-height:1.8"></footer>
+</main>
+<script src="js/common.js"></script>
+<script src="js/three.min.js"></script>
+<script src="js/gw150914.js"></script>
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+let lang=KH.getLang();
+const N=(x,d)=>KH.num?KH.num(x,d,lang):x.toFixed(d);
+const L={ar:{
+title:'الجاذبية وانحناء الزمكان',sub:'من نيوتن إلى أينشتاين إلى LIGO',
+lead:'عند نيوتن الجاذبية قوة بين كتلتين. أما في النسبية العامة (أينشتاين ١٩١٥) فلا توجد «قوة»: الكتلة والطاقة تحنيان الزمكان، والأجسام الحرة تتبع أقصر المسارات فيه (الخطوط الجيوديسية). نستكشف هنا أربع نتائج يمكن قياسها لهذه الفكرة: المدارات، وانحناء الضوء، وتباطؤ الزمن، وموجات الجاذبية التي رُصدت فعلًا.',
+h1:'🕳️ بئر الزمكان ومختبر المدارات',
+l1:'الشبكة تمثّل «عمق» الجهد الجاذبي حول الكتلة المركزية. أطلق كوكبًا بسرعة مختلفة: عند السرعة الدائرية يدور في دائرة، وأقل منها يرسم قطعًا ناقصًا، وعند √2 منها (سرعة الإفلات) يهرب في قطع مكافئ. حرّك المؤشر «تصحيح النسبية العامة» لترى مبادرة الحضيض، وهي الظاهرة التي فسّر بها أينشتاين انحراف مدار عطارد.',
+mass:'الكتلة المركزية',speed:'سرعة الإطلاق ÷ السرعة الدائرية',radius:'مسافة الإطلاق',gr:'تصحيح النسبية العامة (مكبَّر)',
+launch:'🚀 أطلق كوكبًا',clear:'مسح',pause:'⏸ إيقاف',resume:'▶ تشغيل',trails:'إظهار المسارات',
+presets:[['دائري',1],['قطع ناقص',0.75],['شديد التفلطح',0.5],['إفلات (√2)',1.4143]],
+wellNote:'⚠️ تشبيه «الغشاء المطاطي» مفيد للتصوّر لكنه ليس دقيقًا: فالكرة على الغشاء تتدحرج إلى أسفل بسبب جاذبية الأرض نفسها! في الواقع، حركة الأجسام البطيئة كالكواكب تحكمها أساسًا «انحناء الزمن» (المركّبة g₀₀ من المقياس)، لا انحناء المكان. الشبكة هنا ترسم الجهد النيوتوني −GM/r، والمدارات محسوبة عدديًا بطريقة فيرليه (velocity Verlet).',
+mathT:'📐 التفاصيل الرياضية',
+m1:`<p>معادلة الحركة النيوتونية مع التصحيح الأول من النسبية العامة (المدارات حول كتلة شوارتزشيلد):</p>
+<div class="eq">d²<b>r</b>/dt² = −(GM/r³)·<b>r</b> · [ 1 + 3L²/(c²r²) ]</div>
+<p>حيث L = |<b>r</b>×<b>v</b>| الزخم الزاوي لوحدة الكتلة. الحد الإضافي 3L²/(c²r²) يأتي من معادلة المدار في مقياس شوارتزشيلد:</p>
+<div class="eq">d²u/dφ² + u = GM/L² + 3GM u²/c² ,  u = 1/r</div>
+<p>والحل التقريبي قطع ناقص يدور حضيضه بمقدار:</p>
+<div class="eq">Δφ = 6πGM / [c² a (1−e²)]  لكل دورة</div><p>ملاحظة: هذه المعادلة من الرتبة الأولى في GM/(c²a)، لذلك يختلف عنها القياس في المختبر ببضعة في المئة عند التكبير الكبير، ويقترب منها كلما صغّرت المؤشر.</p>
+<p>لعطارد: a = 5.79×10¹⁰ م، e = 0.2056، فتكون Δφ = 5.02×10⁻⁷ راديان لكل دورة ≈ <b>43″ لكل قرن</b>، وهو بالضبط الفرق الذي عجزت عنه ميكانيكا نيوتن (من أصل 5600″ لكل قرن سببها الكواكب الأخرى ومبادرة الاعتدالين). في المختبر أعلاه نكبّر الحد بجعل c صغيرة اصطناعيًا حتى يظهر الأثر في بضع دورات، ويعرض العدّاد الزاوية المقيسة مقارنة بالمعادلة.</p>
+<p>سرعة الدوران الدائري v<sub>c</sub> = √(GM/r)، وسرعة الإفلات v<sub>esc</sub> = √2 · v<sub>c</sub>. وطاقة المدار E = v²/2 − GM/r تحدد نوعه: E&lt;0 قطع ناقص، E=0 قطع مكافئ، E&gt;0 قطع زائد.</p>`,
+h2:'🔭 انحناء الضوء وعدسات الجاذبية',
+l2:'الضوء أيضًا يتبع انحناء الزمكان. حرّك العدسة (اسحب على الصورة) أمام سماء خلفية: عندما تصطف العدسة والمصدر يظهر «حلقة أينشتاين»، وإلا يظهر خيالان للمصدر نفسه. هذه هي الطريقة التي نرى بها مجرات بعيدة جدًا مكبّرة خلف عناقيد المجرات.',
+thetaE:'نصف قطر حلقة أينشتاين θ_E',src:'الخلفية',srcs:['مجرة صناعية في المركز','شبكة مربعات','درب التبانة (صورة حقيقية)'],
+lensNote:'المحاكاة تطبّق معادلة العدسة النقطية بدقة لكل بكسل: β = θ − θ_E² θ/|θ|². ولأن سطوع السطح محفوظ في العدسات، تكبّر العدسة الصورة دون أن تغيّر سطوعها السطحي.',
+sunBend:'☀️ انحراف الضوء عند حافة الشمس',realImgs:'📷 صور حقيقية لعدسات الجاذبية',
+m2:`<p>زاوية انحراف شعاع يمر على بُعد b من كتلة M (ضعف قيمة نيوتن):</p><div class="eq">α = 4GM / (c² b)</div>
+<p>عند حافة الشمس: α = 4(1.327×10²⁰)/[(2.998×10⁸)²(6.957×10⁸)] = 8.49×10⁻⁶ راديان = <b>1.75″</b>. قاس إدينغتون ودايسون هذا في كسوف ٢٩ مايو ١٩١٩، ثم قيس حديثًا بالتداخل الراديوي بدقة أفضل من ١٠⁻⁴ (γ = 1 ± 10⁻⁴).</p>
+<p>معادلة العدسة الرقيقة ونصف قطر أينشتاين:</p><div class="eq">β = θ − θ<sub>E</sub>²/θ ,   θ<sub>E</sub> = √( 4GM D<sub>LS</sub> / (c² D<sub>L</sub> D<sub>S</sub>) )</div>
+<p>خيالان عند θ<sub>±</sub> = [β ± √(β² + 4θ<sub>E</sub>²)]/2، والتكبير الكلي μ = (u²+2)/(u√(u²+4)) حيث u = β/θ<sub>E</sub>؛ وهذا أساس «العدسات الميكروية» التي تُكتشف بها كواكب خارج المجموعة الشمسية.</p>`,
+h3:'⏱️ الزمن يجري أبطأ قرب الكتل',
+l3:'كلما اقتربت من كتلة كبيرة تباطأت ساعتك مقارنة بساعة بعيدة. هذا ليس تشبيهًا: نظام GPS في هاتفك يصحّح هذا الأثر يوميًا، وإلا تراكم خطأ في الموقع بنحو ١١ كم كل يوم.',
+gpsT:'🛰️ ساعات أقمار GPS',bhT:'🕳️ ساعة قرب ثقب أسود (مراقب ساكن)',
+gpsNote:'الحساب هنا لمدار GPS الحقيقي (نصف قطر 26 560 كم، سرعة 3.874 كم/ث)، ولهذا تُضبط ساعات الأقمار قبل الإطلاق على تردد 10.22999999543 ميغاهرتز بدل 10.23 ميغاهرتز.',
+clockNote:'كل ساعة تُظهر سرعة مرور الزمن عندها نسبةً إلى ساعة بعيدة جدًا عن أي كتلة (مكبّرة بصريًا للآثار الصغيرة كما هو مذكور تحت كل ساعة).',
+m3:`<p>في مقياس شوارتزشيلد يكون معدل ساعة ساكنة على بُعد r:</p><div class="eq">dτ/dt = √(1 − r<sub>s</sub>/r) ,   r<sub>s</sub> = 2GM/c²</div>
+<p>ولساعة تتحرك بسرعة v في مجال ضعيف (حتى الرتبة الأولى):</p><div class="eq">dτ/dt ≈ 1 − GM/(rc²) − v²/(2c²)</div>
+<p>لقمر GPS: الحد الجاذبي GM<sub>⊕</sub>/c²·(1/R<sub>⊕</sub> − 1/r) × 86400 ث = +45.7 ميكروثانية/يوم (الساعة أسرع لأنها أعلى)، وحد السرعة −v²/(2c²) × 86400 = −7.2 ميكروثانية/يوم، والمحصلة ≈ +38.5 ميكروثانية/يوم. والخطأ المكافئ في المسافة c × 38.5 µs ≈ 11.5 كم.</p>
+<p>الانزياح الأحمر الجاذبي: Δf/f = gh/c². في تجربة باوند–ريبكا (١٩٥٩) ببرج ارتفاعه 22.5 م: Δf/f = 2.46×10⁻¹⁵، وقد قيس بدقة ١٪.</p>
+<p>عند أفق الحدث (r = r<sub>s</sub>) يصير dτ/dt = 0 لمراقب ساكن، ولا يمكن لأي مراقب أن يبقى ساكنًا داخل r<sub>s</sub>. وفي المؤشر نضع r ≥ 1.0001 r<sub>s</sub>.</p>`,
+h4:'🌊 موجات الجاذبية: الحدث GW150914',
+l4:'في ١٤ سبتمبر ٢٠١٥ (09:50:45 بالتوقيت العالمي) رصد كاشفا LIGO لأول مرة تموّجًا في الزمكان نفسه، صادرًا عن اندماج ثقبين أسودين على بُعد نحو ١٫٣ مليار سنة ضوئية. المنحنى أدناه <b>بيانات حقيقية</b> من الكاشفين، مع نموذج النسبية العددية بالأسود.',
+nr:'نموذج النسبية العددية',play:'🔊 استمع إلى «زقزقة» الاندماج',
+gwNote:'البيانات مبيَّضة (whitened) ومرشَّحة بين 35 و350 هرتز. لاحظ أن موجة ليفينغستون (L1) تصل قبل هانفورد بنحو ٧ ملّي ثانية، وهو زمن انتقال إشارة بسرعة الضوء بين الموقعين (٣٠٠٢ كم)، وأنها معكوسة الإشارة لأن ذراعي الكاشفين متعامدان تقريبًا بالنسبة لبعضهما. الاتساع الحقيقي h ≈ 10⁻²¹: أي أن ذراعًا طولها ٤ كم تغيّر طولها بنحو جزء من ألف من قطر البروتون.',
+m4:`<p>تقدّر «الكتلة الزقزقية» من تردد الموجة f ومعدل تغيّره ḟ (تقريب الرتبة الدنيا):</p><div class="eq">𝓜 = (m₁m₂)<sup>3/5</sup>/(m₁+m₂)<sup>1/5</sup> = (c³/G) [ (5/96) π<sup>−8/3</sup> f<sup>−11/3</sup> ḟ ]<sup>3/5</sup></div>
+<p>لـ GW150914: 𝓜 ≈ 30 M☉ (في إطار الكاشف). كتلة أصغر من ذلك لا تستطيع الوصول إلى تردد ~150 هرتز قبل التلامس، وجسمان مضغوطان بهذه الكتلة ومتقاربان إلى ~350 كم لا يمكن أن يكونا إلا ثقبين أسودين.</p>
+<p>الطاقة المشعّة: (m₁+m₂ − M<sub>f</sub>)c² ≈ 3 M☉c² ≈ 5.4×10⁴⁷ جول في نحو ٠٫٢ ثانية، وبلغت ذروة القدرة ~3.6×10⁴⁹ واط، أي أكثر من مجموع ضوء كل النجوم في الكون المرئي في تلك اللحظة.</p>
+<p>اتساع الموجة على بُعد D: h ~ (4/D)(G𝓜/c²)<sup>5/3</sup>(πf/c)<sup>2/3</sup> ≈ 10⁻²¹ عند D ≈ 410 ميغافرسك.</p>`,
+gwKV:[['التاريخ','14 سبتمبر 2015، 09:50:45 UT'],['الكتلتان (إطار المصدر)','36 + 29 M☉'],['الثقب الناتج','62 M☉، دوران ≈ 0.67'],['المسافة','410 ميغافرسك (≈ 1.3 مليار سنة ضوئية)'],['الطاقة المشعّة','≈ 3 M☉c²'],['نسبة الإشارة للضجيج','24'],['جائزة نوبل','2017: فايس وباريش وثورن']],
+hRef:'📚 المراجع ومصادر البيانات'
+},en:{
+title:'Gravity & Spacetime Curvature',sub:'From Newton to Einstein to LIGO',
+lead:'For Newton gravity is a force between masses. In General Relativity (Einstein 1915) there is no force: mass–energy curves spacetime and free bodies follow its straightest paths (geodesics). Here we explore four measurable consequences: orbits, light bending, time dilation, and the gravitational waves that have actually been detected.',
+h1:'🕳️ The spacetime well & orbit lab',
+l1:'The grid shows the depth of the gravitational potential around the central mass. Launch a planet at different speeds: at the circular speed it moves on a circle, below it on an ellipse, and at √2 times it (escape speed) it leaves on a parabola. Raise the “GR correction” slider to see perihelion precession — the effect Einstein used to explain Mercury’s anomalous orbit.',
+mass:'Central mass',speed:'Launch speed ÷ circular speed',radius:'Launch distance',gr:'GR correction (exaggerated)',
+launch:'🚀 Launch a planet',clear:'Clear',pause:'⏸ Pause',resume:'▶ Run',trails:'Show trails',
+presets:[['Circular',1],['Ellipse',0.75],['Very eccentric',0.5],['Escape (√2)',1.4143]],
+wellNote:'⚠️ The “rubber sheet” is a useful picture but not accurate: a ball on a sheet rolls down because of Earth’s own gravity! For slow bodies like planets, motion is governed mainly by the curvature of time (the g₀₀ part of the metric), not of space. The grid shows the Newtonian potential −GM/r; orbits are integrated with velocity Verlet.',
+mathT:'📐 Mathematical details',
+m1:`<p>Newtonian equation of motion with the first General-Relativistic correction (orbits around a Schwarzschild mass):</p><div class="eq">d²<b>r</b>/dt² = −(GM/r³)·<b>r</b> · [ 1 + 3L²/(c²r²) ]</div><p>with L = |<b>r</b>×<b>v</b>| the specific angular momentum. The extra term comes from the Schwarzschild orbit equation</p><div class="eq">d²u/dφ² + u = GM/L² + 3GM u²/c² ,  u = 1/r</div><p>whose approximate solution is an ellipse whose perihelion advances by</p><div class="eq">Δφ = 6πGM / [c² a (1−e²)]  per orbit</div><p>Note: the formula is first order in GM/(c²a), so the lab measurement differs by a few per cent at strong exaggeration and converges as you lower the slider.</p><p>For Mercury (a = 5.79×10¹⁰ m, e = 0.2056): Δφ = 5.02×10⁻⁷ rad per orbit ≈ <b>43″ per century</b>, exactly the residual Newtonian mechanics could not explain (out of 5600″/century caused by the other planets and the precession of the equinoxes). In the lab we exaggerate the term by making c artificially small so the effect shows within a few orbits; the readout compares the measured advance with the formula.</p><p>Circular speed v<sub>c</sub> = √(GM/r), escape speed v<sub>esc</sub> = √2·v<sub>c</sub>; the orbital energy E = v²/2 − GM/r sets the orbit type (E&lt;0 ellipse, E=0 parabola, E&gt;0 hyperbola).</p>`,
+h2:'🔭 Light bending & gravitational lensing',
+l2:'Light also follows curved spacetime. Drag the lens across a background sky: when lens and source align, an Einstein ring appears; otherwise you see two images of the same source. This is how we see extremely distant galaxies magnified behind galaxy clusters.',
+thetaE:'Einstein radius θ_E',src:'Background',srcs:['Synthetic galaxy at centre','Square grid','Milky Way (real image)'],
+lensNote:'The simulation solves the point-lens equation exactly for every pixel: β = θ − θ_E² θ/|θ|². Because surface brightness is conserved by lensing, the lens magnifies the image without changing its surface brightness.',
+sunBend:'☀️ Light deflection at the solar limb',realImgs:'📷 Real images of gravitational lenses',
+m2:`<p>Deflection of a ray passing at impact parameter b from a mass M (twice the Newtonian value):</p><div class="eq">α = 4GM / (c² b)</div><p>At the solar limb: α = 4(1.327×10²⁰)/[(2.998×10⁸)²(6.957×10⁸)] = 8.49×10⁻⁶ rad = <b>1.75″</b>. Measured by Eddington and Dyson at the eclipse of 29 May 1919, and today with radio interferometry to better than 10⁻⁴ (γ = 1 ± 10⁻⁴).</p><p>Thin-lens equation and Einstein radius:</p><div class="eq">β = θ − θ<sub>E</sub>²/θ ,   θ<sub>E</sub> = √( 4GM D<sub>LS</sub> / (c² D<sub>L</sub> D<sub>S</sub>) )</div><p>Two images at θ<sub>±</sub> = [β ± √(β² + 4θ<sub>E</sub>²)]/2; total magnification μ = (u²+2)/(u√(u²+4)) with u = β/θ<sub>E</sub> — the basis of microlensing, used to discover exoplanets.</p>`,
+h3:'⏱️ Time runs slower near mass',
+l3:'The closer you are to a large mass, the slower your clock runs compared with a distant one. This is not a metaphor: the GPS in your phone corrects for it every day, otherwise position errors would grow by about 11 km per day.',
+gpsT:'🛰️ GPS satellite clocks',bhT:'🕳️ A clock near a black hole (static observer)',
+gpsNote:'Computed for the real GPS orbit (radius 26 560 km, speed 3.874 km/s). That is why GPS clocks are set before launch to 10.22999999543 MHz instead of 10.23 MHz.',
+clockNote:'Each clock shows how fast time passes there relative to a clock far from any mass (tiny effects are visually exaggerated, as stated under each clock).',
+m3:`<p>In the Schwarzschild metric a static clock at radius r runs at</p><div class="eq">dτ/dt = √(1 − r<sub>s</sub>/r) ,   r<sub>s</sub> = 2GM/c²</div><p>and a clock moving at speed v in a weak field (first order):</p><div class="eq">dτ/dt ≈ 1 − GM/(rc²) − v²/(2c²)</div><p>For a GPS satellite: gravity term GM<sub>⊕</sub>/c²·(1/R<sub>⊕</sub> − 1/r) × 86400 s = +45.7 µs/day (faster, being higher); velocity term −v²/(2c²) × 86400 = −7.2 µs/day; net ≈ +38.5 µs/day, i.e. a range error c × 38.5 µs ≈ 11.5 km.</p><p>Gravitational redshift: Δf/f = gh/c². Pound–Rebka (1959), 22.5 m tower: Δf/f = 2.46×10⁻¹⁵, measured to 1%.</p><p>At the horizon (r = r<sub>s</sub>) dτ/dt → 0 for a static observer, and no observer can stay static inside r<sub>s</sub>; the slider stops at r = 1.0001 r<sub>s</sub>.</p>`,
+h4:'🌊 Gravitational waves: GW150914',
+l4:'On 14 September 2015 (09:50:45 UT) the two LIGO detectors recorded, for the first time, a ripple in spacetime itself, from two black holes merging about 1.3 billion light-years away. The curves below are the <b>real data</b> from both detectors, with the numerical-relativity model in black.',
+nr:'Numerical-relativity model',play:'🔊 Listen to the merger “chirp”',
+gwNote:'Data are whitened and band-passed 35–350 Hz. The Livingston (L1) signal arrives about 7 ms before Hanford — the light-travel time between the sites (3002 km) — and is sign-flipped because the detector arms are nearly perpendicular to each other. The true amplitude is h ≈ 10⁻²¹: a 4 km arm changes length by about a thousandth of a proton diameter.',
+m4:`<p>The chirp mass follows from the frequency f and its rate of change ḟ (leading order):</p><div class="eq">𝓜 = (m₁m₂)<sup>3/5</sup>/(m₁+m₂)<sup>1/5</sup> = (c³/G) [ (5/96) π<sup>−8/3</sup> f<sup>−11/3</sup> ḟ ]<sup>3/5</sup></div><p>For GW150914 𝓜 ≈ 30 M☉ (detector frame). Lighter systems cannot reach ~150 Hz before touching, and compact objects this massive and only ~350 km apart can only be black holes.</p><p>Radiated energy (m₁+m₂ − M<sub>f</sub>)c² ≈ 3 M☉c² ≈ 5.4×10⁴⁷ J in ~0.2 s; peak power ~3.6×10⁴⁹ W, more than the combined light of all stars in the observable universe at that instant.</p><p>Strain at distance D: h ~ (4/D)(G𝓜/c²)<sup>5/3</sup>(πf/c)<sup>2/3</sup> ≈ 10⁻²¹ at D ≈ 410 Mpc.</p>`,
+gwKV:[['Date','14 Sep 2015, 09:50:45 UT'],['Masses (source frame)','36 + 29 M☉'],['Remnant','62 M☉, spin ≈ 0.67'],['Distance','410 Mpc (≈ 1.3 billion ly)'],['Radiated energy','≈ 3 M☉c²'],['Signal-to-noise','24'],['Nobel Prize','2017: Weiss, Barish, Thorne']],
+hRef:'📚 References & data sources'
+}};
+const t=k=>L[lang][k];
+
+// =============== 1. spacetime well (three.js) ===============
+const cv=$('well');let R3=null,scene,cam,grid,gridPos,gridBase,central,bodies=[],paused=false;
+const G_=1;let M=1;const SOFT=1.2,DEPTH=10;
+function depth(r,m){return -DEPTH*m/Math.sqrt(r*r+SOFT*SOFT);} // Newtonian potential (softened), scaled
+let camYaw=0.6,camPitch=0.62,camDist=62;
+function initWell(){
+  try{R3=new THREE.WebGLRenderer({canvas:cv,antialias:true});}catch(e){R3=null;cv.insertAdjacentHTML('afterend','<p class="note">WebGL?</p>');return;}
+  R3.setPixelRatio(Math.min(2,devicePixelRatio||1));
+  scene=new THREE.Scene();cam=new THREE.PerspectiveCamera(45,1,0.1,1000);
+  const S=64,n=96;const g=new THREE.PlaneGeometry(S,S,n,n);g.rotateX(-Math.PI/2);
+  gridPos=g.attributes.position;gridBase=gridPos.array.slice();
+  const cols=new Float32Array(gridPos.count*3);g.setAttribute('color',new THREE.BufferAttribute(cols,3));
+  grid=new THREE.LineSegments(new THREE.WireframeGeometry(g),new THREE.LineBasicMaterial({color:0x6fa8ff,transparent:true,opacity:.55}));
+  grid.userData.src=g;scene.add(grid);
+  central=new THREE.Mesh(new THREE.SphereGeometry(1.4,40,24),new THREE.MeshBasicMaterial({color:0xffc35a}));scene.add(central);
+  const glow=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTex(),color:0xffb040,transparent:true,blending:THREE.AdditiveBlending,depthWrite:false}));glow.scale.set(9,9,1);central.add(glow);
+  // starfield
+  const sp=[];for(let i=0;i<1500;i++){const u=Math.random()*2-1,a=Math.random()*6.283,r=400;sp.push(r*Math.sqrt(1-u*u)*Math.cos(a),r*u,r*Math.sqrt(1-u*u)*Math.sin(a));}
+  const sg=new THREE.BufferGeometry();sg.setAttribute('position',new THREE.Float32BufferAttribute(sp,3));scene.add(new THREE.Points(sg,new THREE.PointsMaterial({color:0xffffff,size:1.1,sizeAttenuation:false})));
+  deform();
+  // camera drag
+  let drag=null;cv.addEventListener('pointerdown',e=>{drag=[e.clientX,e.clientY,camYaw,camPitch];cv.setPointerCapture(e.pointerId);});
+  cv.addEventListener('pointermove',e=>{if(!drag)return;camYaw=drag[2]-(e.clientX-drag[0])*0.006;camPitch=Math.max(0.08,Math.min(1.45,drag[3]+(e.clientY-drag[1])*0.005));});
+  cv.addEventListener('pointerup',()=>drag=null);
+  cv.addEventListener('wheel',e=>{e.preventDefault();camDist=Math.max(25,Math.min(140,camDist*(1+Math.sign(e.deltaY)*0.08)));},{passive:false});
+}
+function glowTex(){const c=document.createElement('canvas');c.width=c.height=128;const g=c.getContext('2d'),gr=g.createRadialGradient(64,64,0,64,64,64);gr.addColorStop(0,'rgba(255,220,150,1)');gr.addColorStop(0.25,'rgba(255,170,60,.45)');gr.addColorStop(1,'rgba(255,140,40,0)');g.fillStyle=gr;g.fillRect(0,0,128,128);return new THREE.CanvasTexture(c);}
+function deform(){
+  const g=grid.userData.src,p=gridPos.array;
+  for(let i=0;i<gridPos.count;i++){const x=gridBase[i*3],z=gridBase[i*3+2];p[i*3+1]=depth(Math.hypot(x,z),M);}
+  gridPos.needsUpdate=true;grid.geometry.dispose();grid.geometry=new THREE.WireframeGeometry(g);
+  central.position.y=depth(0,M)+1.4*Math.cbrt(M);central.scale.setScalar(Math.cbrt(M));
+}
+const COLORS=[0x7ee2a8,0x6fa8ff,0xff9fb3,0xf1d27a,0xc39bff,0x7fe7ff];
+function launch(){
+  const r0=+$('sR').value,f=+$('sV').value,vc=Math.sqrt(G_*M/r0);
+  const col=COLORS[bodies.length%COLORS.length];
+  const mesh=new THREE.Mesh(new THREE.SphereGeometry(0.55,20,14),new THREE.MeshBasicMaterial({color:col}));scene.add(mesh);
+  const tg=new THREE.BufferGeometry(),TN=4000,tp=new Float32Array(TN*3);tg.setAttribute('position',new THREE.BufferAttribute(tp,3));tg.setDrawRange(0,0);
+  const trail=new THREE.Line(tg,new THREE.LineBasicMaterial({color:col,transparent:true,opacity:.9}));scene.add(trail);
+  const b={x:r0,y:0,vx:0,vy:f*vc,mesh,trail,tn:0,TN,col,peri:[],lastR:[r0,r0],phi0:null,f,r0};
+  b.a=acc(b.x,b.y,b.vx,b.vy);bodies.push(b);if(bodies.length>6){const o=bodies.shift();scene.remove(o.mesh);scene.remove(o.trail);}
+}
+function cEff(){const g=+$('sG').value;return g<=0?Infinity:2.2/Math.pow(g,1.2);} // artificially small c to exaggerate GR
+function acc(x,y,vx,vy){const r2=x*x+y*y,r=Math.sqrt(r2),Lm=x*vy-y*vx,c=cEff();const k=-G_*M/(r2*r)*(1+(isFinite(c)?3*Lm*Lm/(c*c*r2):0));return [k*x,k*y];}
+function step(dt){
+  for(const b of bodies){
+    if(b.dead)continue;
+    b.x+=b.vx*dt+0.5*b.a[0]*dt*dt;b.y+=b.vy*dt+0.5*b.a[1]*dt*dt;
+    const a1=acc(b.x,b.y,b.vx+b.a[0]*dt,b.vy+b.a[1]*dt);b.vx+=0.5*(b.a[0]+a1[0])*dt;b.vy+=0.5*(b.a[1]+a1[1])*dt;b.a=a1;
+    const r=Math.hypot(b.x,b.y);if(r<1.4*Math.cbrt(M)){b.dead=true;b.mesh.visible=false;continue;}
+    // perihelion detection: local minimum of r
+    if(b.lastR[1]<b.lastR[0]&&b.lastR[1]<=r){b.peri.push(Math.atan2(b.py,b.px));}
+    b.lastR=[b.lastR[1],r];b.px=b.x;b.py=b.y;
+  }
+}
+function updateMeshes(){
+  const showT=$('cTrail').checked;
+  for(const b of bodies){
+    const r=Math.hypot(b.x,b.y),yy=depth(r,M)+0.55;b.mesh.position.set(b.x,yy,-b.y);
+    if(b.dead)continue;
+    if(r<40){const p=b.trail.geometry.attributes.position;if(b.tn<b.TN){p.array.set([b.x,yy-0.3,-b.y],b.tn*3);b.tn++;}else{p.array.copyWithin(0,3);p.array.set([b.x,yy-0.3,-b.y],(b.TN-1)*3);}p.needsUpdate=true;b.trail.geometry.setDrawRange(0,b.tn);}
+    b.trail.visible=showT;
+  }
+}
+function hud(){
+  const b=bodies[bodies.length-1];let s='';
+  const r0=+$('sR').value,vc=Math.sqrt(G_*M/r0);
+  s+=(lang==='ar'?'السرعة الدائرية عند المسافة المختارة':'Circular speed at chosen distance')+`: ${N(vc,3)} · `+(lang==='ar'?'الإفلات':'escape')+`: ${N(vc*Math.SQRT2,3)}<br>`;
+  if(b&&!b.dead){const r=Math.hypot(b.x,b.y),v2=b.vx*b.vx+b.vy*b.vy,E=v2/2-G_*M/r;
+    const type=E<-1e-4?(lang==='ar'?'قطع ناقص (مرتبط)':'ellipse (bound)'):E>1e-4?(lang==='ar'?'قطع زائد (يهرب)':'hyperbola (escapes)'):(lang==='ar'?'قطع مكافئ':'parabola');
+    s+=(lang==='ar'?'آخر كوكب: الطاقة':'Last planet: energy')+` <span dir="ltr" style="unicode-bidi:isolate">E = ${N(E,4)}</span> ← ${type}<br>`.replace('←',lang==='ar'?'←':'→');
+    if(E<0){const a=-G_*M/(2*E),Lm=b.x*b.vy-b.y*b.vx,e=Math.sqrt(Math.max(0,1+2*E*Lm*Lm/(G_*G_*M*M)));
+      s+=`<span dir="ltr" style="unicode-bidi:isolate">a = ${N(a,2)} · e = ${N(e,3)} · T = ${N(2*Math.PI*Math.sqrt(a*a*a/(G_*M)),1)}</span><br>`;
+      const c=cEff();if(isFinite(c)&&b.peri.length>=2&&e>0.05){const n=b.peri.length-1;let d=(b.peri[n]-b.peri[0])/n;d=Math.atan2(Math.sin(d),Math.cos(d));
+        const th=6*Math.PI*G_*M/(c*c*a*(1-e*e));s+=(lang==='ar'?'مبادرة الحضيض لكل دورة: مقيسة ':'Perihelion advance per orbit: measured ')+`${N(d*180/Math.PI,2)}° · `+(lang==='ar'?'من المعادلة ':'formula ')+`${N(th*180/Math.PI,2)}°`;}
+      else if(isFinite(c)&&e<=0.05)s+=(lang==='ar'?'(اجعل المدار إهليلجيًا لقياس المبادرة)':'(make the orbit elliptical to measure precession)');}
+  }
+  $('hud').innerHTML=s;
+}
+let lastT=performance.now();const TS=40;
+function loop(now){
+  const dt=Math.min(0.05,(now-lastT)/1000);lastT=now;
+  if(R3){
+    const w=cv.clientWidth,h=cv.clientHeight;if(cv.width!==Math.floor(w*R3.getPixelRatio())||cv.height!==Math.floor(h*R3.getPixelRatio())){R3.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();}
+    if(!paused){const sub=80;for(let i=0;i<sub;i++)step(dt*TS/sub);} // here is the modification of simulation speed
+    updateMeshes();
+    cam.position.set(camDist*Math.cos(camPitch)*Math.sin(camYaw),camDist*Math.sin(camPitch)-4,camDist*Math.cos(camPitch)*Math.cos(camYaw));cam.lookAt(0,-4,0);
+    R3.render(scene,cam);
+    if(now-(window.__hudT||0)>250){window.__hudT=now;hud();}
+  }
+  drawClocks(now);
+  requestAnimationFrame(loop);
+}
+function wellControls(){
+  const upd=()=>{M=+$('sM').value;$('oM').textContent=N(M,2)+' M';$('oV').textContent=N(+$('sV').value,2)+'×';$('oR').textContent=N(+$('sR').value,1);
+    const g=+$('sG').value;$('oG').textContent=g<=0?(lang==='ar'?'نيوتن':'Newton'):'×'+N(g*100,0)+'%';};
+  ['sV','sR','sG'].forEach(id=>$(id).oninput=upd);$('sM').oninput=()=>{upd();if(R3)deform();};upd();
+  $('bLaunch').onclick=launch;$('bClear').onclick=()=>{bodies.forEach(b=>{scene.remove(b.mesh);scene.remove(b.trail);});bodies=[];};
+  $('bPause').onclick=()=>{paused=!paused;$('bPause').textContent=paused?t('resume'):t('pause');};
+}
+
+// =============== 2. gravitational lensing ===============
+const lc=$('lens'),lx=lc.getContext('2d');const LW=lc.width,LH=lc.height;let srcData=null,lensX=0.12,lensY=0.05,srcMode=0,mwImg=null;
+function makeSource(){
+  const c=document.createElement('canvas');c.width=LW;c.height=LH;const g=c.getContext('2d');
+  g.fillStyle='#000';g.fillRect(0,0,LW,LH);
+  if(srcMode===1){g.strokeStyle='#6fa8ff';g.lineWidth=1.2;for(let i=0;i<=LW;i+=21){g.beginPath();g.moveTo(i,0);g.lineTo(i,LH);g.stroke();g.beginPath();g.moveTo(0,i);g.lineTo(LW,i);g.stroke();}
+    g.fillStyle='#f1d27a';g.beginPath();g.arc(LW/2,LH/2,10,0,7);g.fill();}
+  else if(srcMode===2&&mwImg){g.drawImage(mwImg,mwImg.width*0.38,mwImg.height*0.3,mwImg.width*0.24,mwImg.height*0.4,0,0,LW,LH);}
+  else{let s=7;const rnd=()=>{s=(s*16807)%2147483647;return s/2147483647;};
+    for(let i=0;i<600;i++){g.fillStyle=`rgba(255,255,255,${0.3+rnd()*0.7})`;g.fillRect(rnd()*LW,rnd()*LH,1.2,1.2);}
+    for(let i=0;i<14;i++){const x=rnd()*LW,y=rnd()*LH,r=3+rnd()*7;const gr=g.createRadialGradient(x,y,0,x,y,r);gr.addColorStop(0,'rgba(255,230,190,.9)');gr.addColorStop(1,'rgba(255,200,150,0)');g.fillStyle=gr;g.save();g.translate(x,y);g.rotate(rnd()*3);g.scale(1,0.5);g.translate(-x,-y);g.beginPath();g.arc(x,y,r,0,7);g.fill();g.restore();}
+    // central blue spiral galaxy (the lensed source)
+    g.save();g.translate(LW/2,LH/2);for(let k=0;k<2;k++){for(let i=0;i<500;i++){const th=i/500*4.2,r=4+th*9;const a=th+k*Math.PI;g.fillStyle=`rgba(${150+i/5},${190+i/10},255,.55)`;g.beginPath();g.arc(Math.cos(a)*r,Math.sin(a)*r*0.8,2.2-i/400,0,7);g.fill();}}
+    const gr=g.createRadialGradient(0,0,0,0,0,12);gr.addColorStop(0,'rgba(255,245,220,1)');gr.addColorStop(1,'rgba(255,220,180,0)');g.fillStyle=gr;g.beginPath();g.arc(0,0,12,0,7);g.fill();g.restore();}
+  srcData=g.getImageData(0,0,LW,LH).data;
+}
+function renderLens(){
+  if(!srcData)makeSource();
+  const out=lx.createImageData(LW,LH),o=out.data,tE=+$('sE').value,tE2=tE*tE;
+  for(let py=0;py<LH;py++){for(let px=0;px<LW;px++){
+    const X=px/LW-0.5-lensX*0,Y=py/LH-0.5;const dx=X-lensX,dy=Y-lensY,r2=dx*dx+dy*dy+1e-9;
+    const bx=X-tE2*dx/r2,by=Y-tE2*dy/r2;
+    let sx=Math.round((bx+0.5)*LW),sy=Math.round((by+0.5)*LH);const k=(py*LW+px)*4;
+    if(sx<0||sy<0||sx>=LW||sy>=LH){o[k]=o[k+1]=o[k+2]=0;o[k+3]=255;continue;}
+    const j=(sy*LW+sx)*4;o[k]=srcData[j];o[k+1]=srcData[j+1];o[k+2]=srcData[j+2];o[k+3]=255;}}
+  lx.putImageData(out,0,0);
+  // lens mark + Einstein ring guide
+  const cx=(lensX+0.5)*LW,cy=(lensY+0.5)*LH;lx.strokeStyle='rgba(241,210,122,.35)';lx.setLineDash([4,5]);lx.beginPath();lx.arc(cx,cy,tE*LW,0,7);lx.stroke();lx.setLineDash([]);
+  lx.fillStyle='#f1d27a';lx.beginPath();lx.arc(cx,cy,3,0,7);lx.fill();
+  $('oE').textContent=N(tE*100,1)+'%';
+}
+function lensControls(){
+  let dragging=false;const pos=e=>{const r=lc.getBoundingClientRect();lensX=(e.clientX-r.left)/r.width-0.5;lensY=(e.clientY-r.top)/r.height-0.5;renderLens();};
+  lc.addEventListener('pointerdown',e=>{dragging=true;lc.setPointerCapture(e.pointerId);pos(e);});lc.addEventListener('pointermove',e=>{if(dragging)pos(e);});lc.addEventListener('pointerup',()=>dragging=false);
+  $('sE').oninput=renderLens;
+  $('selSrc').onchange=()=>{srcMode=+$('selSrc').value;if(srcMode===2&&!mwImg){const im=new Image();im.onload=()=>{mwImg=im;makeSource();renderLens();};im.src='tex/milkyway.jpg';return;}makeSource();renderLens();};
+  // Sun deflection numbers
+  const GM=1.32712440018e20,c=299792458,Rs=6.957e8,a=4*GM/(c*c*Rs);
+  $('sunKV').innerHTML=(lang==='ar'?[['المعادلة','α = 4GM/(c²R☉)'],['القيمة',N(a,10).replace(/0+$/,'')+' rad'],['بالثواني القوسية',N(a*206264.806,3)+'″'],['قيمة نيوتن (النصف)',N(a*206264.806/2,3)+'″'],['أول قياس','كسوف ٢٩ مايو ١٩١٩ (إدينغتون وكرومِلين)']]:
+    [['Formula','α = 4GM/(c²R☉)'],['Value',a.toExponential(3)+' rad'],['In arcseconds',N(a*206264.806,3)+'″'],['Newtonian value (half)',N(a*206264.806/2,3)+'″'],['First measured','Eclipse of 29 May 1919 (Eddington & Crommelin)']]).map(r=>`<b>${r[0]}</b><span>${r[1]}</span>`).join('');
+  const links=[['https://esawebb.org/images/potm2503a/', lang==='ar'?'حلقة أينشتاين حول مجرة إهليلجية في العنقود SMACSJ0028.2-7537 (Webb وHubble، ٢٠٢٥)':'Einstein ring in galaxy cluster SMACSJ0028.2-7537 (Webb + Hubble, 2025)'],
+    ['https://esahubble.org/images/heic0814a/', lang==='ar'?'العنقود المجري Abell 2218 وأقواس العدسة (هابل)':'Galaxy cluster Abell 2218 and its lensed arcs (Hubble)'],
+    ['https://science.nasa.gov/missions/hubble/hubble-views-distant-galaxies-through-a-cosmic-lens', lang==='ar'?'هابل يرى مجرات بعيدة عبر عدسة كونية (NASA)':'Hubble views distant galaxies through a cosmic lens (NASA)']];
+  $('realLinks').innerHTML=links.map(l=>`<a href="${l[0]}" target="_blank" rel="noopener" style="color:var(--gold-l);display:block;margin:4px 0">↗ ${l[1]}</a>`).join('')+`<div style="margin-top:6px">${lang==='ar'?'روابط مباشرة إلى صفحات ESA/NASA للصور الأصلية عالية الدقة (تُفتح في المتصفح).':'Direct links to the original ESA/NASA high-resolution images (open in the browser).'}</div>`;
+}
+
+// =============== 3. time dilation ===============
+const C=299792458,GMe=3.986004418e14,Re=6.371e6;
+function rate(gm,r,v){return Math.sqrt(1-2*gm/(r*C*C)-v*v/(C*C));}
+function timeSection(){
+  const rG=26560e3,vG=Math.sqrt(GMe/rG),vSurf=465.1*Math.cos(30*Math.PI/180);
+  const grav=GMe/(C*C)*(1/Re-1/rG)*86400e6,vel=-(vG*vG-vSurf*vSurf)/(2*C*C)*86400e6,net=grav+vel;
+  const rows=lang==='ar'?[['الأثر الجاذبي (الساعة أعلى، فهي أسرع)','+'+N(grav,1)+' µs/يوم'],['أثر السرعة (النسبية الخاصة)',N(vel,1)+' µs/يوم'],['المحصلة',(net>0?'+':'')+N(net,1)+' µs/يوم'],['الخطأ في المسافة لو لم يُصحَّح',N(net*1e-6*C/1000,1)+' كم/يوم']]:
+    [['Gravitational (higher clock runs faster)','+'+N(grav,1)+' µs/day'],['Velocity (special relativity)',N(vel,1)+' µs/day'],['Net',(net>0?'+':'')+N(net,1)+' µs/day'],['Range error if uncorrected',N(net*1e-6*C/1000,1)+' km/day']];
+  $('gpsT').innerHTML=rows.map((r,i)=>`<tr${i===2?' style="color:var(--gold-l);font-weight:700"':''}><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('');
+  const upd=()=>{const s=+$('sBH').value,x=1.0001*Math.pow(100/1.0001,s);$('oBH').textContent=N(x,x<2?4:2);
+    const f=Math.sqrt(1-1/x);const Msun=10,rs=2*6.674e-11*1.989e30*Msun/(C*C);
+    $('bhKV').innerHTML=(lang==='ar'?[['معدل الساعة dτ/dt',N(f,5)],['ساعة واحدة هنا تقابل',N(1/f,f<0.01?0:3)+' ساعة بعيدًا'],['الانزياح الأحمر z',N(1/f-1,3)],['لثقب كتلته 10 M☉: r',N(x*rs/1000,1)+' كم (r_s = '+N(rs/1000,1)+' كم)']]:
+      [['Clock rate dτ/dt',N(f,5)],['One hour here equals',N(1/f,f<0.01?0:3)+' h far away'],['Redshift z',N(1/f-1,3)],['For a 10 M☉ hole: r',N(x*rs/1000,1)+' km (r_s = '+N(rs/1000,1)+' km)']]).map(r=>`<b>${r[0]}</b><span>${r[1]}</span>`).join('');
+    clockSet[4].rate=f;clockSet[4].sub=(lang==='ar'?'r = ':'r = ')+N(x,2)+' r_s';};
+  $('sBH').oninput=upd;
+  buildClocks();upd();
+}
+let clockSet=[];
+function buildClocks(){
+  const rG=26560e3,vG=Math.sqrt(GMe/rG);
+  const ar=lang==='ar';
+  clockSet=[
+    {n:ar?'بعيدًا عن أي كتلة':'Far from all mass',rate:1,ex:1,sub:ar?'المرجع':'reference'},
+    {n:ar?'سطح الأرض':'Earth’s surface',rate:rate(GMe,Re,465),ex:1e8,sub:ar?'الفرق مكبّر ١٠⁸ مرة':'difference ×10⁸'},
+    {n:'GPS',rate:rate(GMe,rG,vG),ex:1e8,sub:ar?'الفرق مكبّر ١٠⁸ مرة':'difference ×10⁸'},
+    {n:ar?'سطح نجم نيوتروني':'Neutron-star surface',rate:Math.sqrt(1-2*6.674e-11*1.4*1.989e30/(12e3*C*C)),ex:1,sub:'1.4 M☉, R = 12 km'},
+    {n:ar?'قرب ثقب أسود':'Near a black hole',rate:0.8,ex:1,sub:''}];
+  $('clocks').innerHTML=clockSet.map((c,i)=>`<div class="clk panel" style="padding:8px"><canvas id="ck${i}" width="220" height="220"></canvas><b>${c.n}</b><span id="ckr${i}"></span><div class="small" id="cks${i}" style="color:var(--muted)">${c.sub}</div></div>`).join('');
+  clockSet.forEach(c=>c.ang=0);
+}
+let lastClk=performance.now();
+function drawClocks(now){
+  const dt=(now-lastClk)/1000;lastClk=now;
+  clockSet.forEach((c,i)=>{const el=$('ck'+i);if(!el)return;const shown=1-(1-c.rate)*c.ex;c.ang+=dt*Math.max(0,shown)*Math.PI*2/6;
+    const g=el.getContext('2d'),R=100;g.clearRect(0,0,220,220);g.save();g.translate(110,110);
+    g.fillStyle='#0b1430';g.strokeStyle='#d4a73c';g.lineWidth=4;g.beginPath();g.arc(0,0,R,0,7);g.fill();g.stroke();
+    g.strokeStyle='#9fb0d6';g.lineWidth=2;for(let k=0;k<12;k++){const a=k*Math.PI/6;g.beginPath();g.moveTo(Math.sin(a)*(R-6),-Math.cos(a)*(R-6));g.lineTo(Math.sin(a)*(R-16),-Math.cos(a)*(R-16));g.stroke();}
+    g.strokeStyle='#f1d27a';g.lineWidth=5;g.lineCap='round';g.beginPath();g.moveTo(0,0);g.lineTo(Math.sin(c.ang)*(R-22),-Math.cos(c.ang)*(R-22));g.stroke();
+    g.fillStyle='#f1d27a';g.beginPath();g.arc(0,0,6,0,7);g.fill();g.restore();
+    const r=$('ckr'+i);if(r)r.textContent='dτ/dt = '+(c.rate>0.9999?c.rate.toFixed(11):c.rate.toFixed(4));
+    const s=$('cks'+i);if(s&&i===4)s.textContent=c.sub;});
+}
+
+// =============== 4. GW150914 ===============
+const show={H1:true,L1:true,NR:true};
+function drawGW(){
+  const c=$('gw'),D=window.GW150914;if(!D)return;const w=c.clientWidth,h=c.clientHeight,dpr=Math.min(2,devicePixelRatio||1);c.width=w*dpr;c.height=h*dpr;const g=c.getContext('2d');g.scale(dpr,dpr);
+  g.direction='ltr';const t0=-0.2,t1=0.05,X=t=>40+(t-t0)/(t1-t0)*(w-56),Y=v=>h/2-v*(h/2-26);
+  g.strokeStyle='#ffffff18';g.lineWidth=1;g.font='11px sans-serif';g.fillStyle='#9fb0d6';
+  for(let tt=-0.2;tt<=0.05+1e-9;tt+=0.05){g.beginPath();g.moveTo(X(tt),12);g.lineTo(X(tt),h-22);g.stroke();g.fillText(tt.toFixed(2)+' s',X(tt)-14,h-6);}
+  g.beginPath();g.moveTo(40,h/2);g.lineTo(w-16,h/2);g.stroke();
+  const line=(arr,col,lw)=>{g.strokeStyle=col;g.lineWidth=lw;g.beginPath();let st=false;D.t.forEach((tt,i)=>{if(tt<t0||tt>t1)return;const x=X(tt),y=Y(arr[i]);st?g.lineTo(x,y):g.moveTo(x,y);st=true;});g.stroke();};
+  if(show.H1)line(D.H1,'#6fa8ff',1.4);if(show.L1)line(D.L1,'#ff9f5a',1.4);if(show.NR)line(D.NR,'#ffffff',1.8);
+  g.fillStyle='#d9e0f2';g.fillText(lang==='ar'?'الانفعال (مُطبَّع)':'strain (normalised)',44,14);
+}
+function gwSection(){
+  document.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>{show[b.dataset.g]=!show[b.dataset.g];b.classList.toggle('on',show[b.dataset.g]);drawGW();});
+  $('cNR').textContent=t('nr');
+  $('gwKV').innerHTML=t('gwKV').map(r=>`<b>${r[0]}</b><span>${r[1]}</span>`).join('');
+  $('bPlay').textContent=t('play');
+  $('bPlay').onclick=()=>{try{const D=window.GW150914,AC=window.AudioContext||window.webkitAudioContext,ac=new AC();
+    // the NR waveform at its true rate (2048 Hz samples) resampled to 44.1 kHz; frequencies 35–300 Hz are audible on speakers/headphones
+    const fsIn=1/(D.t[1]-D.t[0]),dur=D.t[D.t.length-1]-D.t[0],sr=44100,n=Math.floor(dur*sr),rep=3,buf=ac.createBuffer(1,n*rep+sr*0.3*rep,sr),ch=buf.getChannelData(0);
+    for(let r=0;r<rep;r++){const off=r*(n+Math.floor(sr*0.3));for(let i=0;i<n;i++){const x=i/sr*fsIn,k=Math.floor(x),f=x-k;const v=(D.NR[k]||0)*(1-f)+(D.NR[k+1]||0)*f;ch[off+i]=v*0.9;}}
+    const s=ac.createBufferSource();s.buffer=buf;s.connect(ac.destination);s.start();}catch(e){alert(e.message);}};
+  drawGW();
+}
+
+// =============== page ===============
+function page(){
+  document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr';
+  document.querySelectorAll('[data-i]').forEach(e=>{const v=t(e.dataset.i);if(typeof v==='string')e.textContent=v;});
+  document.querySelectorAll('[data-h]').forEach(e=>{e.innerHTML=t(e.dataset.h);});
+  $('btnLang').textContent=lang==='ar'?'EN':'ع';$('logo').innerHTML=KH.logoSVG(36);
+  $('bLaunch').textContent=t('launch');$('bClear').textContent=t('clear');$('bPause').textContent=paused?t('resume'):t('pause');
+  $('presets').innerHTML=t('presets').map(p=>`<button class="chip" data-v="${p[1]}">${p[0]}</button>`).join('');
+  $('presets').querySelectorAll('.chip').forEach(b=>b.onclick=()=>{$('sV').value=b.dataset.v;$('sV').oninput&&$('sV').oninput();launch();});
+  $('selSrc').innerHTML=t('srcs').map((s,i)=>`<option value="${i}"${i===srcMode?' selected':''}>${s}</option>`).join('');
+  wellControls();lensControls();renderLens();timeSection();gwSection();
+  $('refs').innerHTML=['Einstein, A. (1915) Sitzungsber. Preuss. Akad. Wiss., 844 & 831 (Mercury)','Dyson, Eddington & Davidson (1920) Phil. Trans. R. Soc. A 220, 291','Pound & Rebka (1960) Phys. Rev. Lett. 4, 337','Ashby, N. (2003) Living Rev. Relativ. 6, 1 — Relativity in the Global Positioning System','Will, C. M. (2014) Living Rev. Relativ. 17, 4 — The confrontation between GR and experiment','Abbott et al., LIGO & Virgo (2016) Phys. Rev. Lett. 116, 061102 — GW150914','<b>'+(lang==='ar'?'البيانات':'Data')+':</b> LIGO Open Science Center / GWOSC, GW150914 strain (H1, L1, 4 kHz) and SEOBNRv2 template from the LOSC event tutorial, CC BY 4.0 — gwosc.org'].map(x=>'• '+x).join('<br>');
+  $('foot').innerHTML=`${KH.logoSVG(30)}<br>${lang==='ar'?'إعداد: خالد محمد · قسم الفلك وعلوم الفضاء والأرصاد الجوية، كلية العلوم، جامعة القاهرة · عضو AfAS وAUASS':'By Khaled Mohamed · Astronomy, Space Science & Meteorology Dept., Faculty of Science, Cairo University · Member of AfAS and AUASS'}<br><a href="index.html">${lang==='ar'?'الرئيسية':'Home'}</a>`;
+  document.title=t('title')+' — '+(lang==='ar'?'خالد محمد':'Khaled Mohamed');
+}
+$('btnLang').onclick=()=>{lang=lang==='ar'?'en':'ar';KH.setLang(lang);page();};
+addEventListener('resize',drawGW);
+initWell();page();launch();
+requestAnimationFrame(loop);
+window.__grav={launch,get bodies(){return bodies},setG:v=>{$('sG').value=v;},step,ff(n){for(let i=0;i<n;i++)step(0.003);updateMeshes();hud();}};
+})();
+</script>
+</body>
+</html>

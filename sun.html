@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0f1e">
+<title>الشمس ونشاطها | The Sun & its Activity</title>
+<link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/page.css">
+<style>
+.hero{display:grid;grid-template-columns:200px 1fr;gap:18px;align-items:center}
+@media(max-width:620px){.hero{grid-template-columns:1fr;text-align:center}}
+.sunball{width:180px;height:180px;border-radius:50%;margin:auto;background:radial-gradient(circle at 45% 40%,#fff6c8 0,#ffd36b 35%,#ff9a2a 70%,#c2410c 100%);box-shadow:0 0 60px 18px #ff9a2a66,0 0 140px 40px #ff6a0033;cursor:pointer;position:relative;overflow:hidden}
+.sunball img{width:100%;height:100%;object-fit:cover;border-radius:50%;opacity:.9;mix-blend-mode:screen}
+.facts{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-top:10px}
+.fact{padding:9px 10px;border-radius:12px;border:1px solid var(--line);background:#0e1630aa;font-size:12.5px}.fact b{display:block;color:var(--gold-l);font-size:15px}
+.tabs2{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.live-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.live-grid figure{margin:0;text-align:center}.live-grid img{width:100%;aspect-ratio:1;border-radius:12px;background:#000;object-fit:cover;border:1px solid var(--line)}
+.live-grid figcaption{font-size:12px;color:var(--muted);margin-top:4px}
+.layers{display:grid;grid-template-columns:minmax(260px,360px) 1fr;gap:16px;align-items:start}
+@media(max-width:700px){.layers{grid-template-columns:1fr}}
+.lay-info h3{margin:0 0 6px;color:var(--gold-l)}
+.phen{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.phen .panel h3{margin:0 0 6px;font-size:16px;color:#fff}.phen .panel p{margin:0;font-size:13.3px;line-height:1.75;color:#d5ddf1}
+.eq{direction:ltr;text-align:center;font-family:"Cambria Math","STIX Two Math","Times New Roman",serif;font-size:15px;margin:8px 0;color:#fff;background:#0b1229;border-radius:10px;padding:8px}
+canvas.plot{width:100%;height:260px;display:block;background:#070b18;border-radius:12px}
+.rng{width:100%;accent-color:var(--gold)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:560px){.row2{grid-template-columns:1fr}}
+.vid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.vid video{width:100%;border-radius:12px;background:#000}
+.small{font-size:12px;color:var(--muted)}
+.chain{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px}
+.chain .st{flex:0 0 auto;min-width:120px;padding:10px;border-radius:12px;border:1px solid var(--line);background:#0e1630;font-size:12.5px;text-align:center;cursor:pointer}
+.chain .st.on{border-color:var(--gold);background:#2a2412}
+.chain .st b{display:block;color:var(--gold-l);font-size:13.5px;margin-bottom:3px}
+</style>
+</head>
+<body>
+<header class="pg-top">
+  <a class="brand" href="index.html"><span id="logo"></span><div><h1 data-i="title"></h1><div class="sub" data-i="sub"></div></div></a>
+  <button class="ibtn" id="btnLang">EN</button>
+</header>
+<main class="wrap">
+  <section class="panel hero">
+    <div class="sunball" id="sun3d" title="3D" style="background:#000"><img src="img/solo_eui174_2022-04-01.jpg" alt="" style="mix-blend-mode:normal;opacity:1;transform:scale(1.25)"></div>
+    <div><p class="lead" style="font-size:14.5px;color:#d9e0f2" data-i="intro"></p><button class="btn sm" id="btn3d" data-i="open3d"></button><div class="facts" id="facts"></div></div>
+  </section>
+
+  <h2 class="sec" data-i="hLive"></h2>
+  <p class="lead" data-i="liveLead"></p>
+  <section class="panel">
+    <div class="live-grid" id="liveImgs"></div>
+    <div id="liveNote" class="note2"></div>
+  </section>
+
+  <h2 class="sec" data-i="hStruct"></h2>
+  <section class="panel layers"><svg id="layersSvg" viewBox="0 0 360 360" width="100%"></svg><div class="lay-info" id="layInfo"></div></section>
+
+  <h2 class="sec" data-i="hFlare"></h2>
+  <p class="lead" data-i="flareLead"></p>
+  <section class="panel">
+    <canvas class="plot" id="goesPlot"></canvas>
+    <div class="small" id="goesCap" style="margin-top:6px"></div>
+    <div class="eq">F<sub>1–8 Å</sub> : A &lt; 10⁻⁷ ≤ B &lt; 10⁻⁶ ≤ C &lt; 10⁻⁵ ≤ M &lt; 10⁻⁴ ≤ X &nbsp; W m⁻²</div>
+    <div class="row2"><div><label class="small" data-i="flareCalc"></label><input type="range" class="rng" id="flx" min="-8" max="-2.6" step="0.01" value="-4.05"></div><div id="flxOut" style="font-size:14px;align-self:center"></div></div>
+  </section>
+
+  <h2 class="sec" data-i="hPhen"></h2>
+  <div class="phen" id="phen"></div>
+
+  <h2 class="sec" data-i="hCycle"></h2>
+  <section class="panel"><canvas class="plot" id="cyclePlot"></canvas><div class="note2" id="cycleNote"></div></section>
+
+  <h2 class="sec" data-i="hChain"></h2>
+  <p class="lead" data-i="chainLead"></p>
+  <section class="panel"><div class="chain" id="chain"></div><div id="chainInfo" style="margin-top:10px;font-size:13.5px;line-height:1.8"></div>
+    <a class="btn sm ghost" href="space-weather.html" style="display:inline-block;margin-top:10px;text-decoration:none" data-i="openGuide"></a></section>
+
+  <h2 class="sec" data-i="hDBM"></h2>
+  <p class="lead" data-i="dbmLead"></p>
+  <section class="panel">
+    <div class="eq">dv/dt = −γ (v − w) |v − w| &nbsp;⇒&nbsp; r(t) = ±(1/γ) ln[1 ± γ(v₀ − w)t] + wt + r₀</div>
+    <div class="row2">
+      <div><label class="small" data-i="v0L"></label><input type="range" class="rng" id="v0" min="300" max="3000" step="10" value="1200"><div id="v0v"></div></div>
+      <div><label class="small" data-i="wL"></label><input type="range" class="rng" id="w" min="250" max="800" step="10" value="420"><div id="wv"></div></div>
+      <div><label class="small" data-i="gL"></label><input type="range" class="rng" id="gm" min="0.05" max="2" step="0.01" value="0.2"><div id="gv"></div></div>
+      <div id="dbmOut" style="align-self:center;font-size:14px"></div>
+    </div>
+    <canvas class="plot" id="dbmPlot" style="margin-top:10px"></canvas>
+  </section>
+
+  <h2 class="sec" data-i="hLocal"></h2>
+  <p class="lead" data-i="localLead"></p>
+  <section class="panel"><div class="row2"><canvas class="plot" id="pathPlot"></canvas><canvas class="plot" id="eotPlot"></canvas></div><div class="note2" id="localNote"></div></section>
+
+  <h2 class="sec" data-i="hVid"></h2>
+  <p class="lead" data-i="vidLead"></p>
+  <section class="vid" id="vids"></section>
+</main>
+<footer class="pg-foot" id="foot"></footer>
+<script src="js/common.js"></script>
+<script src="js/astronomy.min.js"></script>
+<script src="js/goes_20110607.js"></script>
+<script src="js/body3d.js"></script>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id), AE=Astronomy; let lang=KH.getLang(), loc=KH.getLoc();
+const T={
+ar:{title:'الشمس ونشاطها',sub:'أقرب نجم إلينا: تركيبه، ونشاطه، وأثره على الأرض',open3d:'🌐 الشمس 3D بخريطة حقيقية',
+intro:'الشمس نجم متوسط من النوع G2V، عمره ٤٫٦ مليار سنة، ويحوي ٩٩٫٨٦٪ من كتلة المجموعة الشمسية. تتولد طاقتها في القلب من اندماج الهيدروجين إلى هيليوم، وتستغرق عشرات الآلاف من السنين لتبلغ السطح، ثم ثماني دقائق وعشرين ثانية فقط لتصل إلينا.',
+hLive:'🛰️ الشمس الآن (صور حية من SDO وSOHO)',liveLead:'أحدث صور مرصد ديناميكا الشمس SDO بأطوال موجية مختلفة، يُظهر كل طول موجي طبقة ذات درجة حرارة معينة، وصور كوروناغراف LASCO للانبعاثات الكتلية.',
+liveBlocked:'⚠️ تحتاج الصور الحية إلى الإنترنت، ولا تظهر داخل عارض Claude لأنه يمنع تحميل الصور من المواقع الخارجية. افتح البرنامج موقعًا مستقلًا، أو من النسخة غير المتصلة مع اتصال بالإنترنت.',
+hStruct:'🧅 تركيب الشمس من القلب للإكليل',hFlare:'⚡ التوهجات الشمسية: بيانات حقيقية من القمر الصناعي GOES',
+flareLead:'هذا المنحنى بيانات رصد حقيقية من القمر الصناعي GOES-15 في ٧ يونيو ٢٠١١: الأشعة السينية اللينة (١–٨ أنجستروم) أثناء التوهج M2.5 الشهير الذي صاحبه انبعاث كتلي ضخم. ويعتمد تصنيف التوهج على ذروة الفيض في نطاق ١–٨ Å.',
+flareCalc:'حرّك المؤشر: فيض الأشعة السينية (W/m²)',
+goesCap:'المصدر: GOES-15 XRS (من بيانات الاختبار في مكتبة SunPy). ذروة 2.54×10⁻⁵ W/m² الساعة 06:39 UT = توهج M2.5.',
+hPhen:'🌞 ظواهر النشاط الشمسي',hCycle:'🔄 الدورة الشمسية (عدد البقع)',
+cycleOk:'عدد البقع الشهري الرسمي (SILSO، عبر NOAA SWPC) منذ ١٧٤٩، والخط الذهبي هو المتوسط المنعّم. تستمر كل دورة نحو ١١ عامًا، ونحن الآن في الدورة ٢٥.',
+cycleBlocked:'⚠️ يُحمَّل منحنى الدورة مباشرة من NOAA، ويحتاج إلى الإنترنت وفتح البرنامج موقعًا مستقلًا.',
+hChain:'🌍 من الشمس إلى الأرض: سلسلة الطقس الفضائي',chainLead:'اضغط على أي مرحلة لعرض الزمن اللازم لوصول أثرها إلى الأرض، والبصمة التي نرصدها.',openGuide:'📘 الدليل الكامل لأنواع أحداث الطقس الفضائي',
+hDBM:'🧮 احسب وصول الانبعاث الكتلي للأرض: نموذج السحب DBM',dbmLead:'نموذج Vršnak وآخرين (٢٠١٣): يتسارع الانبعاث أو يتباطأ حتى تقترب سرعته من سرعة الرياح الشمسية w، بقوة سحب معاملها γ. ودقة التنبؤ بزمن الوصول في هذه النماذج نحو ±١٠ ساعات. r₀ = ٢٠ نصف قطر شمسي.',
+v0L:'السرعة الابتدائية v₀ (كم/ث)',wL:'سرعة الرياح الشمسية w (كم/ث)',gL:'معامل السحب γ (×10⁻⁷ كم⁻¹)',arr:'زمن الوصول لـ ١ و.ف',varr:'السرعة عند الوصول',h:'ساعة',
+hLocal:'📍 الشمس من موقعك',localLead:'مسار الشمس في سماء موقعك اليوم وفي الانقلابين، ومعادلة الزمن على مدار السنة (الفرق بين الظهر الشمسي الحقيقي والساعة 12:00 المتوسطة).',
+hVid:'🎬 فيديوهات رصد حقيقية',vidLead:'فيديوهات من مرصد SDO وNASA. ما نُزِّل منها يعمل داخل البرنامج دون اتصال، والبقية تُفتح من موقع NASA.',watch:'▶ شاهد على موقع NASA',
+facts:[['١٫٣٩ مليون كم','القطر (١٠٩ × الأرض)'],['١٫٩٨٩×١٠³⁰ كجم','الكتلة'],['٥٧٧٢ ك','حرارة السطح'],['١٥٫٧ مليون ك','حرارة القلب'],['٣٫٨٢٨×١٠²⁶ واط','الإضاءة'],['٨ د ٢٠ ث','زمن وصول الضوء'],['٢٥ / ٣٥ يومًا','الدوران: الاستواء / القطبين'],['٤٫٦ مليار سنة','العمر']],
+credit:'إعداد: خالد محمد · باحث في فيزياء الشمس · عضو AfAS وAUASS'},
+en:{title:'The Sun & its Activity',sub:'Our nearest star: structure, activity and its effects on Earth',open3d:'🌐 The Sun in 3D (real map)',
+intro:'The Sun is an average G2V star, 4.6 billion years old, holding 99.86% of the Solar System\'s mass. Its energy is made in the core by fusing hydrogen into helium; it takes tens of thousands of years to reach the surface, then only 8 min 20 s to reach us.',
+hLive:'🛰️ The Sun now (live SDO & SOHO images)',liveLead:'The latest Solar Dynamics Observatory images at several wavelengths, each showing plasma at a different temperature, plus LASCO coronagraph views of CMEs.',
+liveBlocked:'⚠️ Live images need the internet and do not show inside the Claude viewer, which blocks images from other sites. Open the standalone site or the offline copy while online.',
+hStruct:'🧅 Structure of the Sun, core to corona',hFlare:'⚡ Solar flares: real GOES satellite data',
+flareLead:'This curve is real GOES-15 data from 7 June 2011: soft X-rays (1–8 Å) during the well-known M2.5 flare and its huge eruption. Flare class is set by the peak 1–8 Å flux.',
+flareCalc:'Move the slider: X-ray flux (W/m²)',
+goesCap:'Source: GOES-15 XRS (SunPy test data). Peak 2.54×10⁻⁵ W/m² at 06:39 UT = M2.5 flare.',
+hPhen:'🌞 Solar activity phenomena',hCycle:'🔄 The solar cycle (sunspot number)',
+cycleOk:'Official monthly sunspot number (SILSO, via NOAA SWPC) since 1749; the gold line is the smoothed value. Each cycle lasts about 11 years; we are now in Cycle 25.',
+cycleBlocked:'⚠️ The cycle curve is loaded live from NOAA and needs the internet and the standalone site.',
+hChain:'🌍 From the Sun to the Earth: the space-weather chain',chainLead:'Tap any stage: how long each effect takes to reach Earth and what we observe.',openGuide:'📘 Full guide to space-weather event types',
+hDBM:'🧮 Compute a CME\'s arrival: the Drag-Based Model',dbmLead:'Vršnak et al. (2013): a CME speeds up or slows down toward the solar-wind speed w, with drag parameter γ. r₀ = 20 solar radii.',
+v0L:'Initial speed v₀ (km/s)',wL:'Solar wind speed w (km/s)',gL:'Drag parameter γ (×10⁻⁷ km⁻¹)',arr:'Arrival at 1 AU',varr:'Arrival speed',h:'h',
+hLocal:'📍 The Sun from your location',localLead:'The Sun\'s path in your sky today and at the solstices, and the equation of time over the year (true solar noon minus mean 12:00).',
+hVid:'🎬 Real observational videos',vidLead:'Videos from SDO and NASA. Downloaded ones play offline inside the program; the rest open on NASA\'s site.',watch:'▶ Watch on NASA',
+facts:[['1.39 million km','Diameter (109 × Earth)'],['1.989×10³⁰ kg','Mass'],['5772 K','Surface temperature'],['15.7 million K','Core temperature'],['3.828×10²⁶ W','Luminosity'],['8 min 20 s','Light travel time'],['25 / 35 days','Rotation: equator / poles'],['4.6 billion yr','Age']],
+credit:'By Khaled Mohamed · Solar physics researcher · Member of AfAS and AUASS'}};
+const t=k=>T[lang][k];
+// ---------- layers ----------
+const LAY=[
+ {k:'core',r:0.25,c:'#fff3b0',ar:['القلب','٠ – ٠٫٢٥ R☉','١٥٫٧ مليون كلفن، كثافة ١٥٠ جم/سم³ (١٥٠ مرة كثافة الماء). هنا يحدث الاندماج النووي عبر سلسلة بروتون–بروتون: 4¹H → ⁴He + 2e⁺ + 2ν + ٢٦٫٧ م.إ.ف. ويتحول نحو ٤ ملايين طن من الكتلة إلى طاقة كل ثانية (E = mc²).'],en:['Core','0 – 0.25 R☉','15.7 MK, density 150 g/cm³. Fusion by the proton–proton chain: 4¹H → ⁴He + 2e⁺ + 2ν + 26.7 MeV. About 4 million tonnes of mass become energy every second (E = mc²).']},
+ {k:'rad',r:0.70,c:'#ffd166',ar:['منطقة الإشعاع','٠٫٢٥ – ٠٫٧ R☉','من ٧ إلى ٢ مليون كلفن. تنتقل الطاقة فوتوناتٍ تتشتت ملايين المرات (سير عشوائي)، فيستغرق عبور هذه المنطقة من عشرات الآلاف إلى مئات الآلاف من السنين.'],en:['Radiative zone','0.25 – 0.7 R☉','7 → 2 MK. Energy moves as photons scattered millions of times (a random walk), taking tens to hundreds of thousands of years to cross.']},
+ {k:'tach',r:0.72,c:'#ff6b4a',ar:['الطبقة الانتقالية (Tachocline)','≈ ٠٫٧ R☉','طبقة رقيقة بين منطقة الإشعاع التي تدور كجسم صلب ومنطقة الحمل ذات الدوران التفاضلي. يضخّم القص هنا المجال المغناطيسي، وهذا أساس الدينامو الشمسي والدورة ذات الأحد عشر عامًا.'],en:['Tachocline','≈ 0.7 R☉','A thin shear layer between the rigidly rotating radiative zone and the differentially rotating convection zone. The shear amplifies the magnetic field: the heart of the solar dynamo and the 11-year cycle.']},
+ {k:'conv',r:0.96,c:'#ff9a2a',ar:['منطقة الحمل','٠٫٧ – ١ R☉','من ٢ مليون إلى ٥٨٠٠ كلفن. تصعد البلازما الساخنة ثم تبرد وتهبط كالماء المغلي، وتظهر على السطح حبيباتٍ (granules) قطر الواحدة نحو ١٠٠٠ كم وعمرها ٨–٢٠ دقيقة.'],en:['Convection zone','0.7 – 1 R☉','2 MK → 5800 K. Hot plasma rises, cools and sinks like boiling water; at the surface it shows as ~1000 km granules lasting 8–20 minutes.']},
+ {k:'photo',r:1.0,c:'#ffb648',ar:['الفوتوسفير (السطح المرئي)','سُمك ≈ ٥٠٠ كم','٥٧٧٢ كلفن، ومنه يصدر الضوء الذي نراه. تظهر عليه البقع الشمسية (أبرد، نحو ٣٨٠٠ ك، ومجالها المغناطيسي قوي جدًا ~٣٠٠٠ جاوس) والصِّيَخ (faculae) والحبيبات، ويظهر فيه إظلام الحافة.'],en:['Photosphere','≈ 500 km thick','5772 K: the visible surface. Sunspots (cooler, ~3800 K, ~3000 G fields), faculae, granulation and limb darkening.']},
+ {k:'chromo',r:1.035,c:'#ff4d6d',ar:['الكروموسفير','≈ ٢٠٠٠ كم','من ٤٠٠٠ إلى ٢٥٠٠٠ كلفن. لونها أحمر وردي (خط Hα)، وتظهر لحظات في الكسوف الكلي، وفيها الأشواك (spicules) والخيوط والشُّواظ.'],en:['Chromosphere','≈ 2000 km','4000 → 25,000 K. Pinkish-red (Hα), briefly visible at total eclipse. Spicules, filaments and prominences.']},
+ {k:'tr',r:1.05,c:'#c77dff',ar:['منطقة التحول','بضع مئات من الكيلومترات','تقفز الحرارة من ٢٥ ألف إلى مليون كلفن عبر مسافة صغيرة جدًا، ونرصدها بالأشعة فوق البنفسجية (AIA 304 وIRIS).'],en:['Transition region','a few hundred km','Temperature jumps from 25,000 K to 1 MK over a tiny distance; observed in UV (AIA 304, IRIS).']},
+ {k:'corona',r:1.75,c:'#6fa8ff',ar:['الإكليل (الكورونا)','حتى ملايين الكيلومترات','من ١ إلى ٣ ملايين كلفن، أي أسخن من السطح نحو ٢٠٠ مرة، وهذه «مسألة تسخين الإكليل»، ومن تفسيراتها المرشحة موجات ألفين والتوهجات النانوية (إعادة الاتصال المغناطيسي). يُرى في الكسوف الكلي وبالكوروناغراف والأشعة فوق البنفسجية القصوى، ومنه تنطلق الرياح الشمسية.'],en:['Corona','out to millions of km','1–3 MK, ~200× hotter than the surface: the coronal heating problem (Alfvén waves, nanoflares/reconnection). Seen at total eclipse, with coronagraphs and in EUV; the source of the solar wind.']}];
+function drawLayers(sel){
+ const svg=$('layersSvg'),cx=255,cy=185,R=120;svg.setAttribute('viewBox','0 0 420 370');svg.style.direction='ltr';
+ const ph=LAY.find(x=>x.k==='photo'),ch=LAY.find(x=>x.k==='chromo'),co=LAY.find(x=>x.k==='corona');
+ let h='<defs><radialGradient id="cg"><stop offset=".6" stop-color="#6fa8ff40"/><stop offset="1" stop-color="#6fa8ff00"/></radialGradient><radialGradient id="pg"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".75" stop-color="#ffb648"/><stop offset="1" stop-color="#e0761c"/></radialGradient></defs>';
+ h+=`<circle cx="${cx}" cy="${cy}" r="${R*1.5}" fill="url(#cg)" data-k="corona" style="cursor:pointer" stroke="${sel==='corona'?'#fff':'none'}"/>`;
+ h+=`<circle cx="${cx}" cy="${cy}" r="${R*1.04}" fill="${ch.c}" opacity=".9" data-k="chromo" style="cursor:pointer" stroke="${sel==='chromo'?'#fff':'none'}" stroke-width="2"/>`;
+ h+=`<circle cx="${cx}" cy="${cy}" r="${R}" fill="url(#pg)" data-k="photo" style="cursor:pointer" stroke="${sel==='photo'?'#fff':'none'}" stroke-width="2"/>`;
+ // cut-away quadrant (top-left) showing the interior, outer to inner
+ const inner=['tr','chromo','photo','conv','tach','rad','core'];
+ const q=r=>`M${cx},${cy} L${cx-r},${cy} A${r},${r} 0 0,1 ${cx},${cy-r} Z`;
+ [['chromo',1.04],['photo',1.0],['conv',0.98],['tach',0.72],['rad',0.70],['core',0.25]].forEach(([k,f])=>{const L=LAY.find(x=>x.k===k);h+=`<path d="${q(R*f)}" fill="${L.c}" stroke="${sel===k?'#fff':'#00000055'}" stroke-width="${sel===k?2.2:0.8}" data-k="${k}" style="cursor:pointer"/>`;});
+ // labels on the left with leader lines to points along the cut diagonal
+ const pts={core:0.13,rad:0.5,tach:0.71,conv:0.86,photo:0.995,chromo:1.025,tr:1.055,corona:1.3};
+ LAY.forEach((L,i)=>{const f=pts[L.k],a=225*Math.PI/180+(i%2?0.06:-0.06),px=cx+Math.cos(a)*R*f,py=cy+Math.sin(a)*R*f;const ly=24+i*40;
+  h+=`<circle cx="${px}" cy="${py}" r="2.6" fill="#fff"/><polyline points="${px},${py} 118,${ly} 112,${ly}" fill="none" stroke="${sel===L.k?'#f1d27a':'#ffffff66'}"/>`;
+  h+=`<text x="6" y="${ly+4}" fill="${sel===L.k?'#f1d27a':'#e8edf9'}" font-size="12" font-weight="${sel===L.k?700:500}" data-k="${L.k}" style="cursor:pointer" direction="${lang==='ar'?'rtl':'ltr'}" text-anchor="${lang==='ar'?'end':'start'}" ${lang==='ar'?'x="108"':''}>${L[lang][0].replace(/ \(.*\)/,'')}</text>`;});
+ svg.innerHTML=h.replace(/x="6" (y="[^"]+" fill="[^"]+" font-size="12" font-weight="[^"]+" data-k="[^"]+" style="cursor:pointer" direction="rtl" text-anchor="end") x="108"/g,'x="108" $1');
+ svg.querySelectorAll('[data-k]').forEach(e=>e.onclick=()=>{drawLayers(e.dataset.k);showLay(e.dataset.k);});
+}
+function showLay(k){const L=LAY.find(x=>x.k===k);$('layInfo').innerHTML=`<h3>${L[lang][0]}</h3><div class="small" style="margin-bottom:6px">${L[lang][1]}</div><p style="line-height:1.85;font-size:14px;margin:0">${L[lang][2]}</p>`;}
+// ---------- live ----------
+const LIVE=[['https://sdo.gsfc.nasa.gov/assets/img/latest/latest_1024_HMIIC.jpg','HMI · الضوء المرئي (البقع)','HMI continuum (sunspots)','https://sdo.gsfc.nasa.gov/data/','img/sdo_hmi_continuum_2023-01-31.jpg','SDO/HMI · ٣١ يناير ٢٠٢٣','SDO/HMI · 31 Jan 2023'],
+ ['https://sdo.gsfc.nasa.gov/assets/img/latest/latest_1024_HMIB.jpg','HMI · المجال المغناطيسي','HMI magnetogram','https://sdo.gsfc.nasa.gov/data/'],
+ ['https://sdo.gsfc.nasa.gov/assets/img/latest/latest_1024_0304.jpg','AIA 304 Å · الكروموسفير (٥٠ ألف ك)','AIA 304 Å · chromosphere (50,000 K)','https://sdo.gsfc.nasa.gov/data/'],
+ ['https://sdo.gsfc.nasa.gov/assets/img/latest/latest_1024_0171.jpg','AIA 171 Å · الحلقات الإكليلية (٦٠٠ ألف ك)','AIA 171 Å · coronal loops (0.6 MK)','https://sdo.gsfc.nasa.gov/data/','img/solo_eui174_2022-04-01.jpg','Solar Orbiter/EUI 174 Å · ١ أبريل ٢٠٢٢','Solar Orbiter/EUI 174 Å · 1 Apr 2022'],
+ ['https://sdo.gsfc.nasa.gov/assets/img/latest/latest_1024_0193.jpg','AIA 193 Å · الإكليل والثقوب (١٫٢ مليون ك)','AIA 193 Å · corona & holes (1.2 MK)','https://sdo.gsfc.nasa.gov/data/','img/sdo_aia193_2013-06-24.jpg','SDO/AIA 193 Å · ٢٤ يونيو ٢٠١٣ (لاحظ الثقب الإكليلي المظلم)','SDO/AIA 193 Å · 24 Jun 2013 (note the dark coronal hole)'],
+ ['https://sdo.gsfc.nasa.gov/assets/img/latest/latest_1024_0131.jpg','AIA 131 Å · التوهجات (١٠ مليون ك)','AIA 131 Å · flares (10 MK)','https://sdo.gsfc.nasa.gov/data/'],
+ ['https://soho.nascom.nasa.gov/data/realtime/c2/1024/latest.jpg','LASCO C2 · الإكليل الخارجي','LASCO C2 · outer corona','https://soho.nascom.nasa.gov/data/realtime-images.html'],
+ ['https://soho.nascom.nasa.gov/data/realtime/c3/1024/latest.jpg','LASCO C3 · الانبعاثات الكتلية','LASCO C3 · CMEs','https://soho.nascom.nasa.gov/data/realtime-images.html']];
+function renderLive(){let bad=0;const tap=lang==='ar'?'↗ اضغط لفتح أحدث صورة على موقع NASA':'↗ Tap to open the latest image on NASA';
+ $('liveImgs').innerHTML=LIVE.map((x,i)=>`<figure><a href="${x[3]}" target="_blank" rel="noopener"><img loading="lazy" src="${x[0]}" data-i="${i}" alt=""></a><figcaption>${lang==='ar'?x[1]:x[2]}<br><a href="${x[3]}" target="_blank" rel="noopener" style="color:var(--gold-l);font-size:11px">${tap}</a></figcaption></figure>`).join('');
+ $('liveImgs').querySelectorAll('img').forEach(im=>{im.onerror=()=>{bad++;const x=LIVE[+im.dataset.i];
+   if(x[4]){im.onerror=null;im.src=x[4];im.style.opacity=1;const fc=im.closest('figure').querySelector('figcaption');fc.insertAdjacentHTML('afterbegin',`<span style="color:#ffcf8a">${lang==='ar'?'📁 أرشيف حقيقي: ':'📁 Real archive: '}${lang==='ar'?x[5]:x[6]}</span><br>`);}
+   else{const d=document.createElement('div');d.style.cssText='aspect-ratio:1;border-radius:12px;border:1px dashed #ffffff33;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:#070b18;text-align:center;padding:8px;font-size:12px;color:#9fb0d6;line-height:1.5';d.innerHTML='<span style="font-size:28px">📡</span>'+(lang==='ar'?'الصورة الحية تُعرض عند الاتصال بالإنترنت<br><b style="color:#f1d27a">اضغط لفتحها على موقع NASA</b>':'The live image appears when online<br><b style="color:#f1d27a">Tap to open it on NASA</b>');im.replaceWith(d);}
+   if(bad>=3)$('liveNote').textContent=t('liveBlocked');};});}
+// ---------- GOES plot ----------
+function setupCanvas(cv){const r=cv.getBoundingClientRect(),d=Math.min(2,devicePixelRatio||1);cv.width=r.width*d;cv.height=r.height*d;const g=cv.getContext('2d');g.setTransform(d,0,0,d,0,0);return [g,r.width,r.height];}
+function logPlot(cv,series,opt){const [g,W,H]=setupCanvas(cv);const l=46,r=12,tp=14,b=26,x0=opt.x0,x1=opt.x1,y0=opt.y0,y1=opt.y1;
+ const X=x=>l+(x-x0)/(x1-x0)*(W-l-r),Y=y=>tp+(1-(Math.log10(y)-y0)/(y1-y0))*(H-tp-b);
+ g.fillStyle='#070b18';g.fillRect(0,0,W,H);g.font='11px sans-serif';g.textAlign='right';g.textBaseline='middle';
+ const cls=['A','B','C','M','X'];for(let e=y0;e<=y1;e++){const y=Y(10**e);g.strokeStyle='#ffffff18';g.beginPath();g.moveTo(l,y);g.lineTo(W-r,y);g.stroke();g.fillStyle='#9fb0d6';g.fillText('10'+sup(e),l-4,y);const ci=e+8;if(ci>=0&&ci<5&&e<y1){g.fillStyle='#f1d27a';g.textAlign='left';g.fillText(cls[ci],W-r-10,(y+Y(10**(e+1)))/2);g.textAlign='right';}}
+ g.textAlign='center';g.textBaseline='top';for(const tk of opt.ticks){g.fillStyle='#9fb0d6';g.fillText(tk[1],X(tk[0]),H-b+6);}
+ for(const s of series){g.strokeStyle=s.c;g.lineWidth=1.6;g.beginPath();s.x.forEach((x,i)=>{const v=s.y[i];if(!(v>0))return;const px=X(x),py=Y(Math.max(v,10**y0));i?g.lineTo(px,py):g.moveTo(px,py);});g.stroke();}
+ if(opt.mark){g.strokeStyle='#ffffff99';g.setLineDash([3,3]);g.beginPath();g.moveTo(X(opt.mark[0]),tp);g.lineTo(X(opt.mark[0]),H-b);g.stroke();g.setLineDash([]);g.fillStyle='#fff';g.textAlign='center';g.fillText(opt.mark[1],X(opt.mark[0]),tp);}
+ if(opt.legend){g.textAlign='left';opt.legend.forEach((L,i)=>{g.fillStyle=L[1];g.fillText(L[0],l+8,tp+4+i*14);});}
+ return {X,Y,g};}
+function sup(e){const m={'-':'⁻','0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};return String(e).split('').map(c=>m[c]).join('');}
+function renderGoes(){const G=window.GOES_20110607,mn=G.min.filter(m=>m>=300&&m<=600),i0=G.min.indexOf(mn[0]),i1=G.min.indexOf(mn[mn.length-1]);
+ logPlot($('goesPlot'),[{x:mn,y:G.long.slice(i0,i1+1),c:'#ff8a3d'},{x:mn,y:G.short.slice(i0,i1+1),c:'#6fa8ff'}],{x0:300,x1:600,y0:-8,y1:-3,ticks:[[300,'05:00'],[360,'06:00'],[420,'07:00'],[480,'08:00'],[540,'09:00'],[600,'10:00 UT']],mark:[399,'M2.5'],legend:[['1–8 Å','#ff8a3d'],['0.5–4 Å','#6fa8ff']]});
+ $('goesCap').textContent=t('goesCap');}
+function flareClass(f){const L=['A','B','C','M','X'],e=Math.floor(Math.log10(f));const ci=Math.min(4,Math.max(0,e+8));const base=10**(ci-8);return L[ci]+(f/base).toFixed(1);}
+function renderFlx(){const f=10**+$('flx').value;const cl=flareClass(f);const eff={A:['خلفية هادئة','Quiet background'],B:['نشاط ضعيف','Weak activity'],C:['صغير، بلا أثر يُذكر','Small, little effect'],M:['متوسط: انقطاع راديو بسيط عند القطبين (R1–R2)','Medium: minor polar radio blackouts (R1–R2)'],X:['قوي: انقطاع راديو واسع على الجانب المضاء (R3–R5)','Strong: wide HF blackouts on the dayside (R3–R5)']}[cl[0]];
+ $('flxOut').innerHTML=`<b style="color:var(--gold-l);font-size:22px">${cl}</b> · ${f.toExponential(2)} W/m²<br><span class="small">${eff[lang==='ar'?0:1]}</span>`;}
+// ---------- phenomena ----------
+const PH={ar:[['🌑 البقع الشمسية','مناطق أبرد (~٣٨٠٠ ك) لأن المجال المغناطيسي القوي (~٣٠٠٠ جاوس) يعوق الحمل الحراري عن نقل الحرارة. لها ظل (umbra) وشبه ظل (penumbra)، وتظهر في أزواج متعاكسة الأقطاب (قانون هيل)، وتقترب من الاستواء كلما تقدمت الدورة (قانون شبورر والمخطط الفراشي).'],
+ ['🔆 الحبيبات والصِّيَخ','الحبيبات قمم خلايا الحمل، قطرها نحو ١٠٠٠ كم، والحبيبات الفائقة قطرها نحو ٣٠ ألف كم. أما الصِّيَخ (faculae) فمناطق ساطعة حول البقع، وتبدو أوضح قرب الحافة.'],
+ ['🔥 الشُّواظ والخيوط','بلازما كروموسفيرية أبرد وأكثف من الإكليل المحيط بها، يحملها مجال مغناطيسي ملتوٍ (حبل الفيض، flux rope). تُسمّى شُواظًا إذا رُئيت على حافة الشمس، وتبدو خيوطًا مظلمة على القرص، وتنفجر إذا أصابها عدم استقرار (التوائي kink أو طاري torus).'],
+ ['⚡ التوهجات','إطلاق مفاجئ لطاقة مغناطيسية مختزنة (حتى ١٠²⁵ جول) بإعادة الاتصال المغناطيسي، يسخّن البلازما إلى عشرات ملايين الكلفن ويسرّع إلكترونات تُصدر أشعة سينية صلبة. «تأثير نويبرت»: الأشعة السينية اللينة تقارب التكامل الزمني للأشعة الصلبة.'],
+ ['💥 الانبعاثات الكتلية الإكليلية (CME)','سحابة بلازما ممغنطة كتلتها نحو ١٠¹² كجم، وسرعتها من ٢٠٠ إلى أكثر من ٣٠٠٠ كم/ث، يطلقها انفجار حبل الفيض عندما يتجاوز مؤشر التناقص المغناطيسي n نحو ١٫٥ (عدم الاستقرار الطاري). ولا يصاحب كل توهجٍ انبعاثٌ كتلي: فالتوهجات المحصورة (confined)، كالتي تتناولها أبحاث رسالتي، لا تُطلق CME.'],
+ ['🕳️ الثقوب الإكليلية','مناطق مجالها المغناطيسي مفتوح، فتبدو مظلمة في صور EUV والأشعة السينية. تنطلق منها الرياح الشمسية السريعة (نحو ٧٥٠ كم/ث)، التي تسبب عواصف مغناطيسية متكررة كل ٢٧ يومًا (CIR).'],
+ ['🌬️ الرياح الشمسية','تيار مستمر من البروتونات والإلكترونات يتمدد من الإكليل (نموذج باركر ١٩٥٨)، ويسحب معه المجال المغناطيسي على هيئة حلزون باركر. سرعتها ٣٠٠–٨٠٠ كم/ث، وكثافتها عند الأرض نحو ٥ جسيمات/سم³.'],
+ ['☢️ الجسيمات الشمسية النشطة (SEP)','بروتونات وأيونات تبلغ طاقتها الـ GeV، تتسارع في التوهجات (أحداث «اندفاعية») أو عند صدمات الانبعاثات الكتلية (أحداث «تدريجية»). تصل إلى الأرض خلال دقائق إلى ساعات، وتشكل خطرًا على روّاد الفضاء والأقمار الصناعية.']],
+ en:[['🌑 Sunspots','Cooler regions (~3800 K) where strong fields (~3000 G) suppress convection. Umbra and penumbra, bipolar pairs (Hale\'s law), drifting toward the equator through the cycle (Spörer\'s law, butterfly diagram).'],
+ ['🔆 Granulation & faculae','Granules are tops of convection cells (~1000 km); supergranules ~30,000 km. Faculae are bright areas around spots, clearer near the limb.'],
+ ['🔥 Prominences & filaments','Cool dense chromospheric plasma held up in the corona by twisted fields (flux ropes). Prominences at the limb, dark filaments on the disc; kink or torus instability makes them erupt.'],
+ ['⚡ Flares','Sudden release of stored magnetic energy (up to 10²⁵ J) by reconnection, heating plasma to tens of MK and accelerating electrons (hard X-rays). Neupert effect: soft X-rays ≈ time-integral of hard X-rays.'],
+ ['💥 Coronal mass ejections','Magnetised plasma clouds of ~10¹² kg at 200 to >3000 km/s, launched when an erupting flux rope passes the torus-instability threshold (decay index n ≈ 1.5). Not every flare has a CME: confined flares, like those in my thesis research, do not.'],
+ ['🕳️ Coronal holes','Open-field regions, dark in EUV and X-rays, the source of fast solar wind (~750 km/s) and recurrent 27-day storms (CIRs).'],
+ ['🌬️ Solar wind','A continuous outflow of protons and electrons from the expanding corona (Parker 1958), dragging the field into the Parker spiral; 300–800 km/s, ~5 cm⁻³ at Earth.'],
+ ['☢️ Solar energetic particles','Protons and ions up to GeV energies, accelerated in flares (impulsive) or at CME shocks (gradual); arriving in minutes to hours, a hazard to astronauts and satellites.']]};
+function renderPhen(){$('phen').innerHTML=PH[lang].map(p=>`<div class="panel"><h3>${p[0]}</h3><p>${p[1]}</p></div>`).join('');}
+// ---------- cycle (live from NOAA) ----------
+async function renderCycle(){const cv=$('cyclePlot');try{const r=await fetch('https://services.swpc.noaa.gov/json/solar-cycle/observed-solar-cycle-indices.json');const d=await r.json();
+ const xs=d.map(o=>{const [y,m]=o['time-tag'].split('-');return +y+(+m-0.5)/12;}),ys=d.map(o=>o.ssn),sm=d.map(o=>o.smoothed_ssn);
+ const [g,W,H]=setupCanvas(cv),l=36,rr=10,tp=10,b=24,x0=xs[0],x1=xs[xs.length-1]+1,ym=Math.max(...ys)*1.05,X=x=>l+(x-x0)/(x1-x0)*(W-l-rr),Y=y=>tp+(1-y/ym)*(H-tp-b);
+ g.fillStyle='#070b18';g.fillRect(0,0,W,H);g.font='10px sans-serif';g.fillStyle='#9fb0d6';g.textAlign='center';for(let y=1750;y<=2025;y+=25)g.fillText(y,X(y),H-8);
+ g.strokeStyle='#6fa8ff88';g.lineWidth=1;g.beginPath();xs.forEach((x,i)=>i?g.lineTo(X(x),Y(ys[i])):g.moveTo(X(x),Y(ys[i])));g.stroke();
+ g.strokeStyle='#f1d27a';g.lineWidth=2;g.beginPath();let st=false;xs.forEach((x,i)=>{if(sm[i]>0){st?g.lineTo(X(x),Y(sm[i])):g.moveTo(X(x),Y(sm[i]));st=true;}});g.stroke();
+ $('cycleNote').textContent=t('cycleOk')+` (${d[d.length-1]['time-tag']}: ${d[d.length-1].ssn})`;}catch(e){const [g,W,H]=setupCanvas(cv);g.fillStyle='#070b18';g.fillRect(0,0,W,H);$('cycleNote').textContent=t('cycleBlocked');}}
+// ---------- Sun-Earth chain ----------
+const CH={ar:[['☀️ الضوء والأشعة السينية','٨٫٣ دقيقة','أول ما يصل مع ضوء التوهج: تؤيّن الأشعة السينية الطبقة D في الأيونوسفير على الجانب المضاء، فينقطع اتصال الراديو HF (مقياس R). نرصدها بجهاز GOES XRS.'],['☢️ الجسيمات النشطة SEP','من ١٠ دقائق لساعات','تسير البروتونات النسبية على خطوط حلزون باركر، لذا تكون الأحداث الصادرة من غرب الشمس (نحو W60) أوثق اتصالًا مغناطيسيًا بالأرض. تسبب عاصفة إشعاعية (مقياس S) وامتصاصًا فوق القطبين (PCA)، ونرصدها بجهاز GOES SEISS.'],['💥 صدمة وغلاف الـ CME','من ١ إلى ٤ أيام','تظهر في بيانات النقطة L1 (المسباران ACE وDSCOVR) قفزةً فجائية في السرعة والكثافة والمجال، تليها منطقة الغلاف المضطربة. وعند وصول الصدمة إلى الأرض ينضغط الغلاف المغناطيسي فجأة (SI أو SSC).'],['🧲 السحابة المغناطيسية','بعد الصدمة بساعات','مجال قوي منتظم يدور ببطء، مع حرارة منخفضة. إذا كان المكوّن Bz جنوبيًا ومستمرًا حدث اقتران قوي (إعادة اتصال في جانب النهار)، فتنشأ عاصفة مغناطيسية (Dst ≤ −100 nT، مقياس G).'],['🌌 الشفق والعاصفة','أثناء العاصفة','تشتد الحلقة التيارية، وينزل الشفق إلى عروض أدنى، وتتغير أحزمة الإشعاع، مما يؤثر في شبكات الكهرباء (تيارات GIC) ونظام GPS ومدارات الأقمار الصناعية.']],
+en:[['☀️ Light & X-rays','8.3 min','First to arrive with the flare light: X-rays ionise the dayside D-layer, causing HF radio blackouts (R scale). Seen by GOES XRS.'],['☢️ SEPs','10 min – hours','Relativistic protons follow the Parker spiral, so western events (~W60) connect best to Earth. Radiation storms (S scale) and polar-cap absorption. GOES SEISS.'],['💥 CME shock & sheath','1–4 days','At L1 (ACE/DSCOVR): sudden jumps in speed, density and field, then a turbulent sheath; at Earth the magnetosphere is suddenly compressed (SI/SSC).'],['🧲 Magnetic cloud','hours after the shock','Strong, smooth, slowly rotating field with low temperature. Sustained southward Bz drives dayside reconnection and a geomagnetic storm (Dst ≤ −100 nT, G scale).'],['🌌 Aurora & storm','during the storm','The ring current grows, aurora moves to lower latitudes, radiation belts change: effects on power grids (GICs), GPS and satellite drag.']]};
+function renderChain(sel){sel=sel||0;$('chain').innerHTML=CH[lang].map((c,i)=>`<div class="st${i===sel?' on':''}" data-i="${i}"><b>${c[0]}</b>${c[1]}</div>`).join('');$('chain').querySelectorAll('.st').forEach(e=>e.onclick=()=>renderChain(+e.dataset.i));$('chainInfo').textContent=CH[lang][sel][2];}
+// ---------- DBM ----------
+function dbm(){const v0=+$('v0').value,w=+$('w').value,gm=+$('gm').value*1e-7,Rs=695700,r0=20*Rs,AU=1.495978707e8;
+ $('v0v').textContent=v0+' km/s';$('wv').textContent=w+' km/s';$('gv').textContent=$('gm').value+' ×10⁻⁷ km⁻¹';
+ const dv=v0-w,s=Math.sign(dv)||1;const r=tt=>s/gm*Math.log(1+s*gm*dv*tt)+w*tt+r0,v=tt=>dv/(1+s*gm*dv*tt)+w;
+ let lo=0,hi=20*86400;for(let i=0;i<80;i++){const m=(lo+hi)/2;if(r(m)<AU)lo=m;else hi=m;}const ta=(lo+hi)/2;
+ $('dbmOut').innerHTML=`${t('arr')}: <b style="color:var(--gold-l);font-size:20px">${(ta/3600).toFixed(1)} ${t('h')}</b> (${(ta/86400).toFixed(2)} d)<br>${t('varr')}: <b>${v(ta).toFixed(0)} km/s</b>`;
+ const [g,W,H]=setupCanvas($('dbmPlot')),l=40,rr=10,tp=10,b=22,X=x=>l+x/ta*(W-l-rr)*0.92,vmax=Math.max(v0,w)*1.1,Y=y=>tp+(1-y/vmax)*(H-tp-b);
+ g.fillStyle='#070b18';g.fillRect(0,0,W,H);g.font='10px sans-serif';g.fillStyle='#9fb0d6';g.textAlign='right';for(let y=0;y<=vmax;y+=500){g.fillText(y,l-4,Y(y)+3);g.strokeStyle='#ffffff12';g.beginPath();g.moveTo(l,Y(y));g.lineTo(W-rr,Y(y));g.stroke();}
+ g.strokeStyle='#6fa8ff';g.setLineDash([4,4]);g.beginPath();g.moveTo(l,Y(w));g.lineTo(W-rr,Y(w));g.stroke();g.setLineDash([]);
+ g.strokeStyle='#ff8a3d';g.lineWidth=2;g.beginPath();for(let i=0;i<=100;i++){const tt=ta*i/100;i?g.lineTo(X(tt),Y(v(tt))):g.moveTo(X(tt),Y(v(tt)));}g.stroke();
+ g.fillStyle='#f1d27a';g.textAlign='center';g.fillText('1 AU',X(ta),tp+8);g.fillStyle='#9fb0d6';g.fillText('v (km/s) vs t',W/2,H-6);}
+// ---------- Sun from your location ----------
+function renderLocal(){const o=new AE.Observer(loc.lat,loc.lon,0),now=new Date(),y=now.getUTCFullYear();
+ const days=[[now,'#f1d27a',lang==='ar'?'اليوم':'Today'],[new Date(Date.UTC(y,5,21)),'#ff8a3d',lang==='ar'?'الانقلاب الصيفي':'June solstice'],[new Date(Date.UTC(y,11,21)),'#6fa8ff',lang==='ar'?'الانقلاب الشتوي':'December solstice']];
+ const [g,W,H]=setupCanvas($('pathPlot')),l=30,rr=10,tp=14,b=24,X=a=>l+(a-0)/360*(W-l-rr),Y=h=>tp+(1-h/90)*(H-tp-b);
+ g.fillStyle='#070b18';g.fillRect(0,0,W,H);g.font='10px sans-serif';g.fillStyle='#9fb0d6';g.textAlign='center';const dn=lang==='ar'?['ش','ق','ج','غ','ش']:['N','E','S','W','N'];for(let a=0;a<=360;a+=90)g.fillText(dn[a/90],X(a),H-8);g.textAlign='right';for(let h=0;h<=90;h+=30)g.fillText(h+'°',l-3,Y(h)+3);
+ g.strokeStyle='#ffffff30';g.beginPath();g.moveTo(l,Y(0));g.lineTo(W-rr,Y(0));g.stroke();
+ days.forEach(([d,c,n],k)=>{const ds=Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate())-loc.lon/15*3600000;g.strokeStyle=c;g.lineWidth=2;g.beginPath();let st=false;for(let m=0;m<=1440;m+=6){const tt=new Date(ds+m*60000),eq=AE.Equator(AE.Body.Sun,tt,o,true,true),hz=AE.Horizon(tt,o,eq.ra,eq.dec,'normal');if(hz.altitude>0){st?g.lineTo(X(hz.azimuth),Y(hz.altitude)):g.moveTo(X(hz.azimuth),Y(hz.altitude));st=true;}else st=false;}g.stroke();g.fillStyle=c;g.textAlign='left';g.fillText(n,l+6,tp+4+k*13);});
+ // equation of time
+ const [g2,W2,H2]=setupCanvas($('eotPlot')),pts=[];for(let dd=0;dd<366;dd+=2){const d0=new Date(Date.UTC(y,0,1+dd,12,0)-loc.lon/15*3600000);const hn=AE.SearchHourAngle(AE.Body.Sun,o,0,new Date(d0.getTime()-6*3600000));pts.push([dd,(d0-hn.time.date)/60000]);}
+ const X2=x=>30+x/366*(W2-40),Y2=v=>14+(1-(v+18)/36)*(H2-38);g2.fillStyle='#070b18';g2.fillRect(0,0,W2,H2);g2.font='10px sans-serif';g2.fillStyle='#9fb0d6';g2.textAlign='right';for(let v=-15;v<=15;v+=5){g2.fillText(v,26,Y2(v)+3);g2.strokeStyle=v?'#ffffff12':'#ffffff40';g2.beginPath();g2.moveTo(30,Y2(v));g2.lineTo(W2-10,Y2(v));g2.stroke();}
+ g2.textAlign='center';const mo=lang==='ar'?['ينا','فبر','مار','أبر','ماي','يون','يول','أغس','سبت','أكت','نوف','ديس']:['J','F','M','A','M','J','J','A','S','O','N','D'];mo.forEach((m,i)=>g2.fillText(m,X2(i*30.4+15),H2-8));
+ g2.strokeStyle='#f1d27a';g2.lineWidth=2;g2.beginPath();pts.forEach((p,i)=>i?g2.lineTo(X2(p[0]),Y2(p[1])):g2.moveTo(X2(p[0]),Y2(p[1])));g2.stroke();g2.fillStyle='#f1d27a';g2.textAlign='left';g2.fillText(lang==='ar'?'معادلة الزمن (دقائق)':'Equation of time (min)',36,20);
+ const mx=pts.reduce((a,b)=>b[1]>a[1]?b:a),mn=pts.reduce((a,b)=>b[1]<a[1]?b:a);
+ $('localNote').textContent=lang==='ar'?`تبلغ معادلة الزمن أقصى قيمة لها +${mx[1].toFixed(1)} دقيقة (أوائل نوفمبر، حين تسبق الشمس الساعة) وأدنى قيمة ${mn[1].toFixed(1)} دقيقة (فبراير). والسبب إهليلجية مدار الأرض (قانون كبلر الثاني) وميل محورها ٢٣٫٤٤°، وهما أيضًا سبب شكل الأنالِما ∞.`:`The equation of time peaks at +${mx[1].toFixed(1)} min (early November, Sun ahead of the clock) and bottoms at ${mn[1].toFixed(1)} min (February), caused by Earth's orbital eccentricity (Kepler's 2nd law) and its 23.44° tilt; the same causes make the ∞-shaped analemma.`;}
+// ---------- videos ----------
+const VIDS=[['media/sdo_x9_flare_2024-10-03.mp4','https://svs.gsfc.nasa.gov/14701/','توهج X9.0 – ٣ أكتوبر ٢٠٢٤ (أقوى توهج في الدورة ٢٥)','X9.0 flare – 3 Oct 2024 (strongest of Cycle 25)','img/sdo_aia193_2013-06-24.jpg'],['media/sdo_x18_flare_2024-10-26.mp4','https://svs.gsfc.nasa.gov/14710/','توهج X1.8 – ٢٦ أكتوبر ٢٠٢٤ بثلاثة أطوال موجية','X1.8 flare – 26 Oct 2024 in three wavelengths','img/solo_eui174_2022-04-01.jpg'],['media/sdo_x33_flare_2024-10-23.mp4','https://svs.gsfc.nasa.gov/14709/','توهج X3.3 – ٢٣ أكتوبر ٢٠٢٤ (4K)','X3.3 flare – 23 Oct 2024 (4K)','img/sdo_hmi_continuum_2023-01-31.jpg']];
+function renderVids(){const ph=lang==='ar'?'صورة حقيقية مؤقتة من SDO/Solar Orbiter حتى يُضاف الفيديو':'Temporary real SDO/Solar Orbiter image until the video is added';
+ $('vids').innerHTML=VIDS.map(v=>`<div class="panel"><video controls preload="metadata" playsinline poster="${v[4]}" src="${v[0]}"></video><div style="margin-top:6px;font-size:13.5px">${lang==='ar'?v[2]:v[3]}</div><a class="small" href="${v[1]}" target="_blank" rel="noopener" style="color:var(--gold-l)">${t('watch')}</a></div>`).join('');
+ $('vids').querySelectorAll('video').forEach((vd,i)=>vd.addEventListener('error',()=>{const v=VIDS[i];const a=document.createElement('a');a.href=v[1];a.target='_blank';a.rel='noopener';a.style.cssText='display:block;position:relative;border-radius:12px;overflow:hidden;aspect-ratio:16/10;background:#000';
+  a.innerHTML=`<img src="${v[4]}" style="width:100%;height:100%;object-fit:cover;opacity:.85"><span style="position:absolute;inset:0;display:grid;place-items:center;font-size:54px;color:#fff;text-shadow:0 2px 12px #000">▶</span><span style="position:absolute;bottom:0;left:0;right:0;padding:6px 8px;font-size:11px;background:#000a;color:#cdd6ee">${ph}</span>`;vd.replaceWith(a);},true));}
+// ---------- UI ----------
+function ui(){document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr';document.body.lang=lang;
+ document.querySelectorAll('[data-i]').forEach(e=>{const v=t(e.dataset.i);if(typeof v==='string')e.textContent=v;});
+ $('btnLang').textContent=lang==='ar'?'EN':'ع';$('logo').innerHTML=KH.logoSVG(36);
+ $('facts').innerHTML=t('facts').map(f=>`<div class="fact"><b>${f[0]}</b>${f[1]}</div>`).join('');
+ $('foot').innerHTML=`${KH.logoSVG(30)}<br>${t('credit')}<br><a href="index.html">${lang==='ar'?'الرئيسية':'Home'}</a> · <a href="space-weather.html">${lang==='ar'?'دليل الطقس الفضائي':'Space-weather guide'}</a>`;
+ document.title=t('title')+' — '+(lang==='ar'?'خالد محمد':'Khaled Mohamed');
+ drawLayers('core');showLay('core');renderLive();renderGoes();renderFlx();renderPhen();renderCycle();renderChain(0);dbm();renderLocal();renderVids();}
+$('btnLang').onclick=()=>{lang=lang==='ar'?'en':'ar';KH.setLang(lang);ui();};
+$('btn3d').onclick=$('sun3d').onclick=()=>Body3D.open('sun',null,{lang});
+$('flx').oninput=renderFlx;['v0','w','gm'].forEach(k=>$(k).oninput=dbm);
+let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{renderGoes();dbm();renderLocal();},200);});
+ui();
+})();
+</script>
+</body>
+</html>

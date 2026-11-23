@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0f1e">
+<title>مواقيت الصلاة والقبلة | Prayer Times & Qibla</title>
+<link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/page.css">
+<style>
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:560px){.pgrid{grid-template-columns:repeat(2,1fr)}}
+.pt{padding:14px;text-align:center;border-radius:16px;border:1px solid var(--line);background:linear-gradient(160deg,#16214acc,#0d1430cc)}
+.pt .nm{color:var(--muted);font-size:13px}.pt .tm{font-size:24px;font-weight:700;font-variant-numeric:tabular-nums;margin-top:4px}
+.pt.next{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset;background:linear-gradient(160deg,#3a2f12cc,#1a1430cc)}
+.pt.next .nm{color:var(--gold-l)}
+.countdown{text-align:center;margin:14px 0 4px;font-size:15px;color:#d9e0f2}.countdown b{color:var(--gold-l);font-size:22px;font-variant-numeric:tabular-nums}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+@media(max-width:560px){.opts{grid-template-columns:1fr}}
+.dnav{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.dnav .d{text-align:center;flex:1}.dnav .d b{display:block;font-size:16px}.dnav .d small{color:var(--muted)}
+.qwrap{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.qwrap svg{flex:0 0 auto}
+</style>
+</head>
+<body>
+<header class="pg-top">
+  <a class="brand" href="index.html"><span id="logo"></span><div><h1 data-i="title"></h1><div class="sub" id="placeLbl"></div></div></a>
+  <button class="ibtn" id="btnLang">EN</button>
+</header>
+<main class="wrap">
+  <section class="panel">
+    <div class="opts">
+      <div><label class="f" data-i="city" style="font-size:12px;color:var(--muted)"></label><select class="inp" id="citySel" style="width:100%"></select></div>
+      <div><label class="f" data-i="method" style="font-size:12px;color:var(--muted)"></label><select class="inp" id="methSel" style="width:100%"></select></div>
+      <div><label class="f" data-i="asrL" style="font-size:12px;color:var(--muted)"></label><select class="inp" id="asrSel" style="width:100%"></select></div>
+      <div style="display:flex;align-items:flex-end;gap:8px"><button class="btn sm" id="btnGeo" data-i="useGeo"></button><label style="font-size:13px;display:flex;gap:6px;align-items:center"><input type="checkbox" id="ramadan" style="accent-color:var(--gold)"><span data-i="ramadanL"></span></label></div>
+    </div>
+  </section>
+
+  <section class="panel" style="margin-top:12px">
+    <div class="dnav"><button class="ibtn" id="prev">‹</button><div class="d" id="dayLbl"></div><button class="ibtn" id="next">›</button></div>
+    <div class="pgrid" id="grid"></div>
+    <div class="countdown" id="cd"></div>
+    <div class="note2" id="extra"></div>
+  </section>
+
+  <h2 class="sec" data-i="qiblaH"></h2>
+  <section class="panel qwrap" id="qibla"></section>
+
+  <h2 class="sec" data-i="monthH"></h2>
+  <div class="panel tbl-wrap" id="month"></div>
+
+  <h2 class="sec" data-i="howH"></h2>
+  <section class="panel" id="how" style="font-size:13.5px;line-height:1.9"></section>
+</main>
+<footer class="pg-foot" id="foot"></footer>
+<script src="js/common.js"></script>
+<script src="js/astronomy.min.js"></script>
+<script src="js/prayer-core.js"></script>
+<script>
+(function(){
+const $=id=>document.getElementById(id), AE=Astronomy, P=Prayer, MIN=60000, DAY=86400000;
+let lang=KH.getLang(), loc=KH.getLoc(), dayOff=0;
+const opt=Object.assign({method:null,asr:'shafii',ramadan:false},KH.store.get('prayerOpt',{}));
+const T={ar:{title:'مواقيت الصلاة والقبلة',city:'المدينة',method:'طريقة الحساب',asrL:'حساب العصر',ramadanL:'رمضان (للعشاء في أم القرى وقطر)',useGeo:'📍 موقعي',
+ names:{fajr:'الفجر',sunrise:'الشروق',dhuhr:'الظهر',asr:'العصر',maghrib:'المغرب',isha:'العشاء'},shafii:'الجمهور (طول الظل = ١ × الطول)',hanafi:'الحنفي (طول الظل = ٢ × الطول)',
+ nextIn:'متبقي على',today:'اليوم',qiblaH:'🕋 اتجاه القبلة',monthH:'📆 جدول الشهر',howH:'🧮 كيف تُحسب المواقيت؟',
+ qb:'اتجاه القبلة من موقعك',fromN:'من الشمال الحقيقي باتجاه عقارب الساعة',dist:'المسافة إلى الكعبة',km:'كم',sunNow:'الشمس الآن على سمت',sunTip:'لو الشمس ظاهرة: وجّه نفسك ناحية الشمس، ثم لف',cw:'باتجاه عقارب الساعة',ccw:'عكس عقارب الساعة',sunDown:'الشمس تحت الأفق الآن؛ استخدم بوصلة الهاتف (مع مراعاة الانحراف المغناطيسي).',
+ midnight:'منتصف الليل الشرعي',lastThird:'بداية الثلث الأخير',imsak:'الإمساك (قبل الفجر بـ١٠ دقائق)',hiLat:'تنبيه: الشمس لا تصل لزاوية الفجر/العشاء في هذا التاريخ عند هذا العرض، فاستُخدمت قاعدة «سُبع الليل».',
+ how:`<p><b>الظهر:</b> لحظة عبور مركز الشمس خط الزوال (الزاوية الساعية = ٠)، وتساوي ١٢:٠٠ + (المنطقة الزمنية × ١٥ − خط الطول)/١٥ − معادلة الزمن.</p>
+ <p><b>الشروق والمغرب:</b> لحظة وصول الحافة العليا للشمس للأفق: ارتفاع المركز h = −٠٫٨٣٣° (نصف القطر ١٦′ + الانكسار الجوي ٣٤′).</p>
+ <p><b>الفجر والعشاء:</b> لحظة وصول الشمس لزاوية انخفاض تحت الأفق تحددها الجهة: في الهيئة المصرية للمساحة الفجر عند −١٩٫٥° والعشاء عند −١٧٫٥°. نوجد الزاوية الساعية من المثلث الفلكي: cos H = (sin h − sin φ sin δ) / (cos φ cos δ)، حيث φ خط العرض وδ ميل الشمس.</p>
+ <p><b>العصر:</b> حين يصبح ظل الشيء مثله (أو مثليه عند الحنفية) زائدًا ظل الزوال: cot h = n + tan|φ − δ|، ثم نحسب الوقت من نفس معادلة الزاوية الساعية.</p>
+ <p><b>القبلة:</b> اتجاه الدائرة العظمى نحو الكعبة (٢١٫٤٢٢٥° ش، ٣٩٫٨٢٦٢° ق): tan q = sin Δλ / (cos φ tan φ<sub>k</sub> − sin φ cos Δλ).</p>
+ <p style="color:var(--muted)">الحسابات هنا بمحرك Astronomy Engine (دقة ثوانٍ لموقع الشمس)، وتُقرَّب الأوقات لأقرب دقيقة. للتحقق: مواقيت القاهرة يوم ١٨ نوفمبر ٢٠٢٦ بطريقة الهيئة المصرية خرجت مطابقة للمنشور بالدقيقة (الفجر ٤:٥٢، الشروق ٦:٢٢، العصر ٢:٣٧، المغرب ٤:٥٨، العشاء ٦:١٨).</p>`},
+ en:{title:'Prayer Times & Qibla',city:'City',method:'Calculation method',asrL:'Asr method',ramadanL:'Ramadan (Isha for Umm al-Qura/Qatar)',useGeo:'📍 My location',
+ names:{fajr:'Fajr',sunrise:'Sunrise',dhuhr:'Dhuhr',asr:'Asr',maghrib:'Maghrib',isha:'Isha'},shafii:'Standard (shadow = 1 × height)',hanafi:'Hanafi (shadow = 2 × height)',
+ nextIn:'Time left until',today:'Today',qiblaH:'🕋 Qibla direction',monthH:'📆 Monthly timetable',howH:'🧮 How are the times computed?',
+ qb:'Qibla from your location',fromN:'clockwise from true north',dist:'Distance to the Kaaba',km:'km',sunNow:'The Sun is now at azimuth',sunTip:'If the Sun is visible: face the Sun, then turn',cw:'clockwise',ccw:'counter-clockwise',sunDown:'The Sun is below the horizon; use your phone compass (mind the magnetic declination).',
+ midnight:'Islamic midnight',lastThird:'Last third of the night',imsak:'Imsak (10 min before Fajr)',hiLat:'Note: the Sun does not reach the Fajr/Isha angle on this date at this latitude, so the one-seventh-of-the-night rule was used.',
+ how:`<p><b>Dhuhr:</b> the Sun's centre crosses the meridian (hour angle 0): 12:00 + (zone×15 − longitude)/15 − equation of time.</p>
+ <p><b>Sunrise & Maghrib:</b> the Sun's upper limb on the horizon: centre altitude h = −0.833° (16′ radius + 34′ refraction).</p>
+ <p><b>Fajr & Isha:</b> the Sun at a set depression; the Egyptian Survey uses −19.5° (Fajr) and −17.5° (Isha). From the astronomical triangle: cos H = (sin h − sin φ sin δ)/(cos φ cos δ).</p>
+ <p><b>Asr:</b> when an object's shadow equals its height (twice for Hanafi) plus the noon shadow: cot h = n + tan|φ − δ|.</p>
+ <p><b>Qibla:</b> initial great-circle bearing to the Kaaba (21.4225°N, 39.8262°E): tan q = sin Δλ / (cos φ tan φ<sub>k</sub> − sin φ cos Δλ).</p>
+ <p style="color:var(--muted)">Computed with Astronomy Engine and rounded to the nearest minute. Check: Cairo, 18 Nov 2026, Egyptian Survey method, matches the published times to the minute.</p>`}};
+const t=k=>T[lang][k];
+const rnd=x=>x==null?null:Math.round(x/MIN)*MIN;
+const ft=x=>x?KH.fmtTime(rnd(x),loc,lang):'—';
+function dayStart(off){const t0=Date.now()+off*DAY,o=KH.tzOffsetMin(t0,loc)*MIN;return Math.floor((t0+o)/DAY)*DAY-o;}
+function ui(){
+ document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr';document.body.lang=lang;
+ document.querySelectorAll('[data-i]').forEach(e=>{const v=t(e.dataset.i);if(typeof v==='string')e.textContent=v;});
+ $('btnLang').textContent=lang==='ar'?'EN':'ع';$('logo').innerHTML=KH.logoSVG(36);
+ $('citySel').innerHTML=KH.CITIES.map(c=>`<option value="${c.id}">${c[lang]}</option>`).join('')+(KH.CITIES.some(c=>c.id===loc.id)?'':`<option value="cur">${lang==='ar'?'موقعي':'My location'} (${loc.lat.toFixed(2)}, ${loc.lon.toFixed(2)})</option>`);
+ $('citySel').value=KH.CITIES.some(c=>c.id===loc.id)?loc.id:'cur';
+ if(!opt.method)opt.method=P.defaultMethod(loc);
+ $('methSel').innerHTML=Object.keys(P.METHODS).map(k=>`<option value="${k}">${P.METHODS[k][lang]}</option>`).join('');$('methSel').value=opt.method;
+ $('asrSel').innerHTML=`<option value="shafii">${t('shafii')}</option><option value="hanafi">${t('hanafi')}</option>`;$('asrSel').value=opt.asr;
+ $('ramadan').checked=!!opt.ramadan;
+ $('placeLbl').textContent=(KH.CITIES.find(c=>c.id===loc.id)||{})[lang]||`${loc.lat.toFixed(2)}, ${loc.lon.toFixed(2)}`;
+ $('how').innerHTML=t('how');
+ $('foot').innerHTML=`${KH.logoSVG(30)}<br>${lang==='ar'?'إعداد: خالد محمد · عضو AfAS وAUASS':'By Khaled Mohamed · Member of AfAS and AUASS'}<br><a href="index.html">${lang==='ar'?'الصفحة الرئيسية':'Home'}</a> · <a href="events.html">${lang==='ar'?'تقويم الظواهر':'Sky Events'}</a>`;
+ document.title=t('title')+' — '+(lang==='ar'?'خالد محمد':'Khaled Mohamed');
+}
+function save(){KH.store.set('prayerOpt',opt);}
+$('btnLang').onclick=()=>{lang=lang==='ar'?'en':'ar';KH.setLang(lang);ui();render();};
+$('citySel').onchange=e=>{const c=KH.CITIES.find(x=>x.id===e.target.value);if(c){loc=Object.assign({},c);KH.setLoc(loc);opt.method=P.defaultMethod(loc);save();ui();render();}};
+$('methSel').onchange=e=>{opt.method=e.target.value;save();render();};
+$('asrSel').onchange=e=>{opt.asr=e.target.value;save();render();};
+$('ramadan').onchange=e=>{opt.ramadan=e.target.checked;save();render();};
+$('prev').onclick=()=>{dayOff--;render();};$('next').onclick=()=>{dayOff++;render();};
+$('btnGeo').onclick=()=>navigator.geolocation&&navigator.geolocation.getCurrentPosition(p=>{loc={id:'geo',lat:+p.coords.latitude.toFixed(4),lon:+p.coords.longitude.toFixed(4),tz:Intl.DateTimeFormat().resolvedOptions().timeZone};KH.setLoc(loc);opt.method=P.defaultMethod(loc);save();ui();render();},()=>alert(lang==='ar'?'تعذّر تحديد الموقع (عارض Claude يمنعه؛ اختر مدينتك)':'Location unavailable (blocked in the Claude viewer; pick your city)'));
+const KEYS=['fajr','sunrise','dhuhr','asr','maghrib','isha'];
+let cur=null;
+function render(){
+ const ds=dayStart(dayOff);cur=P.times(ds,loc,opt);
+ $('dayLbl').innerHTML=`<b>${dayOff===0?t('today')+' · ':''}${KH.fmtDate(ds+12*3600000,loc,lang,{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</b><small>${hijri(ds+12*3600000)}</small>`;
+ const now=Date.now(); let nk=null; if(dayOff===0) nk=KEYS.find(k=>k!=='sunrise'&&rnd(cur[k])>now);
+ $('grid').innerHTML=KEYS.map(k=>`<div class="pt${k===nk?' next':''}"><div class="nm">${t('names')[k]}</div><div class="tm">${ft(cur[k])}</div></div>`).join('');
+ $('extra').innerHTML=`${t('imsak')}: ${ft(cur.fajr-10*MIN)} · ${t('midnight')}: ${ft(cur.midnight)} · ${t('lastThird')}: ${ft(cur.lastThird)}${cur.highLat?'<br>'+t('hiLat'):''}`;
+ tick();renderQibla();renderMonth();
+}
+function hijri(t0){try{return new Intl.DateTimeFormat(lang==='ar'?'ar-SA-u-ca-islamic-umalqura':'en-u-ca-islamic-umalqura',{day:'numeric',month:'long',year:'numeric',timeZone:KH.tzOf(loc)}).format(new Date(t0))+(lang==='ar'?' (أم القرى)':' (Umm al-Qura)');}catch(e){return'';}}
+function tick(){
+ if(dayOff!==0||!cur){$('cd').innerHTML='';return;}
+ const now=Date.now();let nk=KEYS.find(k=>k!=='sunrise'&&rnd(cur[k])>now),tt=nk?rnd(cur[nk]):null;
+ if(!nk){const tm=P.times(dayStart(1),loc,opt);nk='fajr';tt=rnd(tm.fajr);}
+ const s=Math.max(0,Math.round((tt-now)/1000)),h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;
+ $('cd').innerHTML=`${t('nextIn')} <b style="font-size:15px">${t('names')[nk]}</b><br><b>${KH.digits(`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(x).padStart(2,'0')}`,lang)}</b>`;
+}
+setInterval(tick,1000);
+function renderQibla(){
+ const q=P.qibla(loc),o=new AE.Observer(loc.lat,loc.lon,0),now=new Date(),eq=AE.Equator(AE.Body.Sun,now,o,true,true),h=AE.Horizon(now,o,eq.ra,eq.dec,'normal');
+ const S=200,c=S/2,R=82,pt=(a,r)=>[c+r*Math.sin(a*Math.PI/180),c-r*Math.cos(a*Math.PI/180)];
+ const [qx,qy]=pt(q.bearing,R-6),[sx,sy]=pt(h.azimuth,R-18);
+ const dirs=lang==='ar'?['ش','ق','ج','غ']:['N','E','S','W'];
+ const diff=((q.bearing-h.azimuth)%360+540)%360-180;
+ $('qibla').innerHTML=`<svg viewBox="0 0 ${S} ${S}" width="200" height="200"><circle cx="${c}" cy="${c}" r="${R}" fill="#0e1630" stroke="#d4a73c" stroke-width="2"/>
+  ${[0,90,180,270].map((a,i)=>{const[x,y]=pt(a,R+11);return`<text x="${x}" y="${y+4}" fill="${i?'#9fb0d6':'#f1d27a'}" font-size="13" text-anchor="middle" font-weight="700">${dirs[i]}</text>`;}).join('')}
+  ${Array.from({length:36},(_,i)=>{const[a,b]=pt(i*10,R),[x2,y2]=pt(i*10,R-(i%9?5:10));return`<line x1="${a}" y1="${b}" x2="${x2}" y2="${y2}" stroke="#ffffff55"/>`;}).join('')}
+  <line x1="${c}" y1="${c}" x2="${qx}" y2="${qy}" stroke="#f1d27a" stroke-width="4" stroke-linecap="round"/><text x="${qx}" y="${qy-6}" font-size="16" text-anchor="middle">🕋</text>
+  ${h.altitude>0?`<circle cx="${sx}" cy="${sy}" r="7" fill="#ffd75e"/>`:''}<circle cx="${c}" cy="${c}" r="4" fill="#fff"/></svg>
+  <div class="kv" style="flex:1;min-width:220px"><b>${t('qb')}</b><span><b style="color:var(--gold-l);font-size:18px">${KH.num(q.bearing,1,lang)}°</b> ${t('fromN')} (${KH.compass(q.bearing,lang)})</span>
+  <b>${t('dist')}</b><span>${KH.digits(Math.round(q.km).toLocaleString('en'),lang)} ${t('km')}</span>
+  <b>☀️</b><span>${h.altitude>0?`${t('sunNow')} ${KH.num(h.azimuth,1,lang)}°. ${t('sunTip')} <b>${KH.num(Math.abs(diff),0,lang)}°</b> ${diff>0?t('cw'):t('ccw')}.`:t('sunDown')}</span></div>`;
+}
+function renderMonth(){
+ const ds0=dayStart(dayOff),d0=new Date(ds0+12*3600000),y=d0.getUTCFullYear(),m=d0.getUTCMonth(),first=Date.UTC(y,m,1,12),n=new Date(Date.UTC(y,m+1,0)).getUTCDate();
+ const o=KH.tzOffsetMin(first,loc)*MIN;let rows='';
+ for(let i=0;i<n;i++){const mid=first+i*DAY,ds=Math.floor((mid+o)/DAY)*DAY-KH.tzOffsetMin(mid,loc)*MIN,r=P.times(ds,loc,opt);
+  rows+=`<tr${i===d0.getUTCDate()-1?' style="background:#d4a73c22"':''}><td>${KH.fmtDate(mid,loc,lang,{weekday:'short',day:'numeric',month:undefined,year:undefined})}</td>${KEYS.map(k=>`<td>${ft(r[k])}</td>`).join('')}</tr>`;}
+ $('month').innerHTML=`<div style="margin-bottom:6px;color:var(--gold-l)">${KH.fmtDate(first,loc,lang,{weekday:undefined,day:undefined,month:'long',year:'numeric'})} · ${P.METHODS[opt.method][lang]}</div><table class="t"><thead><tr><th></th>${KEYS.map(k=>`<th>${t('names')[k]}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table>`;
+}
+ui();render();
+})();
+</script>
+</body>
+</html>
